@@ -1,7 +1,7 @@
 #!/bin/sh
 #
 
-cd /root/openvpn-test-server || exit 1
+set -eux
 
 for SI in openvpn*.pid
 do
