@@ -1,0 +1,15 @@
+#!/bin/sh
+#
+
+cd /root/openvpn-test-server || exit 1
+
+for SI in openvpn*.pid
+do
+    # nothing there?
+    if [ "$SI" = "openvpn*.pid" ] ; then exit 0 ; fi
+
+    echo "stopping $SI..."
+    kill `cat $SI`
+    sleep 1
+    rm -f $SI
+done
