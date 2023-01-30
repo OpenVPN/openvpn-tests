@@ -27,10 +27,10 @@ provider "aws" {
   default_tags {
     tags = {
       Cluster     = var.cluster_name
-      Environment = var.environment
-      Owner       = var.owner
-      Maintainer  = var.email
-      Created-by  = "Terraform/OpenVPN/openvpn-tests/terraform/openvpn-server"
+      environment = var.environment
+      owner       = var.owner
+      maintainer  = var.email
+      created-by  = "Terraform/OpenVPN/openvpn-tests/terraform/openvpn-server"
     }
   }
 }
