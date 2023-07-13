@@ -45,7 +45,7 @@ variable "dns_zone_name" {
 }
 
 variable "dns_host_name" {
-  description = "Hostname to use for server"
+  description = "Hostname prefix to use"
   type        = string
   default     = "openvpn-test"
 }

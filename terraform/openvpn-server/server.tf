@@ -42,6 +42,16 @@ data "cloudinit_config" "ubuntu_server" {
         {
           path = "/root/openvpn-test-server/keys/server.key"
           content = module.pki.server_key
+          permissions = "0o400"
+        },
+        {
+          path = "/root/openvpn-test-server/keys/client.crt"
+          content = module.pki.clients["test_client"].cert
+        },
+        {
+          path = "/root/openvpn-test-server/keys/client.key"
+          content = module.pki.clients["test_client"].key
+          permissions = "0o400"
         },
         {
           path = "/root/openvpn-test-server/vars"
@@ -116,7 +126,7 @@ module "server_instance" {
   source  = "terraform-aws-modules/ec2-instance/aws"
   version = "~> 4.0.0"
 
-  name = "${var.cluster_name}-server"
+  name = local.cn_server
 
   associate_public_ip_address = true
   ami                    = data.aws_ami.ubuntu2204.id
@@ -127,7 +137,32 @@ module "server_instance" {
   vpc_security_group_ids = [module.vpc.sg_id]
   subnet_id              = module.vpc.first_subnet
   user_data_base64       = data.cloudinit_config.ubuntu_server.rendered
-  user_data_replace_on_change = false
+  user_data_replace_on_change = true
+
+  root_block_device = [
+    {
+      volume_size = 20
+    },
+  ]
+
+}
+
+module "local_client_instance" {
+  source  = "terraform-aws-modules/ec2-instance/aws"
+  version = "~> 4.0.0"
+
+  name = local.cn_client
+
+  associate_public_ip_address = true
+  ami                    = data.aws_ami.ubuntu2204.id
+  instance_type          = "m5.xlarge"
+  ipv6_address_count     = 1
+  key_name               = module.vpc.key_pair
+  placement_group        = module.vpc.placement_group
+  vpc_security_group_ids = [module.vpc.sg_id]
+  subnet_id              = module.vpc.first_subnet
+  user_data_base64       = data.cloudinit_config.ubuntu_server.rendered
+  user_data_replace_on_change = true
 
   root_block_device = [
     {
@@ -142,7 +177,7 @@ data "aws_route53_zone" "selected" {
 
 resource "aws_route53_record" "server_ipv4" {
   zone_id = data.aws_route53_zone.selected.zone_id
-  name    = local.cn
+  name    = local.cn_server
   type    = "A"
   ttl     = "60"
   records = [module.server_instance.public_ip]
@@ -150,8 +185,24 @@ resource "aws_route53_record" "server_ipv4" {
 
 resource "aws_route53_record" "server_ipv6" {
   zone_id = data.aws_route53_zone.selected.zone_id
-  name    = local.cn
+  name    = local.cn_server
   type    = "AAAA"
   ttl     = "60"
   records = module.server_instance.ipv6_addresses
+}
+
+resource "aws_route53_record" "client_ipv4" {
+  zone_id = data.aws_route53_zone.selected.zone_id
+  name    = local.cn_client
+  type    = "A"
+  ttl     = "60"
+  records = [module.local_client_instance.public_ip]
+}
+
+resource "aws_route53_record" "client_ipv6" {
+  zone_id = data.aws_route53_zone.selected.zone_id
+  name    = local.cn_client
+  type    = "AAAA"
+  ttl     = "60"
+  records = module.local_client_instance.ipv6_addresses
 }
