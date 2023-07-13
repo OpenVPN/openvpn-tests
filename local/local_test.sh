@@ -8,6 +8,12 @@ SERVER=$(terraform output -raw cn_server)
 popd
 
 OPENVPN_TESTS_PATH=/root/openvpn-test-server/openvpn-tests/local
+SSH="ssh -o UserKnownHostsFile=known_hosts"
+
+$SSH -o StrictHostKeyChecking=no "ubuntu@$SERVER" true
+$SSH -o StrictHostKeyChecking=no "ubuntu@$CLIENT" true
+$SSH "ubuntu@$SERVER" cloud-init status --wait
+$SSH "ubuntu@$CLIENT" cloud-init status --wait
 
 : ${IPERF_GLOBAL_SERVER_ARGS:=}
 : ${IPERF_GLOBAL_CLIENT_ARGS:=-t10}
@@ -22,35 +28,33 @@ TEST_COUNT=1
 start_server() {
     TEST_NAME="$TEST_COUNT:$1"
     OVPN_ARGS="$2"
-    ssh "ubuntu@$SERVER" cloud-init status --wait
-    ssh "ubuntu@$SERVER" sudo $OPENVPN_TESTS_PATH/openvpn --cd $OPENVPN_TESTS_PATH/server \
+    $SSH "ubuntu@$SERVER" sudo $OPENVPN_TESTS_PATH/openvpn --cd $OPENVPN_TESTS_PATH/server \
         --config server.conf $OVPN_ARGS >"$LOG_DIR"/$TEST_NAME.ovpn_server.log 2>&1 &
     ovpn_server_ssh_pid=$!
     sleep 1
-    ssh "ubuntu@$SERVER" sudo iperf $IPERF_GLOBAL_SERVER_ARGS -s >"$LOG_DIR"/$TEST_NAME.iperf_server_tcp.log 2>&1 &
-    ssh "ubuntu@$SERVER" sudo iperf $IPERF_GLOBAL_SERVER_ARGS -u -s >"$LOG_DIR"/$TEST_NAME.iperf_server_udp.log 2>&1 &
+    $SSH "ubuntu@$SERVER" sudo iperf $IPERF_GLOBAL_SERVER_ARGS -s >"$LOG_DIR"/$TEST_NAME.iperf_server_tcp.log 2>&1 &
+    $SSH "ubuntu@$SERVER" sudo iperf $IPERF_GLOBAL_SERVER_ARGS -u -s >"$LOG_DIR"/$TEST_NAME.iperf_server_udp.log 2>&1 &
 }
 
 start_client() {
     TEST_NAME="$TEST_COUNT:$1"
     OVPN_ARGS="$2"
-    ssh "ubuntu@$CLIENT" cloud-init status --wait
-    ssh "ubuntu@$CLIENT" sudo $OPENVPN_TESTS_PATH/openvpn --cd $OPENVPN_TESTS_PATH/client \
+    $SSH "ubuntu@$CLIENT" sudo $OPENVPN_TESTS_PATH/openvpn --cd $OPENVPN_TESTS_PATH/client \
         --config client.conf $OVPN_ARGS --remote "$SERVER" \
         >"$LOG_DIR"/$TEST_NAME.ovpn_client.log 2>&1 &
     ovpn_client_ssh_pid=$!
     sleep 5
-    ssh "ubuntu@$CLIENT" sudo iperf $IPERF_GLOBAL_CLIENT_ARGS -c 10.199.2.1 >"$LOG_DIR"/$TEST_NAME.iperf_client_tcp.log 2>&1
-    ssh "ubuntu@$CLIENT" sudo iperf $IPERF_GLOBAL_CLIENT_ARGS -u -c 10.199.2.1 >"$LOG_DIR"/$TEST_NAME.iperf_client_udp.log 2>&1
-    ssh "ubuntu@$CLIENT" sudo iperf $IPERF_GLOBAL_CLIENT_ARGS -c "$SERVER" >"$LOG_DIR"/$TEST_NAME.iperf_client_novpn_tcp.log 2>&1
-    ssh "ubuntu@$CLIENT" sudo iperf $IPERF_GLOBAL_CLIENT_ARGS -u -c "$SERVER" >"$LOG_DIR"/$TEST_NAME.iperf_client_novpn_udp.log 2>&1
+    $SSH "ubuntu@$CLIENT" sudo iperf $IPERF_GLOBAL_CLIENT_ARGS -c 10.199.2.1 >"$LOG_DIR"/$TEST_NAME.iperf_client_tcp.log 2>&1
+    $SSH "ubuntu@$CLIENT" sudo iperf $IPERF_GLOBAL_CLIENT_ARGS -u -c 10.199.2.1 >"$LOG_DIR"/$TEST_NAME.iperf_client_udp.log 2>&1
+    $SSH "ubuntu@$CLIENT" sudo iperf $IPERF_GLOBAL_CLIENT_ARGS -c "$SERVER" >"$LOG_DIR"/$TEST_NAME.iperf_client_novpn_tcp.log 2>&1
+    $SSH "ubuntu@$CLIENT" sudo iperf $IPERF_GLOBAL_CLIENT_ARGS -u -c "$SERVER" >"$LOG_DIR"/$TEST_NAME.iperf_client_novpn_udp.log 2>&1
 }
 
 deep_cleanup() {
-    ssh "ubuntu@$SERVER" sudo killall $OPENVPN_TESTS_PATH/openvpn || true
-    ssh "ubuntu@$SERVER" sudo killall iperf || true
-    ssh "ubuntu@$CLIENT" sudo killall $OPENVPN_TESTS_PATH/openvpn || true
-    ssh "ubuntu@$CLIENT" sudo killall iperf || true
+    $SSH "ubuntu@$SERVER" sudo killall $OPENVPN_TESTS_PATH/openvpn || true
+    $SSH "ubuntu@$SERVER" sudo killall iperf || true
+    $SSH "ubuntu@$CLIENT" sudo killall $OPENVPN_TESTS_PATH/openvpn || true
+    $SSH "ubuntu@$CLIENT" sudo killall iperf || true
     sleep 5
 }
 
