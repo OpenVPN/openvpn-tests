@@ -1,9 +1,9 @@
-data "aws_ami" "ubuntu2004" {
+data "aws_ami" "ubuntu2204" {
   owners = ["099720109477"]
 
   filter {
     name   = "name"
-    values = ["ubuntu/images/hvm-ssd/ubuntu-focal-20.04-amd64-server-20220901"]
+    values = ["ubuntu/images/hvm-ssd/ubuntu-jammy-22.04-amd64-server-20230711"]
   }
 
   filter {
@@ -107,7 +107,7 @@ module "server_instance" {
   name = "${var.cluster_name}-server"
 
   associate_public_ip_address = true
-  ami                    = data.aws_ami.ubuntu2004.id
+  ami                    = data.aws_ami.ubuntu2204.id
   instance_type          = "m5.xlarge"
   ipv6_address_count     = 1
   key_name               = module.vpc.key_pair
