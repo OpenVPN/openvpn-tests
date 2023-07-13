@@ -64,6 +64,14 @@ post_test_handler() {
     TEST_COUNT=$(( TEST_COUNT + 1 ))
 }
 
+retrieve_logs() {
+    for log in syslog cloud-init-output.log; do
+        scp -o UserKnownHostsFile=known_hosts "ubuntu@$SERVER":/var/log/$log "$LOG_DIR"/server.$log
+        scp -o UserKnownHostsFile=known_hosts "ubuntu@$CLIENT":/var/log/$log "$LOG_DIR"/client.$log
+    done
+}
+trap retrieve_logs EXIT
+
 deep_cleanup
 
 if $RUN_NODCO; then
