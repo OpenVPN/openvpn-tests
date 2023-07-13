@@ -26,7 +26,7 @@ data "cloudinit_config" "ubuntu_server" {
   part {
     content_type = "text/cloud-config"
     content = jsonencode({
-      packages = [ "awscli", "git", "net-tools" ]
+      packages = [ "awscli", "git", "iperf", "net-tools" ]
       package_update = true
       package_upgrade = false
       package_reboot_if_required = false
@@ -99,6 +99,7 @@ git clone -b $OPENVPN_BRANCH $OPENVPN_REPO openvpn
 git clone -b $OVPN_DCO_BRANCH $OVPN_DCO_REPO ovpn-dco
 git clone -b $TEST_BRANCH $TEST_REPO openvpn-tests
 ln -s $PWD/openvpn/src/openvpn/openvpn openvpn-tests/server
+ln -s $PWD/openvpn/src/openvpn/openvpn openvpn-tests/local
 
 pushd keys
 openssl dhparam -out dh.pem 2048
