@@ -48,6 +48,8 @@ data "cloudinit_config" "ubuntu_server" {
           content = <<EOF
 OPENVPN_REPO=${var.openvpn_repo}
 OPENVPN_BRANCH=${var.openvpn_branch}
+OVPN_DCO_REPO=${var.ovpn_dco_repo}
+OVPN_DCO_BRANCH=${var.ovpn_dco_branch}
 TEST_REPO=${var.test_repo}
 TEST_BRANCH=${var.test_branch}
 EOF
@@ -74,14 +76,17 @@ service procps restart
 
 sed -i -e 's/^# deb-src/deb-src/g' /etc/apt/sources.list
 
-apt update && apt build-dep -y openvpn
-apt install -y libcap-ng-dev
+apt update
+apt build-dep -y openvpn
+apt install -y libnl-genl-3-dev libcap-ng-dev
+apt install -y dkms # to get all kernel build deps
 
 cd /root/openvpn-test-server
 
 . ./vars
 
 git clone -b $OPENVPN_BRANCH $OPENVPN_REPO openvpn
+git clone -b $OVPN_DCO_BRANCH $OVPN_DCO_REPO ovpn-dco
 git clone -b $TEST_BRANCH $TEST_REPO openvpn-tests
 ln -s $PWD/openvpn/src/openvpn/openvpn openvpn-tests/server
 
@@ -89,11 +94,18 @@ pushd keys
 openssl dhparam -out dh.pem 2048
 popd
 
-cd openvpn
+pushd openvpn
 
 autoreconf -f -i
 ./configure
 make -j4
+
+popd
+pushd ovpn-dco
+
+make KERNEL_SRC=/lib/modules/$(uname -r)/build/
+make install
+modprobe ovpn-dco-v2
 
 EOF
   }
