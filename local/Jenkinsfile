@@ -1,0 +1,88 @@
+properties([
+    buildDiscarder(logRotator(artifactDaysToKeepStr: '90', artifactNumToKeepStr: '7', daysToKeepStr: '', numToKeepStr: '')),
+    disableConcurrentBuilds(),
+    disableResume(),
+    parameters([
+        text(defaultValue: '''# will be appended to terraform.tfvars
+# can be used to override openvpn/ovpn-dco source branches
+# e.g.
+# openvpn_branch=release/2.6''', name: 'TERRAFORM_VARIABLES'),
+        string(description: 'Set arguments for all iperf servers',
+               name: 'IPERF_GLOBAL_SERVER_ARGS', trim: true),
+        string(defaultValue: '-t10',
+               description: 'Set arguments for all iperf clients',
+               name: 'IPERF_GLOBAL_CLIENT_ARGS', trim: true),
+    ]),
+    pipelineTriggers([[$class: 'PeriodicFolderTrigger', interval: '30m']])
+])
+
+def terraform_config() {
+    sh(label: 'terraform.tfvars', script: '''
+SANE_NAME=$(perl -wE 'my $n=lc($ARGV[0]);$n=~s/^.*%2f//;$n=substr($n,-30);$n=~s/[^a-z0-9-]/-/g;$n=~s/^-*//;print($n)' "${JOB_BASE_NAME}")
+cat <<EOF | tee terraform.tfvars
+region="eu-west-1"
+owner="$JENKINS_URL"
+email="pkg@openvpn.net"
+dns_zone_name="${AWS_TEST_DNS_ZONE_NAME}"
+dns_host_name="${SANE_NAME}-${BUILD_NUMBER}"
+cluster_name="${SANE_NAME}-${BUILD_NUMBER}"
+ssh_pub_key="${AWS_TEST_SSH_PUBKEY}"
+assume_role="arn:aws:iam::${AWS_TEST_ACCOUNT}:role/${AWS_TEST_ROLE}"
+test_branch="${CHANGE_BRANCH:-${BRANCH_NAME}}"
+${TERRAFORM_VARIABLES}
+EOF
+''')
+}
+
+def terraform_apply() {
+    timeout(10) {
+        sh(label: 'terraform apply', script: '''
+#export TF_LOG=trace
+terraform init -no-color -lockfile=readonly
+terraform apply -auto-approve -no-color
+''')
+    }
+}
+
+def terraform_destroy() {
+    retry(2) {
+        sh(label: 'terraform destroy', script: '''
+terraform destroy -auto-approve -no-color
+''')
+    }
+}
+
+def git_checkout() {
+    stage("Git checkout") {
+        cleanWs()
+        checkout scm
+    }
+}
+
+node(env.AWS_TEST_TERRAFORM_NODE) {
+    git_checkout()
+    stage('Terraform Prepare') {
+        try {
+            dir('terraform/openvpn-server') {
+                terraform_config()
+                terraform_apply()
+            }
+            sshagent([env.AWS_TEST_SSH_SECRET]) {
+                stage('Run Tests') {
+                    dir('local') {
+                        sh(label: 'Run Tests',
+                           script: './local_test.sh')
+                    }
+                }
+            }
+        }
+        finally {
+            stage("Cleanup") {
+                archiveArtifacts(artifacts: 'local/testlogs-*/**', allowEmptyArchive: true)
+                dir('terraform/openvpn-server') {
+                    terraform_destroy()
+                }
+            }
+        }
+    }
+}

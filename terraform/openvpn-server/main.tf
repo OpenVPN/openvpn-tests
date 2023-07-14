@@ -33,6 +33,13 @@ provider "aws" {
       created-by  = "Terraform/OpenVPN/openvpn-tests/terraform/openvpn-server"
     }
   }
+  dynamic "assume_role" {
+    for_each = var.assume_role != "" ? toset([var.assume_role]) : []
+    content {
+      role_arn     = assume_role.value
+      session_name = var.cluster_name
+    }
+  }
 }
 
 data "aws_caller_identity" "current" {}
@@ -40,7 +47,7 @@ data "aws_caller_identity" "current" {}
 module "pki" {
   source = "../openvpn-test-pki/"
 
-  cn       = local.cn
+  cn       = local.cn_server
   locality = var.cluster_name
   province = var.region
 }
@@ -55,5 +62,6 @@ module "vpc" {
 
 locals {
   aws_account_id = data.aws_caller_identity.current.account_id
-  cn             = "${var.dns_host_name}.${var.dns_zone_name}"
+  cn_server      = "${var.dns_host_name}-server.${var.dns_zone_name}"
+  cn_client      = "${var.dns_host_name}-client.${var.dns_zone_name}"
 }

@@ -9,6 +9,9 @@ output "clients" {
   value = module.pki.clients
   sensitive = true
 }
-output "cn" {
-  value = local.cn
+output "cn_server" {
+  value = local.cn_server
+}
+output "cn_client" {
+  value = local.cn_client
 }

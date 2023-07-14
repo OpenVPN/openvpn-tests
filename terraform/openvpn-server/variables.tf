@@ -1,23 +1,41 @@
+variable "assume_role" {
+  description = "Have the AWS provider assume a role"
+  type        = string
+  default     = ""
+}
+
 variable "openvpn_repo" {
-  description = "Git Repo URI"
+  description = "OpenVPN 2 Git Repo URI"
   type        = string
   default     = "https://github.com/OpenVPN/openvpn.git"
 }
 
+variable "ovpn_dco_repo" {
+  description = "DCO Linux Kernel Module Git Repo URI"
+  type        = string
+  default     = "https://github.com/OpenVPN/ovpn-dco.git"
+}
+
 variable "test_repo" {
-  description = "Git Repo URI"
+  description = "Tests Git Repo URI"
   type        = string
   default     = "https://github.com/OpenVPN/openvpn-tests.git"
 }
 
 variable "openvpn_branch" {
-  description = "Branch name to check out"
+  description = "Branch name to check out in openvpn_repo"
+  type        = string
+  default     = "master"
+}
+
+variable "ovpn_dco_branch" {
+  description = "Branch name to check out in ovpn_dco_repo"
   type        = string
   default     = "master"
 }
 
 variable "test_branch" {
-  description = "Branch name to check out"
+  description = "Branch name to check out in test_repo"
   type        = string
   default     = "main"
 }
@@ -33,7 +51,7 @@ variable "dns_zone_name" {
 }
 
 variable "dns_host_name" {
-  description = "Hostname to use for server"
+  description = "Hostname prefix to use"
   type        = string
   default     = "openvpn-test"
 }
