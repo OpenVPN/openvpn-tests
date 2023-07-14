@@ -28,7 +28,7 @@ dns_host_name="${SANE_NAME}-${BUILD_NUMBER}"
 cluster_name="${SANE_NAME}-${BUILD_NUMBER}"
 ssh_pub_key="${AWS_TEST_SSH_PUBKEY}"
 assume_role="arn:aws:iam::${AWS_TEST_ACCOUNT}:role/${AWS_TEST_ROLE}"
-test_branch="${BRANCH_NAME}"
+test_branch="${CHANGE_BRANCH:-${BRANCH_NAME}}"
 ${TERRAFORM_VARIABLES}
 EOF
 ''')
