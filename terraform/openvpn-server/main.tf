@@ -33,6 +33,13 @@ provider "aws" {
       created-by  = "Terraform/OpenVPN/openvpn-tests/terraform/openvpn-server"
     }
   }
+  dynamic "assume_role" {
+    for_each = var.assume_role != "" ? toset([var.assume_role]) : []
+    content {
+      role_arn     = assume_role.value
+      session_name = var.cluster_name
+    }
+  }
 }
 
 data "aws_caller_identity" "current" {}

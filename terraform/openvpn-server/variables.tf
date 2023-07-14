@@ -1,3 +1,9 @@
+variable "assume_role" {
+  description = "Have the AWS provider assume a role"
+  type        = string
+  default     = ""
+}
+
 variable "openvpn_repo" {
   description = "OpenVPN 2 Git Repo URI"
   type        = string

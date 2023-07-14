@@ -27,6 +27,7 @@ dns_zone_name="${AWS_TEST_DNS_ZONE_NAME}"
 dns_host_name="${SANE_NAME}-${BUILD_NUMBER}"
 cluster_name="${SANE_NAME}-${BUILD_NUMBER}"
 ssh_pub_key="${AWS_TEST_SSH_PUBKEY}"
+assume_role="arn:aws:iam::${AWS_TEST_ACCOUNT}:role/${AWS_TEST_ROLE}"
 test_branch="${BRANCH_NAME}"
 ${TERRAFORM_VARIABLES}
 EOF
@@ -64,17 +65,13 @@ node(env.AWS_TEST_TERRAFORM_NODE) {
         try {
             dir('terraform/openvpn-server') {
                 terraform_config()
-                withAWS(useNode: true, role: env.AWS_TEST_ROLE, roleAccount: env.AWS_TEST_ACCOUNT) {
-                    terraform_apply()
-                }
+                terraform_apply()
             }
             sshagent([env.AWS_TEST_SSH_SECRET]) {
                 stage('Run Tests') {
-                    withAWS(useNode: true, role: env.AWS_TEST_ROLE, roleAccount: env.AWS_TEST_ACCOUNT) {
-                        dir('local') {
-                            sh(label: 'Run Tests',
-                               script: './local_test.sh')
-                        }
+                    dir('local') {
+                        sh(label: 'Run Tests',
+                           script: './local_test.sh')
                     }
                 }
             }
@@ -83,9 +80,7 @@ node(env.AWS_TEST_TERRAFORM_NODE) {
             stage("Cleanup") {
                 archiveArtifacts(artifacts: 'local/testlogs-*/**', allowEmptyArchive: true)
                 dir('terraform/openvpn-server') {
-                    withAWS(useNode: true, role: env.AWS_TEST_ROLE, roleAccount: env.AWS_TEST_ACCOUNT) {
-                        terraform_destroy()
-                    }
+                    terraform_destroy()
                 }
             }
         }
