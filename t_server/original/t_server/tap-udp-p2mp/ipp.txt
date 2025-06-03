@@ -1,0 +1,3 @@
+freebsd-11-amd64,10.204.4.2,fd00:abcd:204:4::1000
+cron2-freebsd-tc-amd64,10.204.4.3,fd00:abcd:204:4::1001
+freebsd-74-amd64,10.204.4.4,fd00:abcd:204:4::1002

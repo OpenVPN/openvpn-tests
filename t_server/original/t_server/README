@@ -1,0 +1,56 @@
+In here you find OpenVPN test instances (in individual subdirectories)
+that test specific feature combinations, all running on their own port
+
+All instances use the same server and CA keys, found in "keys/" - but
+all of them keep their individual ippool-persist files to guarantee
+repeatable IPv4/IPv6 assignments to clients.
+
+Each instance uses their own IPv4 and IPv6 subnet, as specified below.  In
+addition, there is a loopback interface on the server which is used as
+a test whether "route" works (and not just "ifconfig addresses").  The
+loopback interface uses 10.194.0.1, fd00:abcd:194:0::1
+
+
+tun-tcp-p2mp
+   port 51194, TUN, TCP, point-to-multipoint server, IPv4+IPv6 payload
+   10.194.1.0/24
+   fd00:abcd:194:1::/64
+
+tun-udp-p2mp
+   port 51194, TUN, TCP, point-to-multipoint server, IPv4+IPv6 payload
+   10.194.2.0/24
+   fd00:abcd:194:2::/64
+
+tun-udp-p2mp-topology-subnet
+   port 51195, TUN, UDP, point-to-multipoint server, IPv4+IPv6 payload
+   "topology subnet"  (everything else uses "topology net30" = default)
+   10.194.3.0/24
+   fd00:abcd:194:3::/64
+
+tap-udp-p2mp
+   port 51196, TAP, UDP, point-to-multipoint server, IPv4+IPv6 payload
+   10.194.4.0/24
+   fd00:abcd:194:4::/64
+
+tun-udp-p2mp-112-mask
+   port 51197, TUN, UDP, point-to-multipoint server, IPv4+IPv6 payload
+   /112 netmask for IPv6 client config
+   10.194.5.0/24
+   fd00:abcd:194:5::/112
+
+tun-udp-p2mp-ccd-static
+   port 51198, TUN, UDP, point-to-multipoint server, IPv4+IPv6 payload
+   static IP assignments to clients ("ifconfig-push") via ccd/ files,
+   no IP pool
+   10.194.6.0/24
+   fd00:abcd:194:6::/64
+
+   [to be done]
+
+tun-udp-p2mp-polar
+   port 51199, TUN, TCP, point-to-multipoint server, IPv4+IPv6 payload
+   *polar ssl*
+   10.194.7.0/24
+   fd00:abcd:194:7::/64
+
+   [to be done]

@@ -1,0 +1,17 @@
+#
+# 23.small is basically "2.3 testset with a --enable-small binary"
+# we only run basic tests to stress server side handling ("no NCP, no OCC")
+#
+. $HOME/t_client.23/t_client.rc
+
+#
+# tests to run (list suffixes for config stanzas in t_client.23/t_client.rc)
+#
+TEST_RUN_LIST="1 2 3 4"
+
+if [ -n "$TEST_RUN_OVERRIDE" ] ; then
+    echo "overriding test list: $TEST_RUN_OVERRIDE"
+    TEST_RUN_LIST="$TEST_RUN_OVERRIDE"
+fi
+
+OPENVPN_CONF_3="`echo $OPENVPN_CONF_3 | sed -e s/--comp-lzo//`"

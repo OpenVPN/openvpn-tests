@@ -1,0 +1,57 @@
+#!/bin/sh
+#
+#
+INSTANCES="
+tun-tcp-p2mp
+tun-udp-p2mp
+tun-udp-p2mp-topology-subnet
+tap-udp-p2mp
+tun-udp-p2mp-112-mask
+tun-udp-p2mp-fragment
+tun-udp-p2p
+Xtun-udp-p2mp-ccd-static
+Xtun-udp-p2mp-polar
+tun-udp-p2mp-global-authpam
+tun-udp-p2mp-hash-defscript
+tap-tcp-p2p
+tun-udp-p2p-tls-sha256
+"
+
+cd /root/openvpn-test-server || exit 1
+ip addr add 10.204.0.1/32 dev lo
+ip addr add fd00:abcd:204:0::1/128 dev lo
+
+# for "test 5" - extra routes returned by cc script and plugins
+ip addr add fd00:dead:beef::1/128 dev lo
+ip addr add fd00:dead:beef::2001/128 dev lo
+ip addr add fd00:dead:beef::2002/128 dev lo
+
+# start/stop single instances: "./start tap-udp-p2mp"
+if [ "$1" != '' ] ; then INSTANCES="$@" ; fi
+
+for SI in $INSTANCES
+do
+    # to avoid starting an instance, just put an "X" before the 
+    # directory name in the list above -> skip all non-existing dirs
+    if [ ! -d $SI ] ; then continue ; fi
+
+    echo "starting $SI/server.conf..."
+    ./bin/openvpn --daemon $SI --cd $SI --config server.conf \
+		--writepid ../openvpn-$SI.pid
+ # print config (grep'ed from server.conf)
+    sleep 1
+ # is instance running?
+    cpid=`cat openvpn-$SI.pid`
+    if [ "$cpid" = "" ] ; then
+	echo "   ERROR: $SI failed to start (no/empty pid file)"
+        continue
+    fi
+    if kill -0 $cpid
+    then :
+    else
+	echo "   ERROR: $SI failed to start ('kill -0 $cpid' failed)"
+    fi
+done
+
+#
+exit 0

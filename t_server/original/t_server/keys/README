@@ -1,0 +1,5 @@
+This directory needs to be filled with keys used by the server instances,
+which need to match what the "client VM" t_client.rc instances expect
+(CA, --tls-auth, --tls-key etc)
+
+TODO: write a script that populates whatever is needed for both sides

@@ -1,0 +1,7 @@
+cron2-freebsd-tc-amd64,10.204.6.2,fd00:abcd:204:6::1000
+cron2-freebsd-tc-amd64-23,10.204.6.3,fd00:abcd:204:6::1001
+cron2-freebsd-tc-amd64-24,10.204.6.4,fd00:abcd:204:6::1002
+cron2-freebsd-tc-amd64-22,10.204.6.5,fd00:abcd:204:6::1003
+cron2-gentoo-i386,10.204.6.6,fd00:abcd:204:6::1004
+freebsd-13-amd64,10.204.6.7,fd00:abcd:204:6::1005
+cron2-freebsd-tc-amd64-25,10.204.6.8,fd00:abcd:204:6::1006

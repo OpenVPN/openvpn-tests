@@ -1,0 +1,12 @@
+#session-timeout 30
+#push "tun-mtu 1700"
+#push "tun-mtu 1300"
+#push "comp-lzo no"
+#comp-lzo no
+#push "comp-lzo yes"
+#push "compress lz4"
+#push "compress stub-v2"
+#compress lz4
+
+# 08.03.25, test ("use with built-in auth-gen-token")
+#override-username MyUsernameFromCCD

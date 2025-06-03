@@ -1,0 +1,3 @@
+#push-remove "tun-mtu"
+#push "tun-mtu 500"
+#tun-mtu 500

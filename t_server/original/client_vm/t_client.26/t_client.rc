@@ -1,0 +1,6 @@
+# mostly "like 25", but no --ncp-disable
+
+. ../t_client.25/t_client.rc
+
+OPENVPN_CONF_2a=`echo $OPENVPN_CONF_2a | sed -e 's/--ncp-disable//'`
+OPENVPN_CONF_2c=`echo $OPENVPN_CONF_2c | sed -e 's/--ncp-disable//'`

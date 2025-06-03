@@ -1,0 +1,6 @@
+[CLIENTS DROP]
++otherclient
+[SUBNETS DROP]
++10.0.0.0/8
+-10.10.0.8
+[XEND]

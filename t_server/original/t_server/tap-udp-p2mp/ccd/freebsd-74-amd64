@@ -1,0 +1,9 @@
+ifconfig-push 10.207.4.207 255.255.255.0
+ifconfig-ipv6-push fd00:abcd:207:4::a:207/64 fd00:abcd:207:4::1
+vlan-pvid 207
+push "route-gateway 10.207.4.1"
+
+# this is basically the test for the "cipher in ccd/ file" patch
+# "ncp-ciphers" is needed, with *exactly* this list, otherwise "AES"
+ncp-ciphers CAMELLIA-128-CBC
+cipher CAMELLIA-128-CBC

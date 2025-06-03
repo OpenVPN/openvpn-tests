@@ -1,0 +1,25 @@
+#!/bin/sh
+#
+
+cd /root/openvpn-test-server || exit 1
+
+# start/stop single instances: "./stop tap-udp-p2mp"
+if [ "$1" != '' ] ; then 
+   INSTANCES="$@"
+else
+   INSTANCES=`ls -1 openvpn*.pid | sed -e 's/^openvpn-//' -e 's/\.pid//'`
+fi
+
+for SI in $INSTANCES
+do
+    # nothing there?
+    PID="openvpn-$SI.pid"
+    if [ ! -f $PID ] ; then
+	echo "$SI not running, skip" ; continue
+    fi
+
+    echo "stopping $SI..."
+    kill `cat $PID`
+    sleep 1
+    rm -f $PID
+done

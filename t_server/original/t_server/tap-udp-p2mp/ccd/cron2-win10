@@ -1,0 +1,13 @@
+# die Theorie sagt "damit kann ich mit Patch 2/9 noch die beiden Ref-Clients
+# erreichen, aber nichts mehr hinter dem Tap-Interface
+# (getestet, tut)
+vlan-pvid 200
+#vlan-pvid 207
+
+# braucht explizites ifconfig*push wegen "kein pool"
+ifconfig-push 10.204.4.101 255.255.255.0
+ifconfig-ipv6-push fd00:abcd:204:4::10:10/64 fd00:abcd:204:4::1
+
+# fuer 2.3
+#push "tun-ipv6"
+#disable
