@@ -1,7 +1,17 @@
 #!/bin/sh
 #
+# Usage: t_server.sh [nogit]
 #
-cd /home/gert/t_server.git || exit 1
+# Positional parameters:
+#
+#   nogit: do pull latest code from the remote Git repository
+#
+# Environment variables
+#
+#   OPENVPN_GIT_REPO: path to the openvpn Git repository
+#
+. ./config
+cd $OPENVPN_GIT_REPO || exit 1
 
 # if run from crontab, ensure complete path (fping/fping6!)
 PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/opt/bin
