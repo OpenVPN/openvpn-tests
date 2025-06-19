@@ -6,8 +6,6 @@ cd /home/gert/t_server.git || exit 1
 # if run from crontab, ensure complete path (fping/fping6!)
 PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/opt/bin
 
-REPO=gitlab
-#
 CRYPTO=openssl
 EXTRA_ARGS=--enable-async-push			# 1+2+3+7
 
@@ -29,8 +27,6 @@ esac
 if [ "$1" != nogit ]
 then
     echo "update git..."
-    #git fetch $REPO || exit 2
-    #git rebase $REPO/master || exit 3
     git pull --rebase || exit 2
     git -P shortlog  HEAD~3..HEAD
 fi
