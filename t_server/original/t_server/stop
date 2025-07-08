@@ -1,7 +1,12 @@
 #!/bin/sh
 #
+set -x
+SCRIPT=$(realpath "$0")
+SCRIPTPATH=$(dirname "$SCRIPT")
 
-cd /root/openvpn-test-server || exit 1
+. /var/lib/provision/deployment-config.sh
+
+#cd /root/openvpn-test-server || exit 1
 
 # start/stop single instances: "./stop tap-udp-p2mp"
 if [ "$1" != '' ] ; then 

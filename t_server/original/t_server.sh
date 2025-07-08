@@ -10,7 +10,10 @@
 #
 #   OPENVPN_GIT_REPO: path to the openvpn Git repository
 #
-. $HOME/deployment-config.sh
+SCRIPT=$(realpath "$0")
+SCRIPTPATH=$(dirname "$SCRIPT")
+
+. /var/lib/provision/deployment-config.sh
 cd $OPENVPN_GIT_REPO || exit 1
 
 # if run from crontab, ensure complete path (fping/fping6!)
@@ -22,7 +25,7 @@ EXTRA_ARGS=--enable-async-push			# 1+2+3+7
 # FIXME: revert to old behavior later
 # build variants
 #DAY=`date +%u`
-DAY=$1
+DAY=1
 
 case $DAY in
     1) EXTRA_ARGS=--enable-werror ;;				# Monday
@@ -92,13 +95,13 @@ echo "restart server processes..."
 cp -v $BINDIR/openvpn $BINDIR/openvpn.$DAY
 cp -v src/openvpn/openvpn $BINDIR/openvpn
 
+sudo $SCRIPTPATH/t_server/stop
+sleep 14		# wg. multisocket/EEN, issue #702
+sudo $SCRIPTPATH/t_server/start
+#sudo sh -c "setsid /root/t_server/start"
+
 # FIXME: exit early to keep things simple for now
 exit 0
-
-sudo /root/t_server/stop
-sleep 14		# wg. multisocket/EEN, issue #702
-sudo /root/t_server/start
-#sudo sh -c "setsid /root/t_server/start"
 
 echo "sleep(10), give fbsd11+fbsd74 time to reconnect..."
 oping -c10 10.204.4.200 fd00:abcd:204:4::a:200 10.207.4.207 fd00:abcd:207:4::a:207
