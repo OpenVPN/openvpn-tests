@@ -6,6 +6,7 @@ SCRIPTPATH=$(dirname "$SCRIPT")
 
 . /var/lib/provision/deployment-config.sh
 
+cd "$SCRIPTPATH" || exit 1
 #cd /root/openvpn-test-server || exit 1
 
 # start/stop single instances: "./stop tap-udp-p2mp"
