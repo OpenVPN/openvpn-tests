@@ -42,18 +42,13 @@ do
     # directory name in the list above -> skip all non-existing dirs
     if [ ! -d "$SCRIPTPATH/$SI" ] ; then continue ; fi
 
-    echo "Current directory: $(pwd)"
-
     echo "starting $SI/server.conf..."
-    ls -l $PREFIX/bin/openvpn
     $PREFIX/bin/openvpn --daemon $SI --cd "$SI" --config server.conf \
-		--writepid ../openvpn-$SI.pid
+        --writepid ../openvpn-$SI.pid
 
  # print config (grep'ed from server.conf)
     sleep 1
  # is instance running?
-    pwd
-    ls
     cpid=`cat ./openvpn-$SI.pid`
     if [ "$cpid" = "" ] ; then
 	echo "   ERROR: $SI failed to start (no/empty pid file)"
