@@ -43,7 +43,7 @@ do
     if [ ! -d "$SCRIPTPATH/$SI" ] ; then continue ; fi
 
     echo "starting $SI/server.conf..."
-    $PREFIX/bin/openvpn --daemon $SI --cd "$SI" --config server.conf \
+    $BINDIR/openvpn --daemon $SI --cd "$SI" --config server.conf \
         --writepid ../openvpn-$SI.pid
 
  # print config (grep'ed from server.conf)
