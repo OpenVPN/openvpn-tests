@@ -1,10 +1,11 @@
 #!/bin/sh
 #
-KEY=/home/gert/.ssh/id_ecdsa_tc
-HOST=fbsd-tc.ov.greenie.net
-TESTSETS="22 23.small 23 24 25 26 master"
+KEY=/home/rocky/.ssh/id_ed25519
+HOST=tserver-client.foss.vpn
+#TESTSETS="22 23.small 23 24 25 26 master"
+TESTSETS="master"
 
-LOGDIR=/home/gert/t_server_logs
+LOGDIR=/home/rocky/t_server_logs
 DAY=`date +%Y%m%d`
 NOW=`date +%Y%m%d-%H%M`
 
