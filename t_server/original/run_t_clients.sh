@@ -18,7 +18,7 @@ do
     echo "$T..."
     LOG=$LOGDIR/$DAY/$NOW.$T.out
     
-    ssh -i $KEY $HOST "cd t_client.$T ; TEST_RUN_OVERRIDE='$TEST_RUN_OVERRIDE' ../bin/t_client.sh $T 2>&1" >$LOG
+    ssh -i $KEY $HOST "cd t_client.$T ; TEST_RUN_OVERRIDE='$TEST_RUN_OVERRIDE' t_client_ips_rc="./t_client_ips.rc" update_t_client_ips="../bin/update_t_client_ips.sh" t_server="yes" ../bin/t_client.sh $T 2>&1" >$LOG
     RC=$?
     case $RC in
 	0)   grep "Test sets" $LOG ;;		# all good
