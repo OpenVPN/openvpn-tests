@@ -1,3 +1,4 @@
 t_server/original/config
 *.pid
 openvpn-status.log
+ipp.txt
