@@ -113,6 +113,97 @@ This is "the FreeBSD DCO" t_server instance, very similar to "the Linux DCO"
 instance (but using different IP addresses for everything, so it's easier to
 see which instance a given client is talking to)
 
+# Server instances and test families
+
+The server configurations can be found from the *original* subdirectory. Each server configuration maps to a specific test family in t_client.sh:
+
+|Test case family|Server instance|
+|--|--|
+|1|tun-tcp-p2mp|
+|2|tun-udp-p2mp|
+|3|tun-udp-p2mp-topology-subnet|
+|4|tap-udp-p2mp|
+|5|tun-udp-p2mp-112-mask|
+|6|tun-udp-p2mp-fragment|
+|7|tun-udp-p2mp-global-authpam|
+|8|tun-udp-p2p|
+|9|tap-tcp-p2p|
+|10|tun-udp-p2mp-hash-defscript|
+|11|tun-udp-p2p-tls-sha256|
+
+# Test cases
+
+Here's a list of current t_client.sh test cases along with compatibility with different OpenVPN versions.
+
+|Test|2.4|2.5|2.6|2.7|Description|
+|:---|---|---|---|---|:----------|
+|1a  |   |   |   | Y | TCP / IPv6 / p2mp tun |
+|1b  |   |   |   | Y | TCP p2mp tun, IPv4 HTTP proxy |
+|2   |   |   |   | Y | UDP / p2mp tun |
+|2a  |   |   |   | Y | UDP / p2mp tun, no v4-routes, no NCP |
+|2b  |   |   |   | Y | UDP6 / p2mp tun |
+|2c  |   |   |   | Y | UDP6 / p2mp tun / --multihome / --redirect-gateway (ipv4, ipv6) |
+|2d  |   |   |   | Y | UDP p2mp tun, IPv4 SOCKS proxy |
+|2e  |   |   |   | Y | UDP p2mp tun, IPv6 SOCKS proxy |
+|2f  |   |   |   | Y | UDP p2mp tun, IPv6-only (--pull-filter) |
+|2g  |   |   |   | Y | UDP4 / p2mp tun / --multihome / --redirect-gateway (ipv4, ipv6) |
+|2w  |   |   |   | Y | UDP6 / p2mp tun / data-cipher DES-EDE3-CBC |
+|2h  |   |   |   | Y | UDP4 / --redirect-gateway (ipv4, ipv6), pre-existing route |
+|2x  |   |   |   | Y | UDP4 / p2mp tun / data-cipher none |
+|2y  |   |   |   | Y | UDP6 / p2mp tun / --ncp-disable + cipher none |
+|2z1 |   |   |   | Y | NCP fail (cipher) |
+|2z2 |   |   |   | Y | NCP fail (cipher) |
+|3   |   |   |   | Y | UDP / p2mp tun, topology subnet, tls-auth |
+|3a  |   |   |   | Y | UDP / p2mp tun, topology subnet, tls-auth, max-packet-size |
+|4   |   |   |   |   | UDP / p2mp tap |
+|4a  |   |   |   |   | UDP / p2mp tap3 / topo subnet |
+|4b  |   |   |   |   | UDP / p2mp tap / ipv6-only |
+|5   |   |   |   | Y | UDP / p2mp tun, top net30, ipv6 /112 |
+|5a  |   |   |   | Y | udp / p2pm / top net30 / ipv6 only server / async CCS |
+|5b  |   |   |   | Y | udp / p2pm / top net30 / ipv6 only server / async PLUGIN |
+|5c  |   |   |   | Y | udp / p2pm / top net30 / ipv6 only server / async PLUGIN_V2 |
+|5d  |   |   |   | Y | udp / p2pm / top net30 / ipv6 only server / all-async |
+|5e  |   |   |   | Y | udp / p2pm / top net30 / ipv6 only server / tls-crypt-v2 |
+|5m  |   |   |   | Y | udp / p2pm / top net30 / ipv6 only server / tls-crypt / max-packet-size |
+|5n  |   |   |   | Y | udp / p2pm / top net30 / ipv6 only server / tls-crypt-v2 / max-packet-size |
+|5u1 |   |   |   |   | udp / p2pm / top net30 / ipv6 only server / tls-crypt-v2 (invalid/bbb) |
+|5u2 |   |   |   |   | udp / p2pm / top net30 / ipv6 only server / tls-crypt-v2 (invalid/XX) |
+|5v1 |   |   |   | Y | client-connect fail (script) |
+|5v2 |   |   |   | Y | client-connect fail (script / async) |
+|5v3 |   |   |   | Y | client-connect fail (script / async / reject) |
+|5w1 |   |   |   | Y | client-connect fail (plugin) |
+|5w2 |   |   |   | Y | client-connect reject (disable) (plugin) |
+|5w3 |   |   |   | Y | client-connect fail (plugin + defer) |
+|5w4 |   |   |   | Y | client-connect reject (disable) (plugin + defer) |
+|5x1 |   |   |   | Y | client-connect fail (plugin_v2) |
+|5x2 |   |   |   | Y | client-connect reject (disable) (plugin v2) |
+|5x3 |   |   |   | Y | client-connect fail (plugin + defer) |
+|5x4 |   |   |   | Y | client-connect reject (disable) (plugin + defer) |
+|6   |   |   |   | Y | UDP / p2mp tun, top subnet, --fragment 500 |
+|7   |   |   |   |   | UDP / p2mp tun, top subnet, global |
+|7a  |   |   |   |   | very long test with auth-token and reneg-sec |
+|7b  |   |   |   |   | UDP / p2mp tun, top subnet, global |
+|7l  |   |   |   |   | UDP / p2mp tun, top subnet, global, lwip |
+|7x  |   |   |   | Y | auth-user-pass fail |
+|7x2 |   |   |   | Y | auth-user-pass fail (too long) |
+|7y  |   |   |   | Y | auth-user-pass fail (script fail) |
+|8   |   |   |   | Y | UDP / p2p tun |
+|8a  |   |   |   | Y | IPv6 |
+|9   |   |   |   | Y | tcp / p2p tap / --tls-server |
+|9a  |   |   |   | Y | udp / p2p tap / --tls-client (no --client) / tcp6 / no pushed cipher |
+|10  |   |   |   | Y | UDP / p2mp tun, no CA / FP auth |
+|10a |   |   |   | Y | UDP / p2mp tun, no CA / FP auth (deferred) |
+|10b |   |   |   | Y | UDP / p2mp tun, no CA / FP auth (fail TEMP) |
+|10u |   |   |   | Y | UDP / p2mp tun, no CA / FP auth / wrong password (sync)|
+|10v |   |   |   | Y | UDP / p2mp tun, no CA / FP auth / wrong password (async) |
+|10w |   |   |   | Y | UDP / p2mp tun, no CA / FP auth / script fail |
+|10x |   |   |   |   | UDP / p2mp tun, no CA / FP auth / wrong server FP |
+|10z |   |   |   | Y | UDP / p2mp tun, no CA / FP auth (server side only) |
+|11  |   |   |   | Y | UDP / p2p tun, TLS, SHA256
+|11a |   |   |   | Y | udp / p2p / TLS / SHA256 (BF-only) / v6 |
+|11t |   |   |   | Y | udp4 / p2p / TLS / SHA1-SHA256 (NCP) / 400s pre-delay |
+|11z |   |   |   | Y | udp / p2p / TLS / none 'lala land' |
+
 # Setup
 
 (this section needs to be written)
