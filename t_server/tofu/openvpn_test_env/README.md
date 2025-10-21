@@ -1,13 +1,32 @@
 # openvpn_test_env
 
-This is an OpenTofu root module that allows spinning up OpenVPN project
-t_server testing environment with Tofu, the Terraform AWS provider and
-cloud-init.
+This is an OpenTofu root module that enables setting up several different things in AWS:
 
-Building this setup is possible without touching Terraform or cloud-init, but
-then a lot more manual preparation is required. The virtual machines that the
-t_server setup requires can be configured with the same set of scripts that
-cloud-init uses.
+1. Server-side infrastructure for t_server
+2. Manual OpenVPN test environments
+3. Otterwiki
+4. Buildbot
+
+Each feature can be turned on and off as required. The main use-case is setting
+up t_server infrastructure on-demand.
+
+# Overview of the t_server setup
+
+The t_server setup consists of three VMs:
+
+* **t_server_rocky_9_amd64**: the server instance
+* **t_server_client**: the client instance
+* **t_server_anchor**: the anchor VM (=long-running OpenVPN client used in some t_client tests)
+
+Each of these is configured with Tofu, which copies files and runs scripts on
+them to configure them. Most things are implemented with cloud-init, but
+OpenVPN certificates and keys are copied over with SSH-based provisioning to
+avoid cloud-init user data from filling up completely.
+
+It is possible to build this environment outside of AWS and/or without Tofu,
+but in that case a lot of manual preparation is required. Once networks and VMs
+are up, though, you should be able to just run the scripts that cloud-init runs
+to configure your VMs according to their roles.
 
 # Prerequisites
 

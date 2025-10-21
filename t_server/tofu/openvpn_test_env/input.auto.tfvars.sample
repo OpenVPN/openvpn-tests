@@ -1,4 +1,4 @@
-### Features
+### Features for the t_server test environment
 
 # Add DNS records to the public DNS zone (requires registering the domain on AWS Route53)
 enable_public_dns_zone = true
@@ -9,11 +9,32 @@ enable_private_dns_zone = true
 # Enable automatic stopping of virtual machines at night
 enable_scheduler_stop_start = true
 
+
+### Features for the manual OpenVPN testing environment
+
+# Enable OpenVPN server(s)
+enable_openvpn_rocky_9            = true
+enable_openvpn_windows            = true
+enable_openvpn_ubuntu_2404        = true
+
+# Enable OpenVPN clients
+enable_openvpn_client             = true
+enable_openvpn_client_ubuntu_2404 = true
+enable_openvpn_client_windows     = true
+
+# Enable servers that are not OpenVPN clients but should be reachable via
+# OpenVPN
+enable_office_server              = true
+enable_private_office_server      = true
+
+
+### Other features
+
 # Enable the Buildbot (test) instance
-enable_buildbot = true
+enable_buildbot = false
 
 # Enable the Otterwiki (test) instance
-enable_otterwiki = true
+enable_otterwiki = false
 
 
 ### AWS settings

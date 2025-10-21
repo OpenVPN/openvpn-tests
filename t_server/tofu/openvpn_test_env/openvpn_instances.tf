@@ -1,6 +1,7 @@
 locals {
   openvpn_instances = {
     "openvpn_rocky_9" = {
+      amount                      = var.enable_openvpn_rocky_9 ? 1 : 0
       instance_type               = "t3.small",
       ami                         = module.ami.rocky_9_id
       associate_public_ip_address = true
@@ -20,6 +21,7 @@ locals {
       ]
     },
     "openvpn_windows" = {
+      amount                      = var.enable_openvpn_windows ? 1 : 0
       instance_type               = "t3.medium",
       ami                         = module.ami.windows_server_2025_base_id
       associate_public_ip_address = true
@@ -40,6 +42,7 @@ locals {
       ]
     },
     "openvpn_ubuntu_2404" = {
+      amount                      = var.enable_openvpn_ubuntu_2404 ? 1 : 0
       instance_type               = "t3.small",
       ami                         = module.ami.ubuntu_2404_amd64_id
       associate_public_ip_address = true
@@ -59,6 +62,7 @@ locals {
       ]
     },
     "openvpn_client" = {
+      amount                      = var.enable_openvpn_client ? 1 : 0
       instance_type               = "t3.small",
       ami                         = module.ami.rocky_9_id
       associate_public_ip_address = true
@@ -77,6 +81,7 @@ locals {
       ]
     },
     "openvpn_client_ubuntu_2404" = {
+      amount                      = var.enable_openvpn_client_ubuntu_2404 ? 1 : 0
       instance_type               = "t3.small",
       ami                         = module.ami.rocky_9_id
       associate_public_ip_address = true
@@ -95,6 +100,7 @@ locals {
       ]
     },
     "openvpn_client_windows" = {
+      amount                      = var.enable_openvpn_client_windows ? 1 : 0
       instance_type               = "t3.small",
       ami                         = module.ami.rocky_9_id
       associate_public_ip_address = true
@@ -113,6 +119,7 @@ locals {
       ]
     },
     "office_server" = {
+      amount                      = var.enable_office_server ? 1 : 0
       instance_type               = "t3.small",
       ami                         = module.ami.rocky_9_id
       associate_public_ip_address = true
@@ -131,6 +138,7 @@ locals {
       ]
     },
     "private_office_server" = {
+      amount                      = var.enable_private_office_server ? 1 : 0
       instance_type               = "t3.small",
       ami                         = module.ami.rocky_9_id
       associate_public_ip_address = false
@@ -154,7 +162,7 @@ locals {
 module "openvpn_instance" {
   for_each = local.openvpn_instances
 
-  amount                      = 1
+  amount                      = each.value["amount"]
   source                      = "github.com/Puppet-Finland/terraform-aws_instance_wrapper?ref=2.10.2"
   ami                         = each.value["ami"]
   associate_public_ip_address = each.value["associate_public_ip_address"]
