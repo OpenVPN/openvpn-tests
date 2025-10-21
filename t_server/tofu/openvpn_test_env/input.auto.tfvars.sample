@@ -1,0 +1,39 @@
+# Features
+enable_public_dns_zone      = true
+enable_private_dns_zone     = true
+enable_scheduler_stop_start = true
+enable_buildbot             = true
+enable_otterwiki            = true
+
+# Variables
+public_dns_zone_name                              = "vpn-foss.org"
+private_dns_zone_name                             = "foss.vpn"
+deployment                                        = "production"
+key_name                                          = "openvpn-foss-opentofu"
+region                                            = "eu-central-1"
+primary_vpc_cidr_block                            = "10.32.0.0/22"
+primary_vpc_primary_public_subnet_cidr_block      = "10.32.0.0/24"
+primary_vpc_secondary_public_subnet_cidr_block    = "10.32.1.0/24"
+primary_vpc_primary_private_subnet_cidr_block     = "10.32.2.0/24"
+primary_vpc_secondary_private_subnet_cidr_block   = "10.32.3.0/24"
+secondary_vpc_cidr_block                          = "10.33.0.0/22"
+secondary_vpc_primary_public_subnet_cidr_block    = "10.33.0.0/24"
+secondary_vpc_secondary_public_subnet_cidr_block  = "10.33.1.0/24"
+secondary_vpc_primary_private_subnet_cidr_block   = "10.33.2.0/24"
+secondary_vpc_secondary_private_subnet_cidr_block = "10.33.3.0/24"
+vpn_cidr_block                                    = "10.35.80.0/24"
+ubuntu_2404_vpn_cidr_block                        = "10.173.114.0/24"
+windows_vpn_cidr_block                            = "10.145.4.0/24"
+openvpn_server_hostname                           = "openvpn"
+tserver_anchor_hostname                          = "tserver-anchor"
+tserver_client_hostname                          = "tserver-client"
+tserver_rocky_9_amd64_hostname                   = "tserver-rocky-9-amd64"
+tserver_allow_ipv4                               = "10.32.0.0/22"
+tserver_allow_ipv6                               = "2a05:d014:94e:fe00::/56"
+
+# Required for installing the t_server client certs and key on the client VM -
+# those are too big for user data
+tserver_provisioning_ssh_private_key = "/home/john/.ssh/tserver"
+
+# Test VPN
+tserver_rocky_9_amd64_vpn_cidr_block = "10.58.123.0/24"
