@@ -6,7 +6,7 @@ resource "aws_eip" "openvpn_ubuntu_2404" {
 resource "aws_route53_record" "openvpn_ubuntu_2404-a" {
   count   = var.enable_public_dns_zone ? 1 : 0
   zone_id = aws_route53_zone.public_dns_zone[0].zone_id
-  name    = "openvpn_ubuntu_2404.vpn-foss.org"
+  name    = "openvpn_ubuntu_2404.${var.public_dns_zone_name}"
   type    = "A"
   ttl     = 300
   records = [aws_eip.openvpn_ubuntu_2404.public_ip]
@@ -15,7 +15,7 @@ resource "aws_route53_record" "openvpn_ubuntu_2404-a" {
 resource "aws_route53_record" "openvpn_ubuntu_2404-aaaa" {
   count   = var.enable_public_dns_zone ? 1 : 0
   zone_id = aws_route53_zone.public_dns_zone[0].zone_id
-  name    = "openvpn_ubuntu_2404.vpn-foss.org"
+  name    = "openvpn_ubuntu_2404.${var.public_dns_zone_name}"
   type    = "AAAA"
   ttl     = 300
   records = [module.openvpn_instance["openvpn_ubuntu_2404"].ipv6_addresses[0][0]]

@@ -9,7 +9,9 @@ enable_otterwiki            = true
 public_dns_zone_name                              = "vpn-foss.org"
 private_dns_zone_name                             = "foss.vpn"
 deployment                                        = "production"
+# These two SSH keys need to be present before running Tofu
 key_name                                          = "openvpn-foss-opentofu"
+windows_key_name                                  = "openvpn-foss-windows-rsa"
 region                                            = "eu-central-1"
 primary_vpc_cidr_block                            = "10.32.0.0/22"
 primary_vpc_primary_public_subnet_cidr_block      = "10.32.0.0/24"
@@ -25,11 +27,11 @@ vpn_cidr_block                                    = "10.35.80.0/24"
 ubuntu_2404_vpn_cidr_block                        = "10.173.114.0/24"
 windows_vpn_cidr_block                            = "10.145.4.0/24"
 openvpn_server_hostname                           = "openvpn"
-tserver_anchor_hostname                          = "tserver-anchor"
-tserver_client_hostname                          = "tserver-client"
-tserver_rocky_9_amd64_hostname                   = "tserver-rocky-9-amd64"
-tserver_allow_ipv4                               = "10.32.0.0/22"
-tserver_allow_ipv6                               = "2a05:d014:94e:fe00::/56"
+tserver_anchor_hostname                           = "tserver-anchor"
+tserver_client_hostname                           = "tserver-client"
+tserver_rocky_9_amd64_hostname                    = "tserver-rocky-9-amd64"
+tserver_allow_ipv4                                = "10.32.0.0/22"
+tserver_allow_ipv6                                = "2a05:d014:94e:fe00::/56"
 
 # Required for installing the t_server client certs and key on the client VM -
 # those are too big for user data

@@ -23,7 +23,7 @@ locals {
       instance_type               = "t3.medium",
       ami                         = module.ami.windows_server_2025_base_id
       associate_public_ip_address = true
-      key_name                    = "openvpn-foss-windows-rsa"
+      key_name                    = var.windows_key_name
       source_dest_check           = false,
       subnet_id                   = module.primary-vpc.primary_public_subnet_id,
       tags = { "Role" : "OpenVPN server",

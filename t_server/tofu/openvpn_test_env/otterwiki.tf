@@ -58,7 +58,7 @@ resource "aws_eip" "wiki" {
 resource "aws_route53_record" "wiki-a" {
   count   = alltrue([var.enable_otterwiki, var.enable_public_dns_zone]) ? 1 : 0
   zone_id = aws_route53_zone.public_dns_zone[0].zone_id
-  name    = "wiki.vpn-foss.org"
+  name    = "wiki.${var.public_dns_zone_name}"
   type    = "A"
   ttl     = 300
   records = [aws_eip.wiki[0].public_ip]
@@ -67,7 +67,7 @@ resource "aws_route53_record" "wiki-a" {
 resource "aws_route53_record" "wiki-aaaa" {
   count   = alltrue([var.enable_otterwiki, var.enable_public_dns_zone]) ? 1 : 0
   zone_id = aws_route53_zone.public_dns_zone[0].zone_id
-  name    = "wiki.vpn-foss.org"
+  name    = "wiki.${var.public_dns_zone_name}"
   type    = "AAAA"
   ttl     = 300
   records = [module.otterwiki_instance["otterwiki"].ipv6_addresses[0][0]]

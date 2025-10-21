@@ -50,6 +50,11 @@ variable "key_name" {
   type        = string
 }
 
+variable "windows_key_name" {
+  description = "Name of the SSH key in the EC2 region to use for Windows instance"
+  type        = string
+}
+
 variable "region" {
   description = "AWS region to deploy resources to"
   type        = string
