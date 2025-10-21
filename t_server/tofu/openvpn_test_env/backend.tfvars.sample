@@ -1,0 +1,4 @@
+# Backend configuration
+bucket = "tserver-test-bucket"
+region = "eu-central-1"
+key    = "tserver"
