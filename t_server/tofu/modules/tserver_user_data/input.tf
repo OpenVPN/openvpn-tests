@@ -1,3 +1,15 @@
+variable "git_name" {
+  type        = string
+  description = "Name for Git config. Mainly useful on the t_server server instance."
+  default     = ""
+}
+
+variable "git_email" {
+  type        = string
+  description = "Email for Git config. Mainly useful on the t_server server instance."
+  default     = ""
+}
+
 variable "hostname" {
   type        = string
   description = "Hostname for the system"

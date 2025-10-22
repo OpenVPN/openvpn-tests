@@ -236,3 +236,13 @@ variable "rocky_9_default_group" {
   type        = string
   default     = "rocky"
 }
+
+variable "git_name" {
+  type        = string
+  description = "Name for Git config on the t_server server instance."
+}
+
+variable "git_email" {
+  type        = string
+  description = "Email for Git config on the t_server server instance."
+}

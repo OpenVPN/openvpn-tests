@@ -82,6 +82,12 @@ tserver_provisioning_ssh_private_key = "/home/john/.ssh/tserver"
 # t_server CIDR block
 tserver_rocky_9_amd64_vpn_cidr_block = "10.58.123.0/24"
 
+# Git configuration. These variables get passed to Git configuration file on
+# the t_server server instance. To disable Git config management set these to
+# "".
+git_name  = "John Doe"
+git_email = "john.doe@example.org"
+
 ### Settings not related to t_server
 vpn_cidr_block             = "10.35.80.0/24"
 ubuntu_2404_vpn_cidr_block = "10.173.114.0/24"

@@ -257,7 +257,7 @@ EOF
         {
           path        = "/var/lib/provision/90-misc.sh",
           encoding    = "b64"
-          content     = base64encode(file("${path.module}/provision/90-misc.sh")),
+          content     = base64encode(templatefile("${path.module}/provision/90-misc.sh", { git_name = var.git_name, git_email = var.git_email })),
           permissions = "0o755",
         },
         {

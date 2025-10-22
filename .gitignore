@@ -6,3 +6,4 @@ ipp.txt
 /t_server/tofu/openvpn_test_env/input.auto.tfvars
 /t_server/tofu/openvpn_test_env/backend.tfvars
 /t_server/tofu/openvpn_test_env/*.tfstate
+*.swp
