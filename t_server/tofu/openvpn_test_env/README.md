@@ -3,7 +3,7 @@
 This is an OpenTofu root module that enables setting up several different things in AWS:
 
 1. Server-side infrastructure for t_server
-2. Manual OpenVPN test environments
+2. Manual OpenVPN test environment
 3. Otterwiki
 4. Buildbot
 

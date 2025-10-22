@@ -14,12 +14,18 @@ data "cloudinit_config" "tserver" {
       package_reboot_if_required = true
       preserve_hostname = false
       hostname = var.hostname
-      fqdn = var.fqdn
+      fqdn = var.my_fqdn
       create_hostname_file = true
       write_files = [
         {
           path        = "/var/lib/provision/deployment-config.sh",
-          content     = file("${path.module}/provision/deployment-config.sh"),
+          content     = templatefile("${path.module}/provision/deployment-config.sh",
+                            {
+                              default_user  = var.default_user,
+                              default_group = var.default_group,
+                              tserver_fqdn = var.tserver_fqdn
+                            }
+                        ),
           permissions = "0o755",
         },
         {

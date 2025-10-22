@@ -3,9 +3,14 @@ variable "hostname" {
   description = "Hostname for the system"
 }
 
-variable "fqdn" {
+variable "tserver_fqdn" {
   type        = string
-  description = "FQDN for the system"
+  description = "FQDN for t_server server instance"
+}
+
+variable "my_fqdn" {
+  type        = string
+  description = "FQDN for this system"
 }
 
 variable "tserver" {
@@ -29,6 +34,11 @@ variable "tserver_client" {
 variable "default_user" {
   type        = string
   description = "Default operating system user"
+}
+
+variable "default_group" {
+  type        = string
+  description = "Primary group for the default operating system user"
 }
 
 variable "ssh_private_key" {

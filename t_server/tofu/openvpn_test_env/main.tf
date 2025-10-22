@@ -47,9 +47,11 @@ module "pki" {
 module "tserver_rocky_9_amd64_user_data" {
   source          = "../modules/tserver_user_data"
   hostname        = var.tserver_rocky_9_amd64_hostname
-  fqdn            = local.tserver_rocky_9_amd64_fqdn
+  tserver_fqdn    = local.tserver_rocky_9_amd64_fqdn
+  my_fqdn         = local.tserver_rocky_9_amd64_fqdn
   tserver         = true
   default_user    = var.rocky_9_default_user
+  default_group   = var.rocky_9_default_user
   ssh_private_key = sshkey_ed25519_key_pair.tserver.private_key_pem
   ca_cert         = module.pki.ca_cert
   server_cert     = module.pki.server_cert
@@ -60,9 +62,11 @@ module "tserver_rocky_9_amd64_user_data" {
 module "tserver_anchor_user_data" {
   source          = "../modules/tserver_user_data"
   hostname        = var.tserver_anchor_hostname 
-  fqdn            = local.tserver_anchor_fqdn  
+  tserver_fqdn    = local.tserver_rocky_9_amd64_fqdn
+  my_fqdn         = local.tserver_anchor_fqdn
   tserver_anchor = true
   default_user    = var.rocky_9_default_user 
+  default_group   = var.rocky_9_default_user
   ssh_public_key  = sshkey_ed25519_key_pair.tserver.public_key
   ca_cert         = module.pki.ca_cert
   anchor_cert     = module.pki.clients["tserver-anchor"]["cert"]
@@ -73,9 +77,11 @@ module "tserver_anchor_user_data" {
 module "tserver_client_user_data" {
   source          = "../modules/tserver_user_data"
   hostname        = var.tserver_client_hostname 
-  fqdn            = local.tserver_client_fqdn  
+  tserver_fqdn    = local.tserver_rocky_9_amd64_fqdn
+  my_fqdn         = local.tserver_client_fqdn
   tserver_client  = true
   default_user    = var.rocky_9_default_user 
+  default_group   = var.rocky_9_default_user
   ssh_public_key  = sshkey_ed25519_key_pair.tserver.public_key
   ca_cert         = module.pki.ca_cert
   data_dir        = var.tserver_data_dir
