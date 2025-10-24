@@ -85,7 +85,3 @@ module "tserver_client_user_data" {
   git_name        = var.git_name
   git_email       = var.git_email
 }
-
-module "otf-misc" {
-  source = "../modules/otf-misc"
-}
