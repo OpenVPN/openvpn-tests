@@ -15,11 +15,28 @@ resource "aws_instance" "tserver_client" {
   user_data                   = module.tserver_client_user_data.user_data 
   vpc_security_group_ids      = [ module.primary-vpc-standard-sg.id, ]
 
-  # Copy OpenVPN client keys. This needs to be done using a provisioner as the
-  # content will not fit into the userdata.
+  # Copy OpenVPN certificates and keys. This needs to be done using a
+  # provisioner as the content will not fit into the userdata.
+  connection {
+    type        = "ssh"
+    user        = "rocky"
+    host        = self.private_ip
+    private_key = file(var.tserver_provisioning_ssh_private_key)
+  }
+
   provisioner "remote-exec" {
     inline = ["sudo mkdir -p ${local.tserver_keydir}",
               "sudo chown -R ${var.rocky_9_default_user}:${var.rocky_9_default_group} ${var.tserver_data_dir}"]
+  }
+
+  provisioner "file" {
+    content     = module.pki.ca_cert
+    destination = "${local.tserver_keydir}/ca.crt"
+  }
+
+  provisioner "file" {
+    content     = module.pki.server_cert
+    destination = "${local.tserver_keydir}/server.crt"
   }
 
   provisioner "file" {
@@ -88,13 +105,6 @@ resource "aws_instance" "tserver_client" {
               "ln -s ${local.tserver_keydir}/client-27.crt ${local.tserver_keydir}/client-master.crt",
               "ln -s ${local.tserver_keydir}/client-27.key ${local.tserver_keydir}/client-master.key"]
 
-  }
-
-  connection {
-    type        = "ssh"
-    user        = "rocky"
-    host        = self.private_ip
-    private_key = file(var.tserver_provisioning_ssh_private_key)
   }
 
   root_block_device {

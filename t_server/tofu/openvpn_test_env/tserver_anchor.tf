@@ -16,6 +16,45 @@ resource "aws_instance" "tserver_anchor" {
   user_data                   = module.tserver_anchor_user_data.user_data 
   vpc_security_group_ids      = [ module.primary-vpc-standard-sg.id, ]
 
+  # Copy OpenVPN certificates and keys. This needs to be done using a
+  # provisioner as the content will not fit into the userdata.
+  connection {
+    type        = "ssh"
+    user        = "rocky"
+    host        = self.private_ip
+    private_key = file(var.tserver_provisioning_ssh_private_key)
+  }
+
+  provisioner "remote-exec" {
+    inline = ["sudo mkdir -p ${local.tserver_keydir}",
+              "sudo chown -R ${var.rocky_9_default_user}:${var.rocky_9_default_group} ${var.tserver_data_dir}"]
+  }
+
+  provisioner "file" {
+    content     = module.pki.ca_cert
+    destination = "${local.tserver_keydir}/ca.crt"
+  }
+
+  provisioner "file" {
+    content     = module.pki.server_cert
+    destination = "${local.tserver_keydir}/server.crt"
+  }
+
+  provisioner "file" {
+    content     = module.pki.clients["tserver-anchor"]["cert"]
+    destination = "${local.tserver_keydir}/anchor.crt"
+  }
+
+  provisioner "file" {
+    content     = module.pki.clients["tserver-anchor"]["key"]
+    destination = "${local.tserver_keydir}/anchor.key"
+  }
+
+  provisioner "remote-exec" {
+    inline = ["sudo chown -R ${var.rocky_9_default_user}:${var.rocky_9_default_group} ${var.tserver_data_dir}",
+              "chmod 600 ${local.tserver_keydir}/*.key"]
+  }
+
   root_block_device {
     volume_size = 15
     tags        = { "Name" : "tserver-anchor",

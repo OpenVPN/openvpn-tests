@@ -65,37 +65,7 @@ variable "ssh_public_key" {
   description = "t_server SSH public key"
 }
 
-variable "ca_cert" {
-  type        = string
-  default     = ""
-  description = "t_server CA certificate"
-}
-
 variable "data_dir" {
   type        = string
   description = "Location for the OpenVPN plugins, certificates, keys and other files required by tserver, tserver-client and tserver-anchor"
-}
-
-variable "server_cert" {
-  type        = string
-  default     = ""
-  description = "t_server server certificate"
-}
-
-variable "server_key" {
-  type        = string
-  default     = ""
-  description = "t_server server key"
-}
-
-variable "anchor_cert" {
-  type        = string
-  default     = ""
-  description = "t_server anchor VM certificate"
-}
-
-variable "anchor_key" {
-  type        = string
-  default     = ""
-  description = "t_server anchor VM key"
 }

@@ -53,9 +53,6 @@ module "tserver_rocky_9_amd64_user_data" {
   default_user    = var.rocky_9_default_user
   default_group   = var.rocky_9_default_user
   ssh_private_key = sshkey_ed25519_key_pair.tserver.private_key_pem
-  ca_cert         = module.pki.ca_cert
-  server_cert     = module.pki.server_cert
-  server_key      = module.pki.server_key
   data_dir        = var.tserver_data_dir
   git_name        = var.git_name
   git_email       = var.git_email
@@ -70,9 +67,6 @@ module "tserver_anchor_user_data" {
   default_user    = var.rocky_9_default_user 
   default_group   = var.rocky_9_default_user
   ssh_public_key  = sshkey_ed25519_key_pair.tserver.public_key
-  ca_cert         = module.pki.ca_cert
-  anchor_cert     = module.pki.clients["tserver-anchor"]["cert"]
-  anchor_key      = module.pki.clients["tserver-anchor"]["key"]
   data_dir        = var.tserver_data_dir
   git_name        = var.git_name
   git_email       = var.git_email
@@ -87,7 +81,6 @@ module "tserver_client_user_data" {
   default_user    = var.rocky_9_default_user 
   default_group   = var.rocky_9_default_user
   ssh_public_key  = sshkey_ed25519_key_pair.tserver.public_key
-  ca_cert         = module.pki.ca_cert
   data_dir        = var.tserver_data_dir
   git_name        = var.git_name
   git_email       = var.git_email

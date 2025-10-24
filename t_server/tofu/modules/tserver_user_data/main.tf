@@ -86,7 +86,6 @@ data "cloudinit_config" "tserver" {
          "chown -R ${var.default_user}:${var.default_user} ${var.data_dir}",
          # Add compatibility link for old OpenVPN configuration files
          "ln -s ${var.data_dir} /root/",
-         "sudo -u ${var.default_user} echo \"${var.ca_cert}\" > ${local.keydir}/ca.crt",
          "sudo -u ${var.default_user} /var/lib/provision/15-clone-repos.sh",
          "sudo -u ${var.default_user} /var/lib/provision/25-build-openvpn.sh",
          "sudo -u ${var.default_user} /var/lib/provision/26-copy-initial-openvpn.sh",
@@ -154,8 +153,6 @@ EOF
         ],
         runcmd = [
            "sudo -u ${var.default_user} mkdir -p ${local.keydir}",
-           "sudo -u ${var.default_user} echo \"${var.server_cert}\" > ${local.keydir}/server.crt",
-           "sudo -u ${var.default_user} echo \"${var.server_key}\" > ${local.keydir}/server.key",
            #"sudo -u ${var.default_user} /var/lib/provision/20-build-openssl.sh",
            "/var/lib/provision/28-setup-test-dependencies.sh",
            "sudo -u ${var.default_user} /var/lib/provision/35-generate-dh-params.sh",
@@ -185,8 +182,6 @@ EOF
         ],
         runcmd = [
            "sudo -u ${var.default_user} mkdir -p ${local.keydir}",
-           "sudo -u ${var.default_user} echo \"${var.anchor_cert}\" > ${local.keydir}/anchor.crt",
-           "sudo -u ${var.default_user} echo \"${var.anchor_key}\" > ${local.keydir}/anchor.key",
            "sudo -u ${var.default_user} /var/lib/provision/27-generate-openvpn-configs.sh",
         ],
       })
