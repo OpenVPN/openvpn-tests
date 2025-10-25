@@ -46,5 +46,3 @@ for TCV2 in tcv2 tcv2-5; do
         $OPENVPN --tls-crypt-v2 $TCV2-server.key --genkey tls-crypt-v2-client $TCV2-client-XX.key WFhYWAo=
     fi
 done
-
-for TCV2_INVALID in tcv2-invalid; do
