@@ -23,7 +23,7 @@ systemctl restart tinyproxy
 dnf -y install dante-server
 cp -v /etc/sockd.conf /etc/sockd.conf.vanilla
 
-cat << EOF > /tmp/sockd.conf
+cat << EOF > /etc/sockd.conf
 logoutput: syslog
 user.privileged: root
 user.unprivileged: nobody
@@ -42,6 +42,12 @@ systemctl restart sockd
 # tun-udp-p2mp: fix hostname for "--local" directive so that bind does not fail
 sed -i s/"^local .* 30003$"/"local $T_SERVER_HOSTNAME 30003"/g "$OPENVPN_TESTS_GIT_REPO/t_server/original/t_server/tun-udp-p2mp/server.conf"
 
+# tun-udp-p2mp-hash-defscript: generate peer-fingerprint entries dynamically
+for PEER in anchor client-27 client-26 client-25 client-24 client-23 client-22; do
+    FP="$(openssl x509 -fingerprint -sha256 -noout -in $KEYDIR/$PEER.crt)"
+    sed -i "/^<peer-fingerprint>$/a $FP" "$OPENVPN_TESTS_GIT_REPO/t_server/original/t_server/tun-udp-p2mp-hash-defscript/server.conf"
+done
+
 # tun-udp-p2mp-global-authpam: create pam_userdb
 #
 # https://www.chiark.greenend.org.uk/doc/libpam-doc/html/sag-pam_userdb.html
@@ -57,10 +63,11 @@ echo "account required pam_permit.so" >> /etc/pam.d/openvpn-global
 
 cd "$PAM_USERDB_DIR"
 echo john > users
-echo -n password >> users
+echo password >> users
 db_load -T -t hash -f users users.db
 chmod 644 users users.db
 
 # Ensure that tserver can connect to the clients with SSH
-cp -v /var/lib/provision/id_ed25519 "$HOMEDIR/.ssh/"
-chown $USERNAME:$GROUPNAME "$HOMEDIR/.ssh/id_ed25519"
+cp -v /var/lib/provision/orchestration-ssh-key "$HOMEDIR/.ssh/"
+chown $USERNAME:$GROUPNAME "$HOMEDIR/.ssh/orchestration-ssh-key"
+chmod 644 "$HOMEDIR/.ssh/orchestration-ssh-key"
