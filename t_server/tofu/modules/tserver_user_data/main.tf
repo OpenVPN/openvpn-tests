@@ -23,7 +23,9 @@ data "cloudinit_config" "tserver" {
                             {
                               default_user  = var.default_user,
                               default_group = var.default_group,
-                              tserver_fqdn = var.tserver_fqdn
+                              tserver_fqdn = var.tserver_fqdn,
+                              tserver_allow_ipv4 = var.tserver_allow_ipv4,
+                              tserver_allow_ipv6 = var.tserver_allow_ipv6
                             }
                         ),
           permissions = "0o755",

@@ -43,6 +43,18 @@ variable "tserver_client" {
   description = "Is this a t_server client instance?"
 }
 
+variable "tserver_allow_ipv4" {
+  type        = string
+  default     = ""
+  description = "IPv4 range allowed to access services on t_server server"
+}
+
+variable "tserver_allow_ipv6" {
+  type        = string
+  default     = ""
+  description = "IPv6 range allowed to access services on t_server server"
+}
+
 variable "default_user" {
   type        = string
   description = "Default operating system user"
