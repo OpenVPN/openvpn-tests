@@ -52,6 +52,9 @@ dnf -y install \
 liboping \
 libdb-utils
 
+# Make sure that fping6 can be found
+ln -s /usr/sbin/fping /usr/sbin/fping6
+
 # Old OpenVPN version support with podman
 dnf -y install \
 podman \
