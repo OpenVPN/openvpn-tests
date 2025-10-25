@@ -68,7 +68,6 @@ The following built-in policies should be enough to spin up the environment:
 * AmazonS3FullAccess
 * AWSCertificateManagerFullAccess
 * AWSLambda_FullAccess
-* CloudFrontFullAccess
 * CloudWatchFullAccessV2
 * IAMFullAccess
     * If want to go fine-grained, do it here. Allowing full access to IAM is
