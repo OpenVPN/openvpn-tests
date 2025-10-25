@@ -29,12 +29,12 @@ test -r ./t_client_ips.rc && ./t_client_ips.rc
 #
 # remote host (used as macro below)
 #
-REMOTE=tserver-rocky-9-amd64.foss.vpn
+REMOTE=$T_SERVER_HOSTNAME
 PROXY_SERVER=$REMOTE
-PROXY_SERVER_IPV4="10.32.0.134"
-PROXY_SERVER_IPV6="2a05:d014:94e:fe02:8d4b:30e5:98b7:ddc9"
+PROXY_SERVER_IPV4="$(dig +short A $REMOTE)"
+PROXY_SERVER_IPV6="$(dig +short AAAA $REMOTE)"
 AUTH_DIR="/openvpn-test-server/auth"
-PEER_FINGERPRINT="0E:0F:28:97:01:C4:68:C1:73:E0:02:82:56:94:20:B2:CD:84:92:7E:EE:44:AF:98:B9:E9:B8:C0:20:5A:F7:C5"
+PEER_FINGERPRINT="$(openssl x509 -fingerprint -sha256 -noout -in /openvpn-test-server/keys/server.crt|cut -d "=" -f 2)"
 
 #
 # tests to run (list suffixes for config stanzas below)
