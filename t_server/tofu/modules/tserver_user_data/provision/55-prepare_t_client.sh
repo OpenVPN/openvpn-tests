@@ -7,6 +7,7 @@ set -e
 # Copy files from openvpn-tests repo
 cp -rv $OPENVPN_TESTS_GIT_REPO/t_server/original/client_vm/t_client.* $HOMEDIR/
 cp -rv $OPENVPN_TESTS_GIT_REPO/t_server/original/client_vm/bin/* $BINDIR/
+cp -rv /var/lib/provision/update_t_client_ips.sh $BINDIR/
 
 # Modify t_client.rc files to match this environment. Variables come from
 # deployment-config.sh.
