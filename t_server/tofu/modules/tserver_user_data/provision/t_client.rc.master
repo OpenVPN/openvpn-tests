@@ -6,7 +6,7 @@
 # define these - if empty, no tests will run
 #
 if [ -z "$KEYBASE" ] ; then
-    KEYBASE="/openvpn-test-server/keys"
+    KEYBASE="$KEYDIR"
 fi
 
 CA_CERT="$KEYBASE/ca.crt"
@@ -33,7 +33,7 @@ REMOTE=$T_SERVER_HOSTNAME
 PROXY_SERVER=$REMOTE
 PROXY_SERVER_IPV4="$(dig +short A $REMOTE)"
 PROXY_SERVER_IPV6="$(dig +short AAAA $REMOTE)"
-AUTH_DIR="/openvpn-test-server/auth"
+AUTH_DIR="$OPENVPN_TEST_SERVER_DIR/auth"
 PEER_FINGERPRINT="$(openssl x509 -fingerprint -sha256 -noout -in /openvpn-test-server/keys/server.crt|cut -d "=" -f 2)"
 
 #
