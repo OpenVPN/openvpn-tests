@@ -45,19 +45,20 @@ module "pki" {
 }
 
 module "tserver_rocky_9_amd64_user_data" {
-  source             = "../modules/tserver_user_data"
-  hostname           = var.tserver_rocky_9_amd64_hostname
-  tserver_fqdn       = local.tserver_rocky_9_amd64_fqdn
-  my_fqdn            = local.tserver_rocky_9_amd64_fqdn
-  tserver            = true
-  tserver_allow_ipv4 = var.tserver_allow_ipv4
-  tserver_allow_ipv6 = var.tserver_allow_ipv6
-  default_user       = var.rocky_9_default_user
-  default_group      = var.rocky_9_default_user
-  ssh_private_key    = sshkey_ed25519_key_pair.tserver.private_key_pem
-  data_dir           = var.tserver_data_dir
-  git_name           = var.git_name
-  git_email          = var.git_email
+  source                = "../modules/tserver_user_data"
+  hostname              = var.tserver_rocky_9_amd64_hostname
+  private_dns_zone_name = var.private_dns_zone_name
+  tserver_fqdn          = local.tserver_rocky_9_amd64_fqdn
+  my_fqdn               = local.tserver_rocky_9_amd64_fqdn
+  tserver               = true
+  tserver_allow_ipv4    = var.tserver_allow_ipv4
+  tserver_allow_ipv6    = var.tserver_allow_ipv6
+  default_user          = var.rocky_9_default_user
+  default_group         = var.rocky_9_default_user
+  ssh_private_key       = sshkey_ed25519_key_pair.tserver.private_key_pem
+  data_dir              = var.tserver_data_dir
+  git_name              = var.git_name
+  git_email             = var.git_email
 }
 
 module "tserver_anchor_user_data" {

@@ -15,6 +15,12 @@ variable "hostname" {
   description = "Hostname for the system"
 }
 
+variable "private_dns_zone_name" {
+  type        = string
+  default     = ""
+  description = "Private DNS zone name"
+}
+
 variable "tserver_fqdn" {
   type        = string
   description = "FQDN for t_server server instance"

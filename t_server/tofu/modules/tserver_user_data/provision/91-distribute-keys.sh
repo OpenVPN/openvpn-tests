@@ -13,6 +13,7 @@ for SERVER in tserver-client tserver-anchor; do
     # normally would be just once, or when explicitly requested.
 
     ssh-keyscan $SERVER >> $KNOWN_HOSTS 2> /dev/null
+    ssh-keyscan $SERVER.$PRIVATE_DNS_ZONE_NAME >> $KNOWN_HOSTS 2> /dev/null
 
     # Wait until the target is reachable. This does not always seem to be the case.
     count=0

@@ -26,6 +26,7 @@ data "cloudinit_config" "tserver" {
                               tserver_fqdn = var.tserver_fqdn,
                               tserver_allow_ipv4 = var.tserver_allow_ipv4,
                               tserver_allow_ipv6 = var.tserver_allow_ipv6
+                              private_dns_zone_name = var.private_dns_zone_name
                             }
                         ),
           permissions = "0o755",
