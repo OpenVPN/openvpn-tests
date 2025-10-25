@@ -104,7 +104,7 @@ data "cloudinit_config" "tserver" {
       content = jsonencode({
         write_files = [
           {
-            path        = "/var/lib/provision/id_ed25519",
+            path        = "/var/lib/provision/orchestration_ssh_key",
             content     = var.ssh_private_key,
             permissions = "0o600",
           },
@@ -159,6 +159,9 @@ EOF
            "sudo -u ${var.default_user} /var/lib/provision/36-generate-secret-keys.sh",
            "sudo -u ${var.default_user} /var/lib/provision/40-build-sample-plugins.sh",
            "sudo -u ${var.default_user} /var/lib/provision/41-copy-plugins.sh",
+           "cp -v /var/lib/provision/orchestration_ssh_key /home/${var.default_user}/.ssh/",
+           "chown -R ${var.default_user}:${var.default_group} /home/${var.default_user}/.ssh/orchestration_ssh_key",
+           "chmod 600 /home/${var.default_user}/.ssh/orchestration_ssh_key",
            "sudo -u ${var.default_user} /var/lib/provision/91-distribute-keys.sh",
         ],
       })
