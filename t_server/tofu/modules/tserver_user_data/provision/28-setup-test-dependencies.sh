@@ -13,9 +13,9 @@ mkdir -p /var/www/ps
 # tun-tcp-p2mp: HTTP proxy for tests 1b and 1c
 dnf -y install tinyproxy
 # FIXME: get rid of hardcoded values
-sed -i '/^Allow 127.0.0.1$/i Allow 10.32.0.0/22' /etc/tinyproxy.conf
-sed -i '/^Allow 127.0.0.1$/i Allow 2a05:d014:94e:fe00::/56' /etc/tinyproxy.conf
-sed -i s/'^Port .*'/'Port 3128'/g /etc/tinyproxy.conf
+sed -i '/^Allow 127.0.0.1$/i Allow 10.32.0.0/22' /etc/tinyproxy/tinyproxy.conf
+sed -i '/^Allow 127.0.0.1$/i Allow 2a05:d014:94e:fe00::/56' /etc/tinyproxy/tinyproxy.conf
+sed -i s/'^Port .*'/'Port 3128'/g /etc/tinyproxy/tinyproxy.conf
 systemctl enable tinyproxy
 systemctl restart tinyproxy
 
