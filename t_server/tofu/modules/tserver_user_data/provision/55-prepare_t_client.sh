@@ -9,7 +9,7 @@ cp -rv $OPENVPN_TESTS_GIT_REPO/t_server/original/client_vm/t_client.* $HOMEDIR/
 cp -rv $OPENVPN_TESTS_GIT_REPO/t_server/original/client_vm/bin/* $BINDIR/
 
 # Create a link to the "master" version of OpenVPN
-ln -s $BINDIR/openvpn $BINDIR/openvpn.master
+test -e $BINDIR/openvpn.master || ln -s $BINDIR/openvpn $BINDIR/openvpn.master
 
 # Modify t_client.rc files to match this environment. Variables come from
 # deployment-config.sh.
