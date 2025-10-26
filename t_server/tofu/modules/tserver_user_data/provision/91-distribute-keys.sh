@@ -4,7 +4,7 @@
 . $(dirname "$0")/deployment-config.sh
 
 KNOWN_HOSTS="$HOMEDIR/.ssh/known_hosts"
-test -f $KNOWN_HOSTS && mv -vfb $KNOWN_HOSTS $KNOWN_HOSTS.bak
+test -f $KNOWN_HOSTS && mv -vf $KNOWN_HOSTS $KNOWN_HOSTS.bak
 
 # These DNS entries are expected to resolve
 for SERVER in tserver-client tserver-anchor; do
