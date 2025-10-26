@@ -49,6 +49,7 @@ module "tserver_rocky_9_amd64_user_data" {
   hostname              = var.tserver_rocky_9_amd64_hostname
   private_dns_zone_name = var.private_dns_zone_name
   tserver_fqdn          = local.tserver_rocky_9_amd64_fqdn
+  tserver_private_fqdn  = local.tserver_rocky_9_amd64_private_fqdn
   my_fqdn               = local.tserver_rocky_9_amd64_fqdn
   tserver               = true
   tserver_allow_ipv4    = var.tserver_allow_ipv4
@@ -62,29 +63,31 @@ module "tserver_rocky_9_amd64_user_data" {
 }
 
 module "tserver_anchor_user_data" {
-  source          = "../modules/tserver_user_data"
-  hostname        = var.tserver_anchor_hostname 
-  tserver_fqdn    = local.tserver_rocky_9_amd64_fqdn
-  my_fqdn         = local.tserver_anchor_fqdn
-  tserver_anchor = true
-  default_user    = var.rocky_9_default_user 
-  default_group   = var.rocky_9_default_user
-  ssh_public_key  = sshkey_ed25519_key_pair.tserver.public_key
-  data_dir        = var.tserver_data_dir
-  git_name        = var.git_name
-  git_email       = var.git_email
+  source               = "../modules/tserver_user_data"
+  hostname             = var.tserver_anchor_hostname
+  tserver_fqdn         = local.tserver_rocky_9_amd64_fqdn
+  tserver_private_fqdn = local.tserver_rocky_9_amd64_private_fqdn
+  my_fqdn              = local.tserver_anchor_fqdn
+  tserver_anchor       = true
+  default_user         = var.rocky_9_default_user
+  default_group        = var.rocky_9_default_user
+  ssh_public_key       = sshkey_ed25519_key_pair.tserver.public_key
+  data_dir             = var.tserver_data_dir
+  git_name             = var.git_name
+  git_email            = var.git_email
 }
 
 module "tserver_client_user_data" {
-  source          = "../modules/tserver_user_data"
-  hostname        = var.tserver_client_hostname 
-  tserver_fqdn    = local.tserver_rocky_9_amd64_fqdn
-  my_fqdn         = local.tserver_client_fqdn
-  tserver_client  = true
-  default_user    = var.rocky_9_default_user 
-  default_group   = var.rocky_9_default_user
-  ssh_public_key  = sshkey_ed25519_key_pair.tserver.public_key
-  data_dir        = var.tserver_data_dir
-  git_name        = var.git_name
-  git_email       = var.git_email
+  source               = "../modules/tserver_user_data"
+  hostname             = var.tserver_client_hostname
+  tserver_fqdn         = local.tserver_rocky_9_amd64_fqdn
+  tserver_private_fqdn = local.tserver_rocky_9_amd64_private_fqdn
+  my_fqdn              = local.tserver_client_fqdn
+  tserver_client       = true
+  default_user         = var.rocky_9_default_user
+  default_group        = var.rocky_9_default_user
+  ssh_public_key       = sshkey_ed25519_key_pair.tserver.public_key
+  data_dir             = var.tserver_data_dir
+  git_name             = var.git_name
+  git_email            = var.git_email
 }

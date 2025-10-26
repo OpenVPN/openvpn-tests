@@ -21,11 +21,12 @@ data "cloudinit_config" "tserver" {
           path        = "/var/lib/provision/deployment-config.sh",
           content     = templatefile("${path.module}/provision/deployment-config.sh",
                             {
-                              default_user  = var.default_user,
-                              default_group = var.default_group,
-                              tserver_fqdn = var.tserver_fqdn,
-                              tserver_allow_ipv4 = var.tserver_allow_ipv4,
-                              tserver_allow_ipv6 = var.tserver_allow_ipv6
+                              default_user          = var.default_user,
+                              default_group         = var.default_group,
+                              tserver_fqdn          = var.tserver_fqdn,
+                              tserver_private_fqdn  = var.tserver_private_fqdn,
+                              tserver_allow_ipv4    = var.tserver_allow_ipv4,
+                              tserver_allow_ipv6    = var.tserver_allow_ipv6
                               private_dns_zone_name = var.private_dns_zone_name
                             }
                         ),

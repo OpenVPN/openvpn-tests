@@ -29,7 +29,7 @@ test -r ./t_client_ips.rc && ./t_client_ips.rc
 #
 # remote host (used as macro below)
 #
-REMOTE=$T_SERVER_HOSTNAME
+REMOTE=$T_SERVER_PRIVATE_HOSTNAME
 PROXY_SERVER=$REMOTE
 PROXY_SERVER_IPV4="$(dig +short A $REMOTE)"
 PROXY_SERVER_IPV6="$(dig +short AAAA $REMOTE)"

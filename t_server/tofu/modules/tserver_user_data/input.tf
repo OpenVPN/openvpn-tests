@@ -23,7 +23,12 @@ variable "private_dns_zone_name" {
 
 variable "tserver_fqdn" {
   type        = string
-  description = "FQDN for t_server server instance"
+  description = "Public FQDN for t_server server instance"
+}
+
+variable "tserver_private_fqdn" {
+  type        = string
+  description = "Private FQDN for t_server server instance; used by t_client.sh"
 }
 
 variable "my_fqdn" {
