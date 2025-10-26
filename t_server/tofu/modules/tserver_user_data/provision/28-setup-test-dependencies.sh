@@ -68,6 +68,6 @@ db_load -T -t hash -f users users.db
 chmod 644 users users.db
 
 # Ensure that tserver can connect to the clients with SSH
-cp -v /var/lib/provision/orchestration-ssh-key "$HOMEDIR/.ssh/"
-chown $USERNAME:$GROUPNAME "$HOMEDIR/.ssh/orchestration-ssh-key"
-chmod 644 "$HOMEDIR/.ssh/orchestration-ssh-key"
+cp -v /var/lib/provision/orchestration-ssh-key $SSH_PRIVATE_KEY
+chown $USERNAME:$GROUPNAME $SSH_PRIVATE_KEY
+chmod 644 $SSH_PRIVATE_KEY

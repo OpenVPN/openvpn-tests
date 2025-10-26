@@ -20,11 +20,11 @@ for SERVER in tserver-client tserver-anchor; do
     maxcount=60
     while [ $count -le $maxcount ]; do
       count=$(( count + 1 ))
-      ssh -i $HOMEDIR/.ssh/orchestration_ssh_key $USERNAME@$SERVER "echo Connected to $SERVER" && break
+      ssh -i $SSH_PRIVATE_KEY $USERNAME@$SERVER "echo Connected to $SERVER" && break
       sleep 10
     done
     # Synchronize the keys. This should work as long as the keydir is present
     # and is writeable on the client and anchor VMs when this script runs. That
     # should always be the case as it gets created very early on.
-    rsync -e "ssh -i $HOMEDIR/.ssh/orchestration_ssh_key" -va $KEYDIR/ta*.key $KEYDIR/tc*.key $USERNAME@$SERVER:$KEYDIR/
+    rsync -e "ssh -i $SSH_PRIVATE_KEY" -va $KEYDIR/ta*.key $KEYDIR/tc*.key $USERNAME@$SERVER:$KEYDIR/
 done
