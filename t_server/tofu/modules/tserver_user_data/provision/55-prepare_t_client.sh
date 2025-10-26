@@ -7,8 +7,12 @@ set -e
 # Copy files from openvpn-tests repo
 cp -rv $OPENVPN_TESTS_GIT_REPO/t_server/original/client_vm/t_client.* $HOMEDIR/
 cp -rv $OPENVPN_TESTS_GIT_REPO/t_server/original/client_vm/bin/* $BINDIR/
-cp -rv /var/lib/provision/t_client.rc.master $HOMEDIR/t_client.master/t_client.rc
-cp -rv /var/lib/provision/update_t_client_ips.sh $BINDIR/
+
+# Copy files from the provisioning directory. This may or may not overwrite
+# files copied earlier.
+cp -v /var/lib/provision/t_client.rc.master $HOMEDIR/t_client.master/t_client.rc
+cp -v /var/lib/provision/ping8.sh $BINDIR/ping8.sh
+cp -v /var/lib/provision/update_t_client_ips.sh $BINDIR/
 
 # Modify t_client.rc files to match this environment. Variables come from
 # deployment-config.sh.

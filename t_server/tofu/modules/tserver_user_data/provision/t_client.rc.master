@@ -35,6 +35,7 @@ PROXY_SERVER_IPV4="$(dig +short A $REMOTE)"
 PROXY_SERVER_IPV6="$(dig +short AAAA $REMOTE)"
 AUTH_DIR="$OPENVPN_TEST_SERVER_DIR/auth"
 PEER_FINGERPRINT="$(openssl x509 -fingerprint -sha256 -noout -in /openvpn-test-server/keys/server.crt|cut -d "=" -f 2)"
+PING8_SH="$BINDIR/ping8.sh"
 
 #
 # tests to run (list suffixes for config stanzas below)
@@ -609,7 +610,7 @@ EXPECT_FAIL_7y="Received control message: AUTH_FAILED"
 #
 # Test 8: UDP / p2p tun
 RUN_TITLE_8="p2p tun / udp4"
-OPENVPN_CONF_8="--dev tun --proto udp4 --remote $REMOTE 51204 --nobind --secret $KEYBASE/p2p.key --ifconfig 10.204.8.2 10.204.8.1 --comp-lzo --tun-ipv6 --ifconfig-ipv6 fd00:abcd:204:8::2/64 fd00:abcd:204:8::1 --route 10.204.0.0 255.255.0.0 --route-ipv6 fd00:abcd:204::/48 --verb 3 --up /home/rocky/bin/ping8.sh --script-security 2 --allow-deprecated-insecure-static-crypto --providers legacy default"
+OPENVPN_CONF_8="--dev tun --proto udp4 --remote $REMOTE 51204 --nobind --secret $KEYBASE/p2p.key --ifconfig 10.204.8.2 10.204.8.1 --comp-lzo --tun-ipv6 --ifconfig-ipv6 fd00:abcd:204:8::2/64 fd00:abcd:204:8::1 --route 10.204.0.0 255.255.0.0 --route-ipv6 fd00:abcd:204::/48 --verb 3 --up $PING8_SH --script-security 2 --allow-deprecated-insecure-static-crypto --providers legacy default"
 EXPECT_IFCONFIG4_8="10.204.8.2"
 EXPECT_IFCONFIG6_8="fd00:abcd:204:8::2"
 PING4_HOSTS_8="10.204.8.1 10.204.0.1"
@@ -617,7 +618,7 @@ PING6_HOSTS_8="fd00:abcd:204:8::1 fd00:abcd:204:0::1"
 
 # Test 8a, IPv6
 RUN_TITLE_8a="p2p tun / udp6"
-OPENVPN_CONF_8a="--dev tun --proto udp6 --remote $REMOTE 51204 --nobind --secret $KEYBASE/p2p.key --ifconfig 10.204.8.2 10.204.8.1 --comp-lzo --tun-ipv6 --ifconfig-ipv6 fd00:abcd:204:8::2/64 fd00:abcd:204:8::1 --route 10.204.0.0 255.255.0.0 --route-ipv6 fd00:abcd:204::/48 --verb 3 --up /home/rocky/bin/ping8.sh --script-security 2 --allow-deprecated-insecure-static-crypto --providers legacy default"
+OPENVPN_CONF_8a="--dev tun --proto udp6 --remote $REMOTE 51204 --nobind --secret $KEYBASE/p2p.key --ifconfig 10.204.8.2 10.204.8.1 --comp-lzo --tun-ipv6 --ifconfig-ipv6 fd00:abcd:204:8::2/64 fd00:abcd:204:8::1 --route 10.204.0.0 255.255.0.0 --route-ipv6 fd00:abcd:204::/48 --verb 3 --up $PING8_SH --script-security 2 --allow-deprecated-insecure-static-crypto --providers legacy default"
 EXPECT_IFCONFIG4_8a="$EXPECT_IFCONFIG4_8"
 EXPECT_IFCONFIG6_8a="$EXPECT_IFCONFIG6_8"
 PING4_HOSTS_8a="$PING4_HOSTS_8"

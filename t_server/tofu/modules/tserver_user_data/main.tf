@@ -206,6 +206,11 @@ EOF
             permissions = "0o755",
           },
           {
+            path        = "/var/lib/provision/ping8.sh",
+            content     = file("${path.module}/provision/ping8.sh"),
+            permissions = "0o755",
+          },
+          {
             path        = "/var/lib/provision/podman/prepare-openvpn-build.sh",
             content     = file("${path.module}/provision/podman/prepare-openvpn-build.sh"),
             permissions = "0o755",
