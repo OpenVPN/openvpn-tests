@@ -5,6 +5,10 @@
 #
 # define these - if empty, no tests will run
 #
+
+# Load deployment configuration
+. /var/lib/provision/deployment-config.sh
+
 if [ -z "$KEYBASE" ] ; then
     KEYBASE="$KEYDIR"
 fi
