@@ -44,8 +44,9 @@ sed -i s/"^local .* 30003$"/"local $T_SERVER_HOSTNAME 30003"/g "$OPENVPN_TESTS_G
 
 # tun-udp-p2mp-hash-defscript: generate peer-fingerprint entries dynamically
 for PEER in anchor client-27 client-26 client-25 client-24 client-23 client-22; do
-    FP="$(openssl x509 -fingerprint -sha256 -noout -in $KEYDIR/$PEER.crt)"
-    sed -i "/^<peer-fingerprint>$/a $FP" "$OPENVPN_TESTS_GIT_REPO/t_server/original/t_server/tun-udp-p2mp-hash-defscript/server.conf"
+    SERVER_CONF="$OPENVPN_TESTS_GIT_REPO/t_server/original/t_server/tun-udp-p2mp-hash-defscript/server.conf"
+    FP="$(openssl x509 -fingerprint -sha256 -noout -in $KEYDIR/$PEER.crt|cut -d "=" -f 2)"
+    grep -q $FP $SERVER_CONF || sed -i "/^<peer-fingerprint>$/a $FP" $SERVER_CONF
 done
 
 # tun-udp-p2mp-global-authpam: create pam_userdb
