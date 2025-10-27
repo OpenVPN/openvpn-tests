@@ -206,4 +206,6 @@ Here's a list of current t_client.sh test cases along with compatibility with di
 
 # Setup
 
-(this section needs to be written)
+Setting up this environment has been automated with OpenTofu and Cloud-init.
+For details have a look at
+[tofu/openvpn_test_env/README.md](tofu/openvpn_test_env/README.md).
