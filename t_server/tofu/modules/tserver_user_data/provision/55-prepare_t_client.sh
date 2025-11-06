@@ -21,4 +21,7 @@ for V in 22 23 24 25 26 master; do
     sed -i -E "s|CLIENT_KEY=\".*\"|CLIENT_KEY=\"\$KEYBASE/client-$V.key\"|" "$F"
     sed -i -E "s|CLIENT_CERT=\".*\"|CLIENT_CERT=\"\$KEYBASE/client-$V.crt\"|" "$F"
     sed -i -E "s|REMOTE=\".*\"|REMOTE=\"$REMOTE\"|" "$F"
+
+    # Make sure that t_client_ips.rc is writeable by the default user
+    touch "$HOMEDIR/t_client.$V/t_client_ips.rc"
 done
