@@ -217,12 +217,7 @@ etc. This means that a single t_client.rc file will not work for all of them.
 For the same reason some tests will not work on every OpenVPN version.
 
 When you add a new t_client, for example to support a new OpenVPN version, you
-need to do several things:
+need to do two things:
 
 * Create a new t_client.rc for it
 * Create certificates and keys for it and point its t_client.rc to those
-* Add a ccd file in each applicable server ccd directory
-
-The ccd files are *required* because many t_client tests validate that the client's
-VPN IPv4 and/or IPv6 address match their expectations and fail if that is not
-the case.
