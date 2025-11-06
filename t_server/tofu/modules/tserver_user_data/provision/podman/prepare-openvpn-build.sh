@@ -30,8 +30,9 @@ pkg-config
 # Install t_client.sh dependencies
 apt-get update
 apt-get -y install \
-iproute2 \
-fping
+dnsutils \
+fping \
+iproute2
 
 # Clone OpenVPN
 cd "$BASEDIR"
