@@ -27,6 +27,12 @@ libpcap0.8-dev \
 net-tools \
 pkg-config
 
+# Install t_client.sh dependencies
+apt-get update
+apt-get -y install \
+iproute2 \
+fping
+
 # Clone OpenVPN
 cd "$BASEDIR"
 git clone https://github.com/OpenVPN/openvpn.git
