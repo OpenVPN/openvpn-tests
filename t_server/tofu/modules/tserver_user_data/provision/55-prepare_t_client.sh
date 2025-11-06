@@ -22,6 +22,17 @@ for V in 22 23 24 25 26 master; do
     sed -i -E "s|CLIENT_CERT=\".*\"|CLIENT_CERT=\"\$KEYBASE/client-$V.crt\"|" "$F"
     sed -i -E "s|REMOTE=\".*\"|REMOTE=\"$REMOTE\"|" "$F"
 
-    # Make sure that t_client_ips.rc is writeable by the default user
+    # Make sure that t_client_ips.rc is writeable by the default user and executable
     touch "$HOMEDIR/t_client.$V/t_client_ips.rc"
+    chmod 755 "$HOMEDIR/t_client.$V/t_client_ips.rc"
 done
+
+# Add openvpn compatibility links for the volume mounts. These will not lead
+# anywhere on the container host, but will on the containers.
+ln -s /usr/local/bin/openvpn-27 $BINDIR/openvpn.master
+ln -s /usr/local/bin/openvpn-27 $BINDIR/openvpn.27
+ln -s /usr/local/bin/openvpn-26 $BINDIR/openvpn.26
+ln -s /usr/local/bin/openvpn-25 $BINDIR/openvpn.25
+ln -s /usr/local/bin/openvpn-24 $BINDIR/openvpn.24
+ln -s /usr/local/bin/openvpn-23 $BINDIR/openvpn.23
+ln -s /usr/local/bin/openvpn-22 $BINDIR/openvpn.22
