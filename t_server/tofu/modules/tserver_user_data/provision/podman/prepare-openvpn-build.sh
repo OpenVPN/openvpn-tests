@@ -32,7 +32,8 @@ apt-get update
 apt-get -y install \
 dnsutils \
 fping \
-iproute2
+iproute2 \
+sudo
 
 # Clone OpenVPN
 cd "$BASEDIR"
