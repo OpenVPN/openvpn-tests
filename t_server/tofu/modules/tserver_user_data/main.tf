@@ -239,7 +239,8 @@ EOF
         ]
         runcmd = [
            "sudo -u ${var.default_user} /var/lib/provision/55-prepare_t_client.sh",
-           "sudo -u ${var.default_user} /var/lib/provision/92-setup-old-openvpn-versions.sh",
+           # We need to build and run containers as the root user or else the tun device can't be used
+           "/var/lib/provision/92-setup-old-openvpn-versions.sh",
            # Without this selinux blocks device access from containers
            "setsebool -P  container_use_devices=true",
         ],
