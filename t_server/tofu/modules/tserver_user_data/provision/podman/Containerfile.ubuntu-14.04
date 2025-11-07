@@ -11,4 +11,6 @@ RUN /build/create-openvpn-executable.sh release/2.2 22
 RUN /build/create-openvpn-executable.sh release/2.3 23
 RUN /build/ensure-tun-is-present.sh
 
+WORKDIR /root
+
 RUN bash -c 'echo "Available OpenVPN versions:"; ls /usr/local/bin|cat'
