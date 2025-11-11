@@ -7,7 +7,7 @@ RUN /build/prepare-openvpn-build.sh
 
 WORKDIR /build/openvpn
 RUN /build/create-openvpn-executable.sh release/2.6 26
-RUN /build/create-openvpn-executable.sh release/2.7 27
+RUN /build/create-openvpn-executable.sh master 27
 RUN /build/create-openvpn-executable.sh master master
 
 WORKDIR /home/ubuntu
