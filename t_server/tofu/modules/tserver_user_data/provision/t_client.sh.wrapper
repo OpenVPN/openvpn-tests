@@ -1,0 +1,21 @@
+#!/bin/sh
+#
+# Launch the podman container that contains the OpenVPN version we wish to use
+#
+BRANCH=$1
+
+podman run --tty \
+  --cap-add=CAP_NET_ADMIN \
+  --cap-add=CAP_NET_RAW \
+  --device=/dev/net/tun \
+  --volume /openvpn-test-server:/openvpn-test-server:ro,z \
+  --volume /var/lib/provision:/var/lib/provision:ro,z \
+  --volume /home/rocky/bin:/root/bin:ro,z \
+  --volume /home/rocky/t_client.$BRANCH:/root/t_client.$BRANCH:rw,z \
+  --env TEST_RUN_OVERRIDE \
+  --env "t_server=yes" \
+  --env "t_client_ips_rc=/root/t_client.$BRANCH/t_client_ips.rc" \
+  --env "update_t_client_ips=/root/bin/update_t_client_ips.sh" \
+  --env "srcdir=/root/t_client.$BRANCH" \
+  --env "openvpn=/usr/local/bin/openvpn-$BRANCH" \
+  localhost/openvpn-$1:latest /root/bin/t_client.sh.real $@

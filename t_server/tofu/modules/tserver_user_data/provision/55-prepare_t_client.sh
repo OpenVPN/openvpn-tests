@@ -8,6 +8,10 @@ set -e
 cp -rv $OPENVPN_TESTS_GIT_REPO/t_server/original/client_vm/t_client.* $HOMEDIR/
 cp -rv $OPENVPN_TESTS_GIT_REPO/t_server/original/client_vm/bin/* $BINDIR/
 
+# Rename t_client.sh as t_client.sh.real and use a podman wrapper in its place.
+mv -v $BINDIR/t_client.sh $BINDIR/t_client.sh.real
+cp -v /var/lib/provision/t_client.sh.wrapper $BINDIR/t_client.sh
+
 # Create a link to the "master" version of OpenVPN
 test -e $BINDIR/openvpn.master || ln -s $BINDIR/openvpn $BINDIR/openvpn.master
 

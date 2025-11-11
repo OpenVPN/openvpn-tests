@@ -202,6 +202,11 @@ EOF
       content = jsonencode({
         write_files = [
           {
+            path        = "/var/lib/provision/t_client.sh.wrapper",
+            content     = file("${path.module}/provision/t_client.sh.wrapper"),
+            permissions = "0o755",
+          },
+          {
             path        = "/var/lib/provision/podman/prepare-openvpn-build.sh",
             content     = file("${path.module}/provision/podman/prepare-openvpn-build.sh"),
             permissions = "0o755",
