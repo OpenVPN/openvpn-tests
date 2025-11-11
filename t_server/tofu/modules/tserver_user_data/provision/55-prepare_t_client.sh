@@ -29,10 +29,14 @@ done
 
 # Add openvpn compatibility links for the volume mounts. These will not lead
 # anywhere on the container host, but will on the containers.
-ln -s /usr/local/bin/openvpn-27 $BINDIR/openvpn.master
-ln -s /usr/local/bin/openvpn-27 $BINDIR/openvpn.27
-ln -s /usr/local/bin/openvpn-26 $BINDIR/openvpn.26
-ln -s /usr/local/bin/openvpn-25 $BINDIR/openvpn.25
-ln -s /usr/local/bin/openvpn-24 $BINDIR/openvpn.24
-ln -s /usr/local/bin/openvpn-23 $BINDIR/openvpn.23
-ln -s /usr/local/bin/openvpn-22 $BINDIR/openvpn.22
+for v in 22 23 24 25 26 27 master; do
+    test -L $BINDIR/openvpn.$v || ln -s /usr/local/bin/openvpn-$v $BINDIR/openvpn.$v
+done
+
+# Ensure that the containers can be passed a usable tun/tap device. Package
+# "iproute2" is required for this to work.
+if ! [ -f "/dev/net/tun" ]; then
+  mkdir /dev/net
+  mknod /dev/net/tun c 10 200
+  ip tuntap add mode tap tap
+fi
