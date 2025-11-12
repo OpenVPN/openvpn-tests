@@ -30,3 +30,10 @@ for V in 22 23 24 25 26 master; do
     touch "$HOMEDIR/t_client.$V/t_client_ips.rc"
     chmod 755 "$HOMEDIR/t_client.$V/t_client_ips.rc"
 done
+
+# Create credentials files required by several tests
+mkdir -p $OPENVPN_TEST_SERVER_DIR/auth
+echo "fbsd-tc-master" > $OPENVPN_TEST_SERVER_DIR/auth/aup.txt
+echo "totallysecret" >> $OPENVPN_TEST_SERVER_DIR/auth/aup.txt
+echo "fbsd-tc-master" > $OPENVPN_TEST_SERVER_DIR/auth/aup-fail.txt
+echo "wrongpassword" >> $OPENVPN_TEST_SERVER_DIR/auth/aup-fail.txt
