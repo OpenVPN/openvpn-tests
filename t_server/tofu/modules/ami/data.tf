@@ -83,27 +83,6 @@ data "aws_ami" "ubuntu_2204" {
   owners = ["099720109477"] # Canonical
 }
 
-data "aws_ami" "ubuntu_2310" {
-  most_recent = true
-
-  filter {
-    name   = "name"
-    values = ["ubuntu/images/hvm-ssd-gp3/ubuntu-mantic-23.10-amd64-server-*"]
-  }
-
-  filter {
-    name   = "virtualization-type"
-    values = ["hvm"]
-  }
-
-  filter {
-    name   = "architecture"
-    values = ["x86_64"]
-  }
-
-  owners = ["099720109477"] # Canonical
-}
-
 data "aws_ami" "ubuntu_2404_x86_64" {
   most_recent = true
 
