@@ -1,9 +1,9 @@
 module "primary-vpc-standard-sg" {
   source                     = "github.com/Puppet-Finland/opentofu-sg-standard?ref=1.1.0"
   basename                   = "production"
-  vpc_id                     = module.primary-vpc.vpc_id
-  allow_ssh_cidr_blocks      = [module.primary-vpc.cidr_block]
-  allow_ssh_ipv6_cidr_blocks = ["::1/128", module.primary-vpc.ipv6_cidr_block]
+  vpc_id                     = local.primary_vpc_id
+  allow_ssh_cidr_blocks      = [local.primary_vpc_cidr_block]
+  allow_ssh_ipv6_cidr_blocks = ["::1/128", local.primary_vpc_ipv6_cidr_block]
 }
 
 # Open SSH port to the Internet if we can't do provisioning using private IP addresses
@@ -32,14 +32,14 @@ resource "aws_security_group_rule" "allow_ssh_from_any_ipv6" {
 module "primary-vpc-webserver-public-sg" {
   source   = "github.com/Puppet-Finland/opentofu-sg-webserver?ref=1.0.0"
   basename = "production"
-  vpc_id   = module.primary-vpc.vpc_id
+  vpc_id   = local.primary_vpc_id
   type     = "public"
 }
 
 resource "aws_security_group" "webcache" {
   name        = "webcache"
   description = "Allow access to TCP on ports 8080-8090"
-  vpc_id      = module.primary-vpc.vpc_id
+  vpc_id      = local.primary_vpc_id
 
   tags = {
     Name = "webcache"

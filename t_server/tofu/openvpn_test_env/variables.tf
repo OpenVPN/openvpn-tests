@@ -17,6 +17,12 @@ variable "enable_scheduler_stop_start" {
   default     = false
 }
 
+variable "manage_vpc" {
+  description = "Whether to manage the VPC or not"
+  type        = bool
+  default     = true
+}
+
 # Parameters
 variable "public_dns_zone_name" {
   description = "Public Route 53 hosted zone name. Required when enable_public_dns_zone is true."
@@ -47,6 +53,24 @@ variable "provision_with_private_ip" {
   description = "Provision with private IP. Only enable if VPN is configured properly."
   type        = bool
   default     = false
+}
+
+variable "external_primary_vpc_id" {
+  description = "Define when manage_vpc is false: the VPC ID for the VPC."
+  type        = string
+  default     = ""
+}
+
+variable "external_primary_vpc_primary_public_subnet_id" {
+  description = "Define when manage_vpc is false: the id of the primary public subnet in the VPC."
+  type        = string
+  default     = ""
+}
+
+variable "external_primary_vpc_primary_public_route_table_id" {
+  description = "Define when manage_vpc is false: the id of the primary public subnet routing table in the VPC."
+  type        = string
+  default     = ""
 }
 
 variable "primary_vpc_cidr_block" {

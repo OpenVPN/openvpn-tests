@@ -6,7 +6,7 @@ resource "aws_instance" "tserver_rocky_9_amd64" {
   instance_type               = "t3.small"
   key_name                    = var.key_name
   source_dest_check           = false
-  subnet_id                   = module.primary-vpc.primary_public_subnet_id
+  subnet_id                   = local.primary_vpc_primary_public_subnet_id
   tags                        = { "Name": "tserver-rocky-9-amd64",
                                   "Role" : "tserver",
                                   "tostop" : "true",
@@ -152,26 +152,15 @@ resource "aws_route53_record" "tserver_rocky_9_amd64-aaaa" {
 
 # OpenVPN return traffic in main VPC through the OpenVPN server
 resource "aws_route" "tserver_rocky_9_amd64_return_traffic" {
-  route_table_id         = module.primary-vpc.public_route_table_id
+  route_table_id         = local.primary_vpc_primary_public_subnet_route_table_id
   destination_cidr_block = var.tserver_rocky_9_amd64_vpn_cidr_block
   network_interface_id   = aws_instance.tserver_rocky_9_amd64.primary_network_interface_id
 }
 
+# Do not add this route unless we are manage the VPC
 resource "aws_route" "tserver_rocky_9_amd64_return_traffic_private" {
-  route_table_id         = module.primary-vpc.private_route_table_id
+  count                  = var.manage_vpc ? 1 : 0
+  route_table_id         = module.primary-vpc[0].private_route_table_id
   destination_cidr_block = var.tserver_rocky_9_amd64_vpn_cidr_block
   network_interface_id   = aws_instance.tserver_rocky_9_amd64.primary_network_interface_id
 }
-
-# OpenVPN return traffic in office VPC through the (iroute) OpenVPN client
-#resource "aws_route" "openvpn_client_return_traffic" {
-#  route_table_id         = module.secondary-vpc.public_route_table_id
-#  destination_cidr_block = var.rocky_9_test_vpn_cidr_block
-#  network_interface_id   = module.openvpn_instance["openvpn_client"].primary_network_interface_id[0]
-#}
-#
-#resource "aws_route" "openvpn_client_return_traffic_private" {
-#  route_table_id         = module.secondary-vpc.private_route_table_id
-#  destination_cidr_block = var.rocky_9_test_vpn_cidr_block
-#  network_interface_id   = module.openvpn_instance["openvpn_client"].primary_network_interface_id[0]
-#}

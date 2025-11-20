@@ -1,7 +1,7 @@
 resource "aws_security_group" "tserver" {
   name        = "tserver"
   description = "Allow access to OpenVPN ports"
-  vpc_id      = module.primary-vpc.vpc_id
+  vpc_id      = local.primary_vpc_id
 
   tags = {
     Name = "tserver"

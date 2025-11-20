@@ -6,7 +6,7 @@ resource "aws_instance" "tserver_anchor" {
   instance_type               = "t3.small"
   key_name                    = var.key_name
   source_dest_check           = false
-  subnet_id                   = module.primary-vpc.primary_public_subnet_id
+  subnet_id                   = local.primary_vpc_primary_public_subnet_id
   tags                        = { "Name": "tserver-anchor",
                                   "Role" : "Static tserver OpenVPN client",
                                   "tostop" : "true",

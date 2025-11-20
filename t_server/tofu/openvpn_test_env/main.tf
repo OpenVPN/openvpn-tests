@@ -4,6 +4,7 @@ module "ami" {
 
 # Main production VPC
 module "primary-vpc" {
+  count                               = var.manage_vpc ? 1 : 0
   source                              = "github.com/Puppet-Finland/opentofu-vpc?ref=1.1.0"
   basename                            = "production"
   region                              = var.region
