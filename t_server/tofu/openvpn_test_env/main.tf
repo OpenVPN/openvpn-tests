@@ -15,18 +15,6 @@ module "primary-vpc" {
   secondary_private_subnet_cidr_block = var.primary_vpc_secondary_private_subnet_cidr_block
 }
 
-module "secondary-vpc" {
-  source                              = "github.com/Puppet-Finland/opentofu-vpc?ref=1.1.0"
-  basename                            = "office"
-  region                              = "eu-central-1"
-  manage_ipv4_nat_gateway             = false
-  vpc_cidr_block                      = var.secondary_vpc_cidr_block
-  primary_public_subnet_cidr_block    = var.secondary_vpc_primary_public_subnet_cidr_block
-  secondary_public_subnet_cidr_block  = var.secondary_vpc_secondary_public_subnet_cidr_block
-  primary_private_subnet_cidr_block   = var.secondary_vpc_primary_private_subnet_cidr_block
-  secondary_private_subnet_cidr_block = var.secondary_vpc_secondary_private_subnet_cidr_block
-}
-
 module "scheduler-stop-start" {
   count  = var.enable_scheduler_stop_start ? 1 : 0
   source = "../modules/scheduler-stop-start"
