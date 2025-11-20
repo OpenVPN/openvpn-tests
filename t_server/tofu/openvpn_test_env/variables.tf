@@ -43,6 +43,12 @@ variable "region" {
   type        = string
 }
 
+variable "provision_with_private_ip" {
+  description = "Provision with private IP. Only enable if VPN is configured properly."
+  type        = bool
+  default     = false
+}
+
 variable "primary_vpc_cidr_block" {
   description = "IPv4 CIDR block for the primary VPC"
   type        = string

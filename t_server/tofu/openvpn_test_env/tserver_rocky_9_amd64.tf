@@ -21,7 +21,7 @@ resource "aws_instance" "tserver_rocky_9_amd64" {
   connection {
     type        = "ssh"
     user        = "rocky"
-    host        = self.private_ip
+    host        = var.provision_with_private_ip ? self.private_ip : self.public_ip
     private_key = file(var.tserver_provisioning_ssh_private_key)
   }
 
