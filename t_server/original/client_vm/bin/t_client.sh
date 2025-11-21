@@ -33,7 +33,7 @@ if [ x"$t_server" != "x" ]; then
         echo "$0: branch missing (23/24/master)" >&2 ; exit 1
     fi
 
-    openvpn="../bin/openvpn.$BRANCH"
+    openvpn="${openvpn:-../bin/openvpn.$BRANCH}"
 fi
 
 if [ -r "${top_builddir}"/t_client.rc ] ; then
