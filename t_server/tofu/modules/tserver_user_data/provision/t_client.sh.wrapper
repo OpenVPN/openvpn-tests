@@ -18,4 +18,4 @@ podman run --tty \
   --env "update_t_client_ips=/root/bin/update_t_client_ips.sh" \
   --env "srcdir=/root/t_client.$BRANCH" \
   --env "openvpn=/usr/local/bin/openvpn-$BRANCH" \
-  localhost/openvpn-$1:latest /root/bin/t_client.sh.real $@
+  localhost/openvpn-$BRANCH:latest /root/bin/t_client.sh.real $@
