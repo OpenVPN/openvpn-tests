@@ -246,13 +246,17 @@ EOF
             content     = file("${path.module}/provision/92-setup-old-openvpn-versions.sh"),
             permissions = "0o755",
           },
+          {
+            path        = "/var/lib/provision/95-t_client-selinux.sh",
+            content     = file("${path.module}/provision/95-t_client-selinux.sh"),
+            permissions = "0o755",
+          },
         ]
         runcmd = [
            "sudo -u ${var.default_user} /var/lib/provision/55-prepare_t_client.sh",
            "/var/lib/provision/56-prepare_t_client_privileged.sh",
            "sudo -u ${var.default_user} /var/lib/provision/92-setup-old-openvpn-versions.sh",
-           # Without this selinux blocks device access from containers
-           "setsebool -P  container_use_devices=true",
+           "/var/lib/provision/95-t_client-selinux.sh",
         ],
       })
     }
