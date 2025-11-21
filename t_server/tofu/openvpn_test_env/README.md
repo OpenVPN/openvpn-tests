@@ -1,40 +1,42 @@
 # openvpn_test_env
 
-This is an OpenTofu root module that enables setting up several different things in AWS:
+This is an OpenTofu root module for setting up the server-side infrastructure
+for the t_server test environment. It should be possible to use Terraform for
+the setup as well, but that has not been tested.
 
-1. Server-side infrastructure for t_server
-2. Manual OpenVPN test environment
-3. Otterwiki
-4. Buildbot
+There are three "features" than can be toggled on and off as needed:
 
-Each feature can be turned on and off as required. The main use-case is setting
-up t_server infrastructure on-demand.
+* VPC management
+* Public DNS zone management
+* Private DNS zone management
+
+Letting this root module manage the private DNS zone simplifies the setup a
+lot, but it also modifies VPC DHCP options. That may have unwanted side-effects
+if you spin this thing up in an existing VPC. 
 
 # Network architecture
 
-The network setup looks roughly like this:
+In case you let this root module handle VPC configuration the end result will
+look like this:
 
-* Primary VPC ("production")
+* Primary VPC
     * Public subnet
     * Private subnet
-* Secondary VPC ("office")
-    * Public subnet
-    * Private subnet
 
-These two VPC are completely detached from each other. Connectivity between the
-two is meant to be provided by OpenVPN servers used for manual testing.
-
-Private subnets only have so-called "egress-only internet gateways", which
-means that only IPv6 egress to Internet is possible. Public subnets have normal
-Internet gateways and thus support both IPv4 and IPv6 egress.
+Private subnet only has a so-called "egress-only internet gateway", which means
+that only IPv6 egress to Internet is possible. Public subnets have normal
+Internet gateways and thus support both IPv4 and IPv6 egress. All EC2 instances
+are created to the public subnet, so for the most part the private subnet can
+be ignored.
 
 There are two DNS zones which make working in the environment easier:
 
 * **Public DNS zone**
     * Requires registering a domain in AWS Route53
-    * Optional, although turning it off *may* require fixes to Tofu code)
+    * Optional
 * **Private DNS zone**
     * Does not require a domain registration as it is internal-only
+    * Optional
 
 ## Tofu modules
 
@@ -51,8 +53,7 @@ Th root module has the following requirements:
 
 * AWS S3 bucket for the OpenTofu state file
     * Make sure it is *not* publicly readable
-* SSH keypair(s) for the Linux and Windows VMs
-    * Windows only accepts RSA keypairs
+* SSH keypair(s) for the Linux VMs
     * Import it/them to your desired AWS region
 * AWS keypair to use with OpenTofu
     * Usually associated with an IAM user with enough permissions (see below)
@@ -89,28 +90,37 @@ Initialize the Tofu backend with:
 ### Create OpenTofu variable file
 
 Copy `input.auto.tfvars.sample` to `input.auto.tfvars` and modify it to match
-your environment. The things you may need to change are:
+your environment. Some of the things you may need to change are:
 
+* **manage_vpc**
+    * Whether to let this root module create a new VPC; if set to false, set the *external* parameters accordingly
+* **external_<option>**
+    * Set these to match your existing VPC ID, public subnet ID and public subnet route table ID
 * **enable_<feature>**
-    * Turn off features you don't need (e.g. the manual OpenVPN testing environment)
+    * Turn off features you don't need
 * **public_dns_zone_name**
     * Public DNS zone in Amazon Route53 where DNS records will be added
     * Must be a registered domain in Route53
 * **private_dns_zone_name**
     * Private DNS zone name of your own choosing
-    * Should not be a registered domain
+    * Should *not* be a registered domain
 * **key_name**
     * The name of the SSH key to use with Linux VMs
-    * Must be present in the AWS EC2 region you chose in `backend.tfvars`
+    * Must be present in the AWS EC2 region you chose in `input.auto.tfvars` and `provider.tf`
     * Can be an elliptic curve key
-* **windows_key_name**
-    * The name of the SSH key to use with Windows VMs
-    * Must be present in the AWS EC2 region you chose in `backend.tfvars`
-    * Must be an RSA key
-* **tserver_allow_ipv6**
-    * Should match the AWS-generated IPv6 subnet of your VPC, which you will only know after deploying the VPC
 * **git_name** and **git_email**
     * These can be helpful when you modify this repository from the t_server server instance
+
+Please refer to comments in [input.auto.tfvars.sample](input.auto.tfvars.sample) for details.
+
+## Set AWS region
+
+Currently you need to set the region in two places:
+
+* *input.auto.tfvars*
+* *provider.tf*
+
+This inconvenience may be fixable.
 
 # The t_server setup
 
@@ -123,8 +133,19 @@ The t_server setup consists of three VMs:
 These VMs are configured mainly with cloud-init *write_files* and *runcmd*
 modules in the *tserver_user_data* Tofu module. However, OpenVPN certificates
 and keys are copied over with SSH-based provisioning as they do not fit in the
-cloud-init user data.  Additionally there are a few files which are managed as
+cloud-init user data. Additionally there are a few files which are managed as
 Tofu templates.
+
+# Accessing the virtual machines
+
+The *t_server_rocky_9_amd64* instance has an elastic IP (=static public IPv4
+address) you can use for SSH connections. The other VMs don't have EIPs, but do
+have public IPs.
+
+A better option is of course to use a VPN and block public SSH access
+altogether. For now the blocking part needs to be done from *sg.tf*.
+
+# Deploying the environment outside of AWS
 
 It is possible to build this environment outside of AWS and/or without Tofu,
 but in that case a lot of manual preparation is required. Once networks and VMs
@@ -132,38 +153,3 @@ are up, though, you should be able to just run the scripts that cloud-init runs
 to configure your VMs according to their roles. Refer to
 `modules/tserver_user_data/main.tf` and `modules/tserver_user_data/provision`
 for details.
-
-# Manual OpenVPN test environment
-
-The manual OpenVPN test setup doubles as a remote access solution to the
-t_server test setup. It consists of a number of OpenVPN servers, client and
-support VMs:
-
-* Rocky Linux 9 OpenVPN setup
-    * **openvpn_rocky_9**: an OpenVPN server based on Rocky Linux 9
-    * **openvpn_client**: an OpenVPN client for this server
-* Ubuntu 24.04 OpenVPN setup
-    * **openvpn_ubuntu_2404**: an OpenVPN server based on Ubuntu 24.04
-    * **openvpn_client_ubuntu_2404**: an OpenVPN client for this server
-* Windows Server 2025 base OpenVPN setup
-    * **openvpn_windows**: an OpenVPN server based on Windows Server Base 2025
-    * **openvpn_client_windows**: an OpenVPN client for this server
-* **office_server**: an OpenVPN client in a different, public subnet that should be reachable through any of the above VPNs; mainly meant for iroute testing
-* **private_office_server**: an OpenVPN client in a different, private subnet that should be reachable through any of the above VPNs; mainly meant for iroute testing
-
-The VPN CIDR blocks for each OpenVPN server must be configured in
-`input.auto.tfvars` so that return packets can find their way to the OpenVPN
-clients. These servers are configured with Ansible code that is not currently
-stored in this repository.
-
-# Otterwiki
-
-This server is an testing/staging instance for the community.openvpn.net
-Otterwiki instance. It is managed by Puppet Bolt code that is not currently
-stored in this repository.
-
-# Buildbot
-
-This server is an testing/staging instance for the OpenVPN community buildbot.
-It can be configured with the normal bootstrapping scripts in openvpn-buildbot
-repository.
