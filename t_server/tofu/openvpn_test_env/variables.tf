@@ -118,16 +118,6 @@ variable "tserver_client_hostname" {
   type        = string
 }
 
-variable "tserver_allow_ipv4" {
-  description = "IPv4 CIDR block to allow connections to tserver instance from"
-  type        = string
-}
-
-variable "tserver_allow_ipv6" {
-  description = "IPv6 CIDR block to allow connections to tserver instance from"
-  type        = string
-}
-
 variable "tserver_provisioning_ssh_private_key" {
   description = "Path to SSH private key for provisioning things that do not fit into the userdata"
   type        = string
