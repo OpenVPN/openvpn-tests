@@ -26,5 +26,5 @@ for SERVER in tserver-client tserver-anchor; do
     # Synchronize the keys. This should work as long as the keydir is present
     # and is writeable on the client and anchor VMs when this script runs. That
     # should always be the case as it gets created very early on.
-    rsync -e "ssh -i $SSH_PRIVATE_KEY" -va $KEYDIR/ta*.key $KEYDIR/tc*.key $USERNAME@$SERVER:$KEYDIR/
+    rsync -e "ssh -i $SSH_PRIVATE_KEY" -va $KEYDIR/p2p.key $KEYDIR/ta*.key $KEYDIR/tc*.key $USERNAME@$SERVER:$KEYDIR/
 done

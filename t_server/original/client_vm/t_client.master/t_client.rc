@@ -40,7 +40,7 @@ PROXY_SERVER_IPV4="$(dig +short A $REMOTE)"
 PROXY_SERVER_IPV6="$(dig +short AAAA $REMOTE)"
 AUTH_DIR="$OPENVPN_TEST_SERVER_DIR/auth"
 PEER_FINGERPRINT="$(openssl x509 -fingerprint -sha256 -noout -in /openvpn-test-server/keys/server.crt|cut -d "=" -f 2)"
-PING8_SH="$BINDIR/ping8.sh"
+PING8_SH="/root/bin/ping8.sh"
 
 #
 # tests to run (list suffixes for config stanzas below)
