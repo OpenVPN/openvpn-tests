@@ -146,12 +146,12 @@ data "aws_ami" "ubuntu_2404_arm64" {
   owners = ["099720109477"] # Canonical
 }
 
-data "aws_ami" "freebsd_142" {
+data "aws_ami" "freebsd_144" {
   most_recent = true
 
   filter {
     name   = "name"
-    values = ["FreeBSD 14.2-RELEASE-amd64 UEFI-PREFERRED base UFS-prod-5llxzlcoynope"]
+    values = ["FreeBSD 14.4-RELEASE-amd64 UEFI-PREFERRED base UFS-prod-5llxzlcoynope"]
   }
 
   filter {
