@@ -53,11 +53,10 @@ PING8_SH="/root/bin/ping8.sh"
 #
 # https://redmine.puppeteers.in/issues/4240
 
-TEST_RUN_LIST="1 1a 1b 1c 1d 1e 1x 2 2a 2b 2c 2d 2e 2f 2g 2h 2w 2x 2y 2z1 2z2 3 3m 5 5a 5b 5c 5d 5e 5m 5n 5u1 5v1 5v2 5v3 5w1 5w2 5w3 5w4 5x1 5x2 5x3 5x4 6 7 7a 7b 7x 7x2 7y 8 8a 9 9a 10 10a 10b 10u 10v 10w 10x 10z 11 11a 11t 11z"
+TEST_RUN_LIST="1 1a 1b 1c 1d 1e 1x 2 2a 2b 2c 2d 2e 2f 2g 2h 2w 2x 2y 2z1 2z2 3 3m 5 5a 5b 5c 5d 5e 5m 5n 5u1 5u2 5v1 5v2 5v3 5w1 5w2 5w3 5w4 5x1 5x2 5x3 5x4 6 7 7a 7b 7x 7x2 7y 8 8a 9 9a 10 10a 10b 10u 10v 10w 10x 10z 11 11a 11t 11z"
 
 # Disabled tests
 #TEST_RUN_LIST+="4 4a 4b" # needs anchor VM
-#TEST_RUN_LIST+="5u2" # need to figure out why this should fail
 #TEST_RUN_LIST+="7l" # needs lwipovpn
 
 if [ -n "$TEST_RUN_OVERRIDE" ] ; then
@@ -433,7 +432,7 @@ OPENVPN_CONF_5u1="$OPENVPN_BASE_P2MP --dev tun --proto udp4 --remote $REMOTE --p
 EXPECT_FAIL_5u1="All connections have been connect-retry-max"
 
 RUN_TITLE_5u2="udp / p2pm / top net30 / ipv6 only server / tls-crypt-v2 (invalid/XX)"
-OPENVPN_CONF_5u2="$OPENVPN_BASE_P2MP --dev tun --proto udp4 --remote $REMOTE --port 51197 --push-peer-info --tls-crypt-v2 $KEYBASE/tcv2-5-client-XX.key --connect-timeout 10 --connect-retry-max 1"
+OPENVPN_CONF_5u2="$OPENVPN_BASE_P2MP --dev tun --proto udp4 --remote $REMOTE --port 51197 --push-peer-info --tls-crypt-v2 $KEYBASE/tcv2-client-XX.key --connect-timeout 10 --connect-retry-max 1"
 #EXPECT_IFCONFIG4_5u2=-
 #EXPECT_IFCONFIG6_5u2=-
 EXPECT_FAIL_5u2="All connections have been connect-retry-max"
