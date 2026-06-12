@@ -7,7 +7,7 @@ SUFFIX=$2
 git checkout $BRANCH || git checkout -b $BRANCH origin/$BRANCH
 autoreconf -vi
 ./configure
-make
+make -j2
 
 # The executable location is not static when we go back far enough in history
 EXE=$(find . -type f -name "openvpn" -perm 0755 -mmin -1)
