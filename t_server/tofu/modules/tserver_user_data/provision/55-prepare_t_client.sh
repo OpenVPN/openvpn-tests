@@ -26,9 +26,8 @@ for V in 22 23 24 25 26 master; do
     sed -i -E "s|CLIENT_CERT=\".*\"|CLIENT_CERT=\"\$KEYBASE/client-$V.crt\"|" "$F"
     sed -i -E "s|REMOTE=\".*\"|REMOTE=\"$REMOTE\"|" "$F"
 
-    # Make sure that t_client_ips.rc is writeable by the default user and executable
+    # Make sure that t_client_ips.rc is writeable by the default user
     touch "$HOMEDIR/t_client.$V/t_client_ips.rc"
-    chmod 755 "$HOMEDIR/t_client.$V/t_client_ips.rc"
 done
 
 # Create credentials files required by several tests
