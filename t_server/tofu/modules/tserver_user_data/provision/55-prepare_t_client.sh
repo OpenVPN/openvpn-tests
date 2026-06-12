@@ -34,5 +34,9 @@ done
 mkdir -p $OPENVPN_TEST_SERVER_DIR/auth
 echo "fbsd-tc-master" > $OPENVPN_TEST_SERVER_DIR/auth/aup.txt
 echo "totallysecret" >> $OPENVPN_TEST_SERVER_DIR/auth/aup.txt
+echo "<auth-user-pass>" > $OPENVPN_TEST_SERVER_DIR/auth/aup.conf
+echo "fbsd-tc-master">> $OPENVPN_TEST_SERVER_DIR/auth/aup.conf
+echo "totallysecret" >> $OPENVPN_TEST_SERVER_DIR/auth/aup.conf
+echo "</auth-user-pass>" >> $OPENVPN_TEST_SERVER_DIR/auth/aup.conf
 echo "fbsd-tc-master" > $OPENVPN_TEST_SERVER_DIR/auth/aup-fail.txt
 echo "wrongpassword" >> $OPENVPN_TEST_SERVER_DIR/auth/aup-fail.txt
