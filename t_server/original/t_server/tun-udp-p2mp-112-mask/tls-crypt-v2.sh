@@ -1,5 +1,5 @@
 #!/bin/sh
-cd /root/t_server/tun-udp-p2mp-112-mask
+cd /home/rocky/openvpn-tests/t_server/original/t_server/tun-udp-p2mp-112-mask
 exec >> tlsv2sh.out 2>&1
 date
 echo $@

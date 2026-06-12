@@ -1,5 +1,7 @@
 #!/bin/sh
 
+export PATH=/bin:/usr/bin:/sbin:/usr/sbin
+
 # make tap interface
 ip tuntap add mode tap name tap9
 ip link set address 0:2:3:4:5:6 dev tap9

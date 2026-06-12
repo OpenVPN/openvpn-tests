@@ -1,10 +1,13 @@
 #!/bin/sh
 #
-KEY=/home/gert/.ssh/id_ecdsa_tc
-HOST=fbsd-tc.ov.greenie.net
-TESTSETS="22 23.small 23 24 25 26 master"
+. /var/lib/provision/deployment-config.sh
 
-LOGDIR=/home/gert/t_server_logs
+KEY=$SSH_PRIVATE_KEY
+HOST=tserver-client.$PRIVATE_DNS_ZONE_NAME
+#TESTSETS="22 23.small 23 24 25 26 master"
+TESTSETS="master"
+
+LOGDIR=$HOMEDIR/t_server_logs
 DAY=`date +%Y%m%d`
 NOW=`date +%Y%m%d-%H%M`
 
@@ -17,7 +20,7 @@ do
     echo "$T..."
     LOG=$LOGDIR/$DAY/$NOW.$T.out
     
-    ssh -i $KEY $HOST "cd t_client.$T ; TEST_RUN_OVERRIDE='$TEST_RUN_OVERRIDE' ../bin/t_client.sh $T 2>&1" >$LOG
+    ssh -i $KEY $HOST "cd t_client.$T ; TEST_RUN_OVERRIDE='$TEST_RUN_OVERRIDE' t_client_ips_rc="./t_client_ips.rc" update_t_client_ips="../bin/update_t_client_ips.sh" t_server="yes" ../bin/t_client.sh $T 2>&1" >$LOG
     RC=$?
     case $RC in
 	0)   grep "Test sets" $LOG ;;		# all good

@@ -1,0 +1,14 @@
+FROM docker.io/ubuntu:20.04
+
+COPY prepare-openvpn-build.sh /build/
+COPY create-openvpn-executable.sh /build/
+
+RUN /build/prepare-openvpn-build.sh
+
+WORKDIR /build/openvpn
+RUN /build/create-openvpn-executable.sh release/2.4 24
+RUN /build/create-openvpn-executable.sh release/2.5 25
+
+WORKDIR /home/ubuntu
+
+RUN bash -c 'echo "Available OpenVPN versions:"; ls /usr/local/bin|cat'

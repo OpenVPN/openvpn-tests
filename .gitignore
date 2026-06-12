@@ -1,0 +1,9 @@
+t_server/original/config
+*.pid
+openvpn-status.log
+ipp.txt
+/t_server/tofu/openvpn_test_env/.terraform
+/t_server/tofu/openvpn_test_env/input.auto.tfvars
+/t_server/tofu/openvpn_test_env/backend.tfvars
+/t_server/tofu/openvpn_test_env/*.tfstate
+*.swp

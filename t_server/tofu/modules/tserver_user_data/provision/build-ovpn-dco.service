@@ -1,0 +1,11 @@
+[Unit]
+Description=Build ovpn-dco after first reboot
+
+[Service]
+Type=oneshot
+ExecStart=%h/bin/build-ovpn-dco.sh
+StandardOutput=journal
+
+[Install]
+WantedBy=default.target
+

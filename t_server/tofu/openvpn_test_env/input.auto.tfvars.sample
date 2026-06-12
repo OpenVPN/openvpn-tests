@@ -1,0 +1,82 @@
+### Features
+
+# Add DNS records to the public DNS zone (requires registering the domain on AWS Route53)
+enable_public_dns_zone = false
+
+# Private DNS zone is used to allow the EC2 instances to address each other
+# with names instead of IP addresses. It also makes life easier when accessing
+# the VPC through a VPN server with a DNS forwarder configured.
+#
+# WARNING: enabling the private DNS zone changes DHCP options for the VPC. If
+# deploying these resources to an existing VPC that may cause problems.
+#
+enable_private_dns_zone = true
+
+# Enable automatic stopping of virtual machines at night
+enable_scheduler_stop_start = false
+
+### Region settings
+#
+# AWS region to use. Remember to change it in provider.tf as well!
+region = "eu-north-1"
+
+### External VPC settings
+#
+# Fill these in _if_ you don't wish to create the VPC with this root module.
+#
+manage_vpc                                         = false
+external_primary_vpc_id                            = "vpc-abcdef0123456789a"
+external_primary_vpc_primary_public_subnet_id      = "subnet-cdef0123456789abc"
+external_primary_vpc_primary_public_route_table_id = "rtb-f0123456789abcdef012"
+
+### VPC settings
+#
+# Only required when this module manages the VPC
+#
+primary_vpc_cidr_block                          = "10.151.0.0/22"
+primary_vpc_primary_public_subnet_cidr_block    = "10.151.0.0/24"
+primary_vpc_secondary_public_subnet_cidr_block  = "10.151.1.0/24"
+primary_vpc_primary_private_subnet_cidr_block   = "10.151.2.0/24"
+primary_vpc_secondary_private_subnet_cidr_block = "10.151.3.0/24"
+
+### Provisioning settings
+#
+# Use private IP to provision. Keep this at false unless you have a VPN setup
+# in your VPC.
+provision_with_private_ip = false
+
+# This SSH key need to be present before running Tofu
+key_name = "tserver"
+
+# Required for installing the t_server client certs and key on the client VM,
+# which are too big to fit into user data
+tserver_provisioning_ssh_private_key = "/home/john/.ssh/tserver"
+
+### DNS settings
+#
+# The public DNS zone name is used in certificate names. Keep it defined even
+# if the public DNS zone is disabled.
+public_dns_zone_name = "tserver.site"
+
+# The private DNS zone in Route 53 is used in the VPC DHCP options so that the
+# EC2 instances can use proper names (e.g. tserver-client.tserver.vpn) to
+# communicate with each other.
+private_dns_zone_name = "tserver.vpn"
+
+### Misc settings
+#
+# t_server VPN CIDR block
+tserver_rocky_9_amd64_vpn_cidr_block = "10.52.124.0/24"
+
+# This gets added to AWS tags and is purely informal
+deployment = "production"
+
+# Hostnames for the t_server EC2 instances; these will be added to private DNS
+# if that is enabled.
+tserver_anchor_hostname        = "tserver-anchor"
+tserver_client_hostname        = "tserver-client"
+tserver_rocky_9_amd64_hostname = "tserver-rocky-9-amd64"
+
+# Git settings
+git_name  = "John Doe"
+git_email = "john.doe@example.com"

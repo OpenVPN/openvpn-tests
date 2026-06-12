@@ -1,5 +1,5 @@
 #!/bin/sh
-cd /root/t_server/tun-udp-p2mp-hash-defscript
+cd /home/rocky/openvpn-tests/t_server/original/t_server/tun-udp-p2mp-hash-defscript
 exec >>aupv-script.log 2>&1
 echo " ------------------"
 date

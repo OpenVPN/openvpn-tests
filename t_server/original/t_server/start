@@ -1,6 +1,11 @@
 #!/bin/sh
 #
 #
+SCRIPT=$(realpath "$0")
+SCRIPTPATH=$(dirname "$SCRIPT")
+
+. /var/lib/provision/deployment-config.sh
+
 INSTANCES="
 tun-tcp-p2mp
 tun-udp-p2mp
@@ -17,7 +22,7 @@ tap-tcp-p2p
 tun-udp-p2p-tls-sha256
 "
 
-cd /root/openvpn-test-server || exit 1
+#cd /root/openvpn-test-server || exit 1
 ip addr add 10.204.0.1/32 dev lo
 ip addr add fd00:abcd:204:0::1/128 dev lo
 
@@ -29,19 +34,22 @@ ip addr add fd00:dead:beef::2002/128 dev lo
 # start/stop single instances: "./start tap-udp-p2mp"
 if [ "$1" != '' ] ; then INSTANCES="$@" ; fi
 
+cd "$SCRIPTPATH"
+
 for SI in $INSTANCES
 do
     # to avoid starting an instance, just put an "X" before the 
     # directory name in the list above -> skip all non-existing dirs
-    if [ ! -d $SI ] ; then continue ; fi
+    if [ ! -d "$SCRIPTPATH/$SI" ] ; then continue ; fi
 
     echo "starting $SI/server.conf..."
-    ./bin/openvpn --daemon $SI --cd $SI --config server.conf \
-		--writepid ../openvpn-$SI.pid
+    $BINDIR/openvpn --daemon $SI --cd "$SI" --config server.conf \
+        --writepid ../openvpn-$SI.pid
+
  # print config (grep'ed from server.conf)
     sleep 1
  # is instance running?
-    cpid=`cat openvpn-$SI.pid`
+    cpid=`cat ./openvpn-$SI.pid`
     if [ "$cpid" = "" ] ; then
 	echo "   ERROR: $SI failed to start (no/empty pid file)"
         continue
