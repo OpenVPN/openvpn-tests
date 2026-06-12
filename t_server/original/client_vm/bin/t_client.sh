@@ -415,7 +415,7 @@ do
            if [ $? -eq 0 ]; then
                ovpn_init_check=0
                ovpn_init_success=1
-               sleep 3         # give openvpn time to quit
+               sleep 5         # give openvpn time to quit
            fi
        else
            grep "Initialization Sequence Completed" $LOGDIR/$SUF:openvpn.log >/dev/null
