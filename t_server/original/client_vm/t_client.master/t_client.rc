@@ -427,8 +427,7 @@ PING6_HOSTS_5n=$PING6_HOSTS_5
 #    -> --hand-window, not --connect-timeout
 #  - "key is garbage" does not send anything back --> connect-timeout (5u2)
 RUN_TITLE_5u1="udp / p2pm / top net30 / ipv6 only server / tls-crypt-v2 (invalid/bbb)"
-#OPENVPN_CONF_5u1="$OPENVPN_BASE_P2MP --dev tun --proto udp4 --remote $REMOTE --port 51197 --push-peer-info --tls-crypt-v2 $KEYBASE/tcv2-5-client-bb.key --server-hand-window 10 --connect-retry-max 1"
-OPENVPN_CONF_5u1="$OPENVPN_BASE_P2MP --dev tun --proto udp4 --remote $REMOTE --port 51197 --push-peer-info --tls-crypt-v2 $KEYBASE/tcv2-5-client-bb.key --connect-retry-max 1"
+OPENVPN_CONF_5u1="$OPENVPN_BASE_P2MP --dev tun --proto udp4 --remote $REMOTE --port 51197 --push-peer-info --tls-crypt-v2 $KEYBASE/tcv2-5-client-bb.key --hand-window 10 --connect-retry-max 1"
 #EXPECT_IFCONFIG4_5u1=-
 #EXPECT_IFCONFIG6_5u1=-
 EXPECT_FAIL_5u1="All connections have been connect-retry-max"
