@@ -41,8 +41,8 @@ module "tserver_rocky_9_amd64_user_data" {
   tserver_private_fqdn  = local.tserver_rocky_9_amd64_private_fqdn
   my_fqdn               = local.tserver_rocky_9_amd64_fqdn
   tserver               = true
-  tserver_allow_ipv4    = var.tserver_allow_ipv4
-  tserver_allow_ipv6    = var.tserver_allow_ipv6
+  tserver_allow_ipv4    = local.primary_vpc_cidr_block
+  tserver_allow_ipv6    = local.primary_vpc_ipv6_cidr_block
   default_user          = var.rocky_9_default_user
   default_group         = var.rocky_9_default_user
   ssh_private_key       = sshkey_ed25519_key_pair.tserver.private_key_pem
