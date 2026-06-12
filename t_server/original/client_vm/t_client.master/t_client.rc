@@ -10,7 +10,7 @@
 . /var/lib/provision/deployment-config.sh
 
 # Load EXPECT_IFCONFIG* values from the cache, if present
-test -r ./t_client_ips.rc && ./t_client_ips.rc
+test -r ./t_client_ips.rc && . ./t_client_ips.rc
 
 if [ -z "$KEYBASE" ] ; then
     KEYBASE="$KEYDIR"
