@@ -568,6 +568,9 @@ OPENVPN_CONF_7x="$OPENVPN_BASE_P2MP --dev tun --proto udp4 --remote $REMOTE --po
 EXPECT_FAIL_7x="Received control message: AUTH_FAILED"
 
 # 7x2: auth-user-pass *fail* (too long)
+# Note that this test fails (i.e. connection succeeds) when the
+# client openvpn executable is compiled without --enable-pkcs11
+# since the username is then already truncated on the client side.
 RUN_TITLE_7x2="udp / p2pm / top subnet / global / auth-user-pass *fail*"
 OPENVPN_CONF_7x2="$OPENVPN_BASE_P2MP --dev tun --proto udp4 --remote $REMOTE --port 51199 --auth-user-pass $AUTH_DIR/aup-toolong.txt"
 #EXPECT_IFCONFIG4_7x2=-

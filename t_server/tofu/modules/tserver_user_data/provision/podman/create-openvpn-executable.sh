@@ -6,7 +6,7 @@ SUFFIX=$2
 
 git checkout $BRANCH || git checkout -b $BRANCH origin/$BRANCH
 autoreconf -vi
-./configure
+./configure --enable-pkcs11
 make -j2
 
 # The executable location is not static when we go back far enough in history
