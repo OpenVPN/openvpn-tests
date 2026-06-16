@@ -68,7 +68,7 @@ if [ $? != 0 ] ; then
 fi
 
 echo "make (quiet)..."
-make >make.stdout 2>&1
+make -j$(nproc) >make.stdout 2>&1
 if [ $? != 0 ] ; then
     echo "make failed, output follows..."
     tail -20 make.stdout
