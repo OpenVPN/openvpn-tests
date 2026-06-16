@@ -92,11 +92,12 @@ src/openvpn/openvpn --version |head -2
 
 
 echo "restart server processes..."
+sudo $SCRIPTPATH/t_server/stop
+sleep 14		# wg. multisocket/EEN, issue #702
+
 cp -v $BINDIR/openvpn $BINDIR/openvpn.$DAY
 cp -v src/openvpn/openvpn $BINDIR/openvpn
 
-sudo $SCRIPTPATH/t_server/stop
-sleep 14		# wg. multisocket/EEN, issue #702
 sudo $SCRIPTPATH/t_server/start
 #sudo sh -c "setsid /root/t_server/start"
 
