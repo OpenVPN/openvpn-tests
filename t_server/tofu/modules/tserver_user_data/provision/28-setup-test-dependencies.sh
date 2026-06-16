@@ -63,8 +63,7 @@ echo "auth required pam_userdb.so db=/openvpn-test-server/pam_userdb/users dump 
 echo "account required pam_permit.so" >> /etc/pam.d/openvpn-global
 
 cd "$PAM_USERDB_DIR"
-echo john > users
-echo password >> users
+cp $OPENVPN_TESTS_GIT_REPO/t_server/original/t_server/users.txt users
 db_load -T -t hash -f users users.db
 chmod 644 users users.db
 

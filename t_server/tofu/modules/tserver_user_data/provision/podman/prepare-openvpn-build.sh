@@ -33,6 +33,7 @@ apt-get -y install \
 dnsutils \
 fping \
 iproute2 \
+iputils-ping \
 sudo
 
 # Clone OpenVPN

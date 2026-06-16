@@ -10,7 +10,7 @@
 . /var/lib/provision/deployment-config.sh
 
 # Load EXPECT_IFCONFIG* values from the cache, if present
-test -r ./t_client_ips.rc && ./t_client_ips.rc
+test -r ./t_client_ips.rc && . ./t_client_ips.rc
 
 if [ -z "$KEYBASE" ] ; then
     KEYBASE="$KEYDIR"
@@ -40,52 +40,24 @@ PROXY_SERVER_IPV4="$(dig +short A $REMOTE)"
 PROXY_SERVER_IPV6="$(dig +short AAAA $REMOTE)"
 AUTH_DIR="$OPENVPN_TEST_SERVER_DIR/auth"
 PEER_FINGERPRINT="$(openssl x509 -fingerprint -sha256 -noout -in /openvpn-test-server/keys/server.crt|cut -d "=" -f 2)"
-PING8_SH="$BINDIR/ping8.sh"
+PING8_SH="/root/bin/ping8.sh"
 
 #
 # tests to run (list suffixes for config stanzas below)
-#
-#TEST_RUN_LIST="1"
-# 1a 1b 1c 1d 1e 1x 2 2a 2b 2c 2g 2h 2d 2e 2f 2w 2x 2y 2z1 2z2 3 3m 4 4a 4b 5 5a 5b 5c 5d 5e 5m 5n 5u1 5u2 5v1 5v2 5v3 5w1 5w2 5w3 5w4 5x1 5x2 5x3 5x4 6 7 7b 7l 7x 7x2 7y 8 8a 9 9a 10 10a 10b 10u 10v 10w 10x 10z 11 11a 11z 11 11a
-#TEST_RUN_LIST="1 1a 1b 1c 1d 1e 1x 2 2a 2b 2c 2g 2h 2d 2e 2f 2w 2x 2y 2z1 2z2 3 3m 4 4a 4b 5 5a 5b 5c 5d 5e 5m 5n 5u1 5u2 5v1 5v2 5v3 5w1 5w2 5w3 5w4 5x1 5x2 5x3 5x4 6 7 7b 7l 7x 7x2 7y 8 8a 9 9a 10 10a 10b 10u 10v 10w 10x 10z 11 11a 11z 11 11a"
-
-# gert, 4.10.20 - 4a is fixed, and this is "master only"
-# freebsd / master: 4a derzeit nicht (tap + top subnet)
-# freebsd / 2.4: 2f, 4b derzeit nicht (IPv6-only)
-#TEST_RUN_LIST="1 1a 1b 1c 1d 1e 2 2a 2b 2c 2d 2e 3 4 5 5a 5b 5c 5d 5v1 5v2 5v3 5w1 5w2 5w3 5w4 5x1 5x2 5x3 5x4 6 7 7x 8 8a 9"
 #
 #case $BRANCH in
 #	master) TEST_RUN_LIST="$TEST_RUN_LIST 2f 4b" ;;
 #esac
 
-#TEST_RUN_LIST="1 1a 2 3"
-#TEST_RUN_LIST="1a"
-#TEST_RUN_LIST="1b 1c 1d"
-#TEST_RUN_LIST="1d 1e 2d 2e"	# socks tcp4/tcp6/udp4/udp6
-#TEST_RUN_LIST="2e"	# socks udp6 - does not work - openvpn!
-#TEST_RUN_LIST="1d"
-#TEST_RUN_LIST="1e"		# "used to be: needs 'openssh -D 2222'"
-#TEST_RUN_LIST="2 2a"
-#TEST_RUN_LIST="2d"
-#TEST_RUN_LIST="2d 2e 4 4b"	# normal / v6-only
-#TEST_RUN_LIST="2e"
-#TEST_RUN_LIST="4 4a 4b"	# TAP tests
-#TEST_RUN_LIST="6"		# --fragment
-#TEST_RUN_LIST="8"
-#TEST_RUN_LIST="9"		# --inetd
-#TEST_RUN_LIST="2 2a 2c"		# --ncp-disable, --multihome
-#TEST_RUN_LIST="8 8a 9"		# p2p, --inetd (-> gentoo.ov)
-#TEST_RUN_LIST="8 8a"	# fails
-
 # This translates to "all tests" currently (18th September 2025)
 #
 # https://redmine.puppeteers.in/issues/4240
 
-TEST_RUN_LIST="1 1a 1b 1c 1d 1e 1x 2 2a 2b 2c 2d 2e 2f 2g 2h 2w 2x 2y 2z1 2z2 3 3m 4 4a 4b 5 5a 5b 5c 5d 5e 5m 5n 5u1 5u2 5v1 5v2 5v3 5w1 5w2 5w3 5w4 5x1 5x2 5x3 5x4 6 7 7a 7b 7l 7x 7x2 7y 8 8a 9 9a 10 10a 10b 10u 10v 10w 10x 10z 11 11a 11t 11z"
+TEST_RUN_LIST="1 1a 1b 1c 1d 1e 1x 2 2a 2b 2c 2d 2e 2f 2g 2h 2w 2x 2y 2z1 2z2 3 3m 5 5a 5b 5c 5d 5e 5m 5n 5u1 5u2 5v1 5v2 5v3 5w1 5w2 5w3 5w4 5x1 5x2 5x3 5x4 6 7 7a 7b 7x 7x2 7y 8 8a 9 9a 10 10a 10b 10u 10v 10w 10x 10z 11 11a 11t 11z"
 
-#TEST_RUN_LIST="7 7a 7b 7l 7x 7x2 7y 10 10a 10b 10u 10v 10w 10x 10z"
-#TEST_RUN_LIST="10 10a 10b 10u 10v 10w 10x 10z"
-TEST_RUN_LIST="10 10a 10b 10x"
+# Disabled tests
+#TEST_RUN_LIST+="4 4a 4b" # needs anchor VM
+#TEST_RUN_LIST+="7l" # needs lwipovpn
 
 if [ -n "$TEST_RUN_OVERRIDE" ] ; then
     echo "overriding test list: $TEST_RUN_OVERRIDE"
@@ -454,14 +426,13 @@ PING6_HOSTS_5n=$PING6_HOSTS_5
 #    -> --hand-window, not --connect-timeout
 #  - "key is garbage" does not send anything back --> connect-timeout (5u2)
 RUN_TITLE_5u1="udp / p2pm / top net30 / ipv6 only server / tls-crypt-v2 (invalid/bbb)"
-#OPENVPN_CONF_5u1="$OPENVPN_BASE_P2MP --dev tun --proto udp4 --remote $REMOTE --port 51197 --push-peer-info --tls-crypt-v2 $KEYBASE/tcv2-5-client-bb.key --server-hand-window 10 --connect-retry-max 1"
-OPENVPN_CONF_5u1="$OPENVPN_BASE_P2MP --dev tun --proto udp4 --remote $REMOTE --port 51197 --push-peer-info --tls-crypt-v2 $KEYBASE/tcv2-5-client-bb.key --connect-retry-max 1"
+OPENVPN_CONF_5u1="$OPENVPN_BASE_P2MP --dev tun --proto udp4 --remote $REMOTE --port 51197 --push-peer-info --tls-crypt-v2 $KEYBASE/tcv2-5-client-bb.key --hand-window 10 --connect-retry-max 1"
 #EXPECT_IFCONFIG4_5u1=-
 #EXPECT_IFCONFIG6_5u1=-
 EXPECT_FAIL_5u1="All connections have been connect-retry-max"
 
 RUN_TITLE_5u2="udp / p2pm / top net30 / ipv6 only server / tls-crypt-v2 (invalid/XX)"
-OPENVPN_CONF_5u2="$OPENVPN_BASE_P2MP --dev tun --proto udp4 --remote $REMOTE --port 51197 --push-peer-info --tls-crypt-v2 $KEYBASE/tcv2-5-client-XX.key --connect-timeout 10 --connect-retry-max 1"
+OPENVPN_CONF_5u2="$OPENVPN_BASE_P2MP --dev tun --proto udp4 --remote $REMOTE --port 51197 --push-peer-info --tls-crypt-v2 $KEYBASE/tcv2-client-XX.key --connect-timeout 10 --connect-retry-max 1"
 #EXPECT_IFCONFIG4_5u2=-
 #EXPECT_IFCONFIG6_5u2=-
 EXPECT_FAIL_5u2="All connections have been connect-retry-max"

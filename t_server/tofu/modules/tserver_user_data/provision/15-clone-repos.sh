@@ -23,12 +23,3 @@ for REPO in $REPOS; do
 	chown -R $USERNAME:$GROUPNAME $REPONAME
     fi
 done
-
-# FIXME: remove this segment when no longer needed
-cd $HOMEDIR/openvpn-tests
-if ! git remote -v|grep upstream > /dev/null; then
-    git remote rename origin upstream
-    git remote add origin https://github.com/mattock/openvpn-tests.git
-    git fetch origin
-    git checkout -b t_server_template origin/t_server_template
-fi

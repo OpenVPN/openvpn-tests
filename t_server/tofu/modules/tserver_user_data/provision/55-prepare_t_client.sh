@@ -26,14 +26,17 @@ for V in 22 23 24 25 26 master; do
     sed -i -E "s|CLIENT_CERT=\".*\"|CLIENT_CERT=\"\$KEYBASE/client-$V.crt\"|" "$F"
     sed -i -E "s|REMOTE=\".*\"|REMOTE=\"$REMOTE\"|" "$F"
 
-    # Make sure that t_client_ips.rc is writeable by the default user and executable
+    # Make sure that t_client_ips.rc is writeable by the default user
     touch "$HOMEDIR/t_client.$V/t_client_ips.rc"
-    chmod 755 "$HOMEDIR/t_client.$V/t_client_ips.rc"
 done
 
 # Create credentials files required by several tests
 mkdir -p $OPENVPN_TEST_SERVER_DIR/auth
 echo "fbsd-tc-master" > $OPENVPN_TEST_SERVER_DIR/auth/aup.txt
 echo "totallysecret" >> $OPENVPN_TEST_SERVER_DIR/auth/aup.txt
+echo "<auth-user-pass>" > $OPENVPN_TEST_SERVER_DIR/auth/aup.conf
+echo "fbsd-tc-master">> $OPENVPN_TEST_SERVER_DIR/auth/aup.conf
+echo "totallysecret" >> $OPENVPN_TEST_SERVER_DIR/auth/aup.conf
+echo "</auth-user-pass>" >> $OPENVPN_TEST_SERVER_DIR/auth/aup.conf
 echo "fbsd-tc-master" > $OPENVPN_TEST_SERVER_DIR/auth/aup-fail.txt
 echo "wrongpassword" >> $OPENVPN_TEST_SERVER_DIR/auth/aup-fail.txt

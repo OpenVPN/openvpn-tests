@@ -1,5 +1,5 @@
-output "freebsd_142_id" {
-  value = data.aws_ami.freebsd_142.id
+output "freebsd_144_id" {
+  value = data.aws_ami.freebsd_144.id
 }
 
 output "rocky_9_id" {

@@ -79,6 +79,17 @@ then
     exit 1
 fi
 
+echoout=`echo -e "foo\cbar"`
+if [ "$echoout" = "foo" ]; then
+    ECHO_E="-e"
+elif [ "$echoout" = "-e foo" ]; then
+    # echo doesn't interpret -e but supports escape sequences
+    ECHO_E=
+else
+    echo "something is wrong with your 'echo' command. FAIL." >&2
+    exit 1
+fi
+
 if [ -z "$CA_CERT" ] ; then
     echo "CA_CERT not defined in 't_client.rc'. SKIP test." >&2
     exit "${TCLIENT_SKIP_RC}"
@@ -154,9 +165,9 @@ output_start()
 {
     case $V in
 	0) outbuf="" ;;			# no per-test output at all
-	1) echo -e "$@"			# compact, details only on failure
+	1) echo $ECHO_E "$@"			# compact, details only on failure
            outbuf="\n" ;;
-	*) echo -e "\n$@\n" ;;		# print all, with a bit formatting
+	*) echo $ECHO_E "\n$@\n" ;;		# print all, with a bit formatting
     esac
 }
 
@@ -168,7 +179,7 @@ output()
 	1) outbuf="$outbuf$@" 		# print details only on failure
 	   test -z "$NO_NL" && outbuf="$outbuf\n"
            ;;
-	*) echo -e $NO_NL "$@" ;;	# print everything
+	*) echo $ECHO_E $NO_NL "$@" ;;	# print everything
     esac
 }
 
@@ -354,13 +365,12 @@ do
         up=""
     fi
 
-    echo -e "\n### test run $SUF: '$test_run_title' ###"
+
+    output_start "### test run $SUF: '$test_run_title' ###"
     if [ -n "$expect_fail" ] ; then
 	echo "### expect failure: '$expect_fail'";
     fi
     echo ""
-
-    output_start "### test run $SUF: '$test_run_title' ###"
     fail_count=0
 
     if [ -n "$test_check_skip" ]; then
@@ -369,7 +379,7 @@ do
         else
             output "skip check failed, SKIP test $SUF."
 	    SUMMARY_SKIP="$SUMMARY_SKIP $SUF"
-	    echo -e "$outbuf" ; continue
+	    echo $ECHO_E "$outbuf" ; continue
         fi
     fi
 
@@ -390,7 +400,7 @@ do
 	fail "make sure that ping hosts are ONLY reachable via VPN, SKIP test $SUF."
 	SUMMARY_FAIL="$SUMMARY_FAIL $SUF"
 	exit_code=31
-	echo -e "$outbuf" ; continue
+	echo $ECHO_E "$outbuf" ; continue
     fi
 
     #pidfile="${top_builddir}/tests/$LOGDIR/openvpn-$SUF.pid"
@@ -415,7 +425,7 @@ do
            if [ $? -eq 0 ]; then
                ovpn_init_check=0
                ovpn_init_success=1
-               sleep 3         # give openvpn time to quit
+               sleep 5         # give openvpn time to quit
            fi
        else
            grep "Initialization Sequence Completed" $LOGDIR/$SUF:openvpn.log >/dev/null
@@ -447,13 +457,13 @@ do
            $RUN_SUDO $KILL_EXEC $opid $sudopid
            echo "tail -5 $SUF:openvpn.log" >&2
            tail -5 $LOGDIR/$SUF:openvpn.log >&2
-           echo -e "\nFAIL. skip rest of sub-tests for test run $SUF.\n" >&2
+           echo $ECHO_E "\nFAIL. skip rest of sub-tests for test run $SUF.\n" >&2
            trap - 0 1 2 3 15
            SUMMARY_FAIL="$SUMMARY_FAIL $SUF"
            exit_code=32
            continue
        else
-           echo -e "test run $SUF: all tests OK (saw expected failure).\n"
+           echo $ECHO_E "test run $SUF: all tests OK (saw expected failure).\n"
            SUMMARY_OK="$SUMMARY_OK $SUF"
            continue
         fi
@@ -472,7 +482,7 @@ do
 	trap - 0 1 2 3 15
 	SUMMARY_FAIL="$SUMMARY_FAIL $SUF"
 	exit_code=30
-	echo -e "$outbuf" ; continue
+	echo $ECHO_E "$outbuf" ; continue
     fi
 
     # make sure openvpn client is terminated in case shell exits
@@ -535,15 +545,15 @@ do
 	SUMMARY_OK="$SUMMARY_OK $SUF"
     else
 	if [ "$V" -gt 0 ] ; then
-	    echo -e -n "$outbuf"
-	    echo -e "test run $SUF: $fail_count test failures. FAIL.\n"
+	    echo $ECHO_E -n "$outbuf"
+	    echo $ECHO_E "test run $SUF: $fail_count test failures. FAIL.\n"
         fi
 	SUMMARY_FAIL="$SUMMARY_FAIL $SUF"
 	exit_code=30
     fi
 
     if [ -n "$test_cleanup" ]; then
-        echo -e "cleaning up: '$test_cleanup'"
+        echo $ECHO_E "cleaning up: '$test_cleanup'"
         eval $test_cleanup
     fi
 
