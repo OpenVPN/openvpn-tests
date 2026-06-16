@@ -100,8 +100,8 @@ sleep 14		# wg. multisocket/EEN, issue #702
 sudo $SCRIPTPATH/t_server/start
 #sudo sh -c "setsid /root/t_server/start"
 
-#echo "sleep(10), give fbsd11+fbsd74 time to reconnect..."
-#oping -c10 10.204.4.200 fd00:abcd:204:4::a:200 10.207.4.207 fd00:abcd:207:4::a:207
+echo "sleep(10), give anchor clients time to reconnect..."
+sudo oping -c10 10.204.4.200 fd00:abcd:204:4::a:200 10.207.4.207 fd00:abcd:207:4::a:207
 
 #ssh $HOST 2.3, 2.4, master t_client runs
 echo "start client jobs..."

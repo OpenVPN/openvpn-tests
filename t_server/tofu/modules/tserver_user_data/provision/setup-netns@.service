@@ -1,0 +1,10 @@
+[Unit]
+Description=Set up netns config for OpenVPN client %i
+
+[Service]
+Type=oneshot
+RemainAfterExit=yes
+ExecStart=bash -c "/var/lib/provision/setup-netns.sh %i"
+
+[Install]
+WantedBy=multi-user.target

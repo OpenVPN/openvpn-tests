@@ -4,6 +4,6 @@ vlan-pvid 207
 push "route-gateway 10.207.4.1"
 
 # this is basically the test for the "cipher in ccd/ file" patch
-# "ncp-ciphers" is needed, with *exactly* this list, otherwise "AES"
-ncp-ciphers CAMELLIA-128-CBC
+# "data-ciphers" is needed, with *exactly* this list, otherwise "AES"
+data-ciphers CAMELLIA-128-CBC
 cipher CAMELLIA-128-CBC
