@@ -10,7 +10,7 @@ test -f $KNOWN_HOSTS && mv -vf $KNOWN_HOSTS $KNOWN_HOSTS.bak
 for SERVER in tserver-client tserver-anchor; do
     # The tserver nodes may get rebuilt, so we can't count on having static
     # host keys. Therefore we refetch them every time this script runs (which
-    # normally would be just once, or when explicitly requested.
+    # normally would be just once, or when explicitly requested).
 
     ssh-keyscan $SERVER >> $KNOWN_HOSTS 2> /dev/null
     ssh-keyscan $SERVER.$PRIVATE_DNS_ZONE_NAME >> $KNOWN_HOSTS 2> /dev/null

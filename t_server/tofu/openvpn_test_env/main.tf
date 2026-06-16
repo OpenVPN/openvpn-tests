@@ -24,13 +24,17 @@ module "scheduler-stop-start" {
 module "pki" {
   source  = "../modules/openvpn-test-pki"
   cn      = local.cn
-  clients = { tserver-anchor    = "RSA",
-              tserver-client-22 = "RSA",
-              tserver-client-23 = "RSA",
-              tserver-client-24 = "RSA",
-              tserver-client-25 = "RSA",
-              tserver-client-26 = "RSA",
-              tserver-client-27 = "RSA", }
+  clients = {
+    tserver-anchor-200 = "RSA",
+    tserver-anchor-207 = "RSA",
+    tserver-client-22 = "RSA",
+    tserver-client-23 = "RSA",
+    tserver-client-24 = "RSA",
+    tserver-client-25 = "RSA",
+    tserver-client-26 = "RSA",
+    tserver-client-27 = "RSA",
+    tserver-client-28 = "RSA",
+  }
 }
 
 module "tserver_rocky_9_amd64_user_data" {

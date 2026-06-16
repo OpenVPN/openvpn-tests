@@ -99,11 +99,21 @@ resource "aws_instance" "tserver_client" {
     destination = "${local.tserver_keydir}/client-27.key"
   }
 
+  provisioner "file" {
+    content     = module.pki.clients["tserver-client-28"]["cert"]
+    destination = "${local.tserver_keydir}/client-28.crt"
+  }
+
+  provisioner "file" {
+    content     = module.pki.clients["tserver-client-28"]["key"]
+    destination = "${local.tserver_keydir}/client-28.key"
+  }
+
   provisioner "remote-exec" {
     inline = ["sudo chown -R ${var.rocky_9_default_user}:${var.rocky_9_default_group} ${var.tserver_data_dir}",
               "chmod 600 ${local.tserver_keydir}/*.key",
-              "ln -s ${local.tserver_keydir}/client-27.crt ${local.tserver_keydir}/client-master.crt",
-              "ln -s ${local.tserver_keydir}/client-27.key ${local.tserver_keydir}/client-master.key"]
+              "ln -s ${local.tserver_keydir}/client-28.crt ${local.tserver_keydir}/client-master.crt",
+              "ln -s ${local.tserver_keydir}/client-28.key ${local.tserver_keydir}/client-master.key"]
 
   }
 
