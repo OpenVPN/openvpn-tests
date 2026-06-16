@@ -154,6 +154,14 @@ net.ipv4.ip_forward=1
 net.ipv6.conf.all.forwarding=1
 EOF
           },
+          {
+            path = "/etc/systemd/system/sockd.service.d/override.conf",
+            content = <<EOF
+[Service]
+Restart=on-failure
+RestartSec=10
+EOF
+          },
         ],
         runcmd = [
            "sudo -u ${var.default_user} mkdir -p ${local.keydir}",
