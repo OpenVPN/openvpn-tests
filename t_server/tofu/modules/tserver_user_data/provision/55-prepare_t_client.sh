@@ -32,11 +32,14 @@ done
 
 # Create credentials files required by several tests
 mkdir -p $OPENVPN_TEST_SERVER_DIR/auth
-echo "fbsd-tc-master" > $OPENVPN_TEST_SERVER_DIR/auth/aup.txt
-echo "totallysecret" >> $OPENVPN_TEST_SERVER_DIR/auth/aup.txt
+USERS_DB=$OPENVPN_TESTS_GIT_REPO/t_server/original/t_server/users.txt
+grep -A1 "^fbsd-tc-master" $USERS_DB > $OPENVPN_TEST_SERVER_DIR/auth/aup.txt
 echo "<auth-user-pass>" > $OPENVPN_TEST_SERVER_DIR/auth/aup.conf
-echo "fbsd-tc-master">> $OPENVPN_TEST_SERVER_DIR/auth/aup.conf
-echo "totallysecret" >> $OPENVPN_TEST_SERVER_DIR/auth/aup.conf
+cat $OPENVPN_TEST_SERVER_DIR/auth/aup.txt >> $OPENVPN_TEST_SERVER_DIR/auth/aup.conf
 echo "</auth-user-pass>" >> $OPENVPN_TEST_SERVER_DIR/auth/aup.conf
 echo "fbsd-tc-master" > $OPENVPN_TEST_SERVER_DIR/auth/aup-fail.txt
 echo "wrongpassword" >> $OPENVPN_TEST_SERVER_DIR/auth/aup-fail.txt
+# here we use the correct password, but a longer username. This is to test for an issue
+# where we truncated the username silently
+echo "ThisUserNameIsTooLongReally_ThisUserNameIsTooLongReally_ThisUserNameIsTooLongReally_ThisUserNameIsTooLongReally_ThisUserNameIsTooLongReally_ThisUserNameIsTooLongReally_ThisUserNameIsTooLongReally_ThisUserNameIsTooLongReally_230ch" > $OPENVPN_TEST_SERVER_DIR/auth/aup-toolong.txt
+grep -A1 "^ThisUserNameIsTooLongReally_" $USERS_DB | tail -n1 >> $OPENVPN_TEST_SERVER_DIR/auth/aup-toolong.txt
