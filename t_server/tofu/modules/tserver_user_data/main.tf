@@ -202,7 +202,7 @@ EOF
             permissions = "0o644",
           },
           {
-            path        = "/etc/systemd/system/openvpn-client\@.service.d/override.conf",
+            path        = "/etc/systemd/system/openvpn-client@.service.d/override.conf",
             content = <<EOF
 [Service]
 NetworkNamespacePath=/run/netns/%i
