@@ -7,8 +7,15 @@ PREFIX=192.168.${NETNS##*-}
 
 [ ! -e /run/netns/$NETNS ] || exit 0
 
+error_exit() {
+    : Cleaning up
+    ip netns del $NETNS
+    exit 1
+}
+trap error_exit ERR
+
 ip netns add $NETNS
-NETNS_EXEC="ip netns exec $NETNS"
+NETNS_EXEC="nsenter --net=/run/netns/$NETNS"
 VETH0="veth${NETNS##*-}e"
 VETH1="veth${NETNS##*-}i"
 
