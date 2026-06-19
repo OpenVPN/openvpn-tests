@@ -2,22 +2,27 @@
 
 set -eux
 
-NETNS=$1
-PREFIX=192.168.${NETNS##*-}
+NETNS="${1:?netns name required}"
+PREFIX="192.168.${NETNS##*-}"
 
-[ ! -e /run/netns/$NETNS ] || exit 0
+VETH_SUFFIX="${NETNS##*-}"
+VETH0="veth${VETH_SUFFIX}e"
+VETH1="veth${VETH_SUFFIX}i"
+NETNS_PATH="/run/netns/${NETNS}"
+NETNS_EXEC="nsenter --net=${NETNS_PATH}"
+
+[ ! -e "${NETNS_PATH}" ] || exit 0
 
 error_exit() {
-    : Cleaning up
-    ip netns del $NETNS
+    set +e
+    trap - ERR
+    ip link del "${VETH0}"
+    ip netns del "${NETNS}"
     exit 1
 }
 trap error_exit ERR
 
-ip netns add $NETNS
-NETNS_EXEC="nsenter --net=/run/netns/$NETNS"
-VETH0="veth${NETNS##*-}e"
-VETH1="veth${NETNS##*-}i"
+ip netns add "${NETNS}"
 
 $NETNS_EXEC ip link set dev lo up
 ip link add ${VETH0} type veth peer name ${VETH1}
