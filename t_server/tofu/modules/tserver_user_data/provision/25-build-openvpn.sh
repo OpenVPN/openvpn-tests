@@ -8,4 +8,4 @@ cd $HOMEDIR/openvpn
 
 autoreconf -vi
 ./configure
-make
+make -j$(nproc)

@@ -154,6 +154,14 @@ net.ipv4.ip_forward=1
 net.ipv6.conf.all.forwarding=1
 EOF
           },
+          {
+            path = "/etc/systemd/system/sockd.service.d/override.conf",
+            content = <<EOF
+[Service]
+Restart=on-failure
+RestartSec=10
+EOF
+          },
         ],
         runcmd = [
            "sudo -u ${var.default_user} mkdir -p ${local.keydir}",
@@ -183,10 +191,33 @@ EOF
             content     = file("${path.module}/provision/27-generate-openvpn-configs.sh"),
             permissions = "0o755",
           },
+          {
+            path        = "/var/lib/provision/setup-netns.sh",
+            content     = file("${path.module}/provision/setup-netns.sh"),
+            permissions = "0o755",
+          },
+          {
+            path        = "/usr/lib/systemd/system/tserver-setup-netns@.service",
+            content     = file("${path.module}/provision/setup-netns@.service"),
+            permissions = "0o644",
+          },
+          {
+            path        = "/etc/systemd/system/openvpn-client@.service.d/override.conf",
+            content = <<EOF
+[Service]
+NetworkNamespacePath=/run/netns/%i
+
+[Unit]
+Requires=tserver-setup-netns@%i.service
+After=tserver-setup-netns@%i.service
+EOF
+            permissions = "0o644",
+          },
         ],
         runcmd = [
-           "sudo -u ${var.default_user} mkdir -p ${local.keydir}",
-           "sudo -u ${var.default_user} /var/lib/provision/27-generate-openvpn-configs.sh",
+          "dnf -y install openvpn",
+          "sudo -u ${var.default_user} mkdir -p ${local.keydir}",
+          "/var/lib/provision/27-generate-openvpn-configs.sh",
         ],
       })
     }

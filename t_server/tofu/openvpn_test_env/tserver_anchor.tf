@@ -12,8 +12,7 @@ resource "aws_instance" "tserver_anchor" {
                                   "tostop" : "true",
                                   "Distro" : "Rocky",
                                   "Login" : "rocky" }
-  # The user data for tserver is close enough for the anchor VM
-  user_data                   = module.tserver_anchor_user_data.user_data 
+  user_data                   = module.tserver_anchor_user_data.user_data
   vpc_security_group_ids      = [ module.primary-vpc-standard-sg.id, ]
 
   # Copy OpenVPN certificates and keys. This needs to be done using a
@@ -41,13 +40,23 @@ resource "aws_instance" "tserver_anchor" {
   }
 
   provisioner "file" {
-    content     = module.pki.clients["tserver-anchor"]["cert"]
-    destination = "${local.tserver_keydir}/anchor.crt"
+    content     = module.pki.clients["tserver-anchor-200"]["cert"]
+    destination = "${local.tserver_keydir}/anchor-200.crt"
   }
 
   provisioner "file" {
-    content     = module.pki.clients["tserver-anchor"]["key"]
-    destination = "${local.tserver_keydir}/anchor.key"
+    content     = module.pki.clients["tserver-anchor-200"]["key"]
+    destination = "${local.tserver_keydir}/anchor-200.key"
+  }
+
+  provisioner "file" {
+    content     = module.pki.clients["tserver-anchor-207"]["cert"]
+    destination = "${local.tserver_keydir}/anchor-207.crt"
+  }
+
+  provisioner "file" {
+    content     = module.pki.clients["tserver-anchor-207"]["key"]
+    destination = "${local.tserver_keydir}/anchor-207.key"
   }
 
   provisioner "remote-exec" {

@@ -1,8 +1,10 @@
 resource "tls_private_key" "ca_key" {
   algorithm = "RSA"
+  rsa_bits  = 4096
 }
 resource "tls_private_key" "server_key" {
   algorithm = "RSA"
+  rsa_bits  = 4096
 }
 
 resource "tls_self_signed_cert" "ca" {
@@ -58,6 +60,7 @@ resource "tls_private_key" "client_key" {
   for_each = var.clients
 
   algorithm = each.value
+  rsa_bits  = 4096
 }
 resource "tls_cert_request" "client_csr" {
   for_each = var.clients

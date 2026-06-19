@@ -68,7 +68,7 @@ if [ $? != 0 ] ; then
 fi
 
 echo "make (quiet)..."
-make >make.stdout 2>&1
+make -j$(nproc) >make.stdout 2>&1
 if [ $? != 0 ] ; then
     echo "make failed, output follows..."
     tail -20 make.stdout
@@ -92,16 +92,17 @@ src/openvpn/openvpn --version |head -2
 
 
 echo "restart server processes..."
+sudo $SCRIPTPATH/t_server/stop
+sleep 14		# wg. multisocket/EEN, issue #702
+
 cp -v $BINDIR/openvpn $BINDIR/openvpn.$DAY
 cp -v src/openvpn/openvpn $BINDIR/openvpn
 
-sudo $SCRIPTPATH/t_server/stop
-sleep 14		# wg. multisocket/EEN, issue #702
 sudo $SCRIPTPATH/t_server/start
 #sudo sh -c "setsid /root/t_server/start"
 
-#echo "sleep(10), give fbsd11+fbsd74 time to reconnect..."
-#oping -c10 10.204.4.200 fd00:abcd:204:4::a:200 10.207.4.207 fd00:abcd:207:4::a:207
+echo "sleep(10), give anchor clients time to reconnect..."
+sudo oping -c10 10.204.4.200 fd00:abcd:204:4::a:200 10.207.4.207 fd00:abcd:207:4::a:207
 
 #ssh $HOST 2.3, 2.4, master t_client runs
 echo "start client jobs..."

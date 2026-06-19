@@ -45,14 +45,17 @@ resource "aws_instance" "tserver_rocky_9_amd64" {
     destination = "${local.tserver_keydir}/server.key"
   }
 
-  provisioner "file" {
-    content     = module.pki.clients["tserver-anchor"]["cert"]
-    destination = "${local.tserver_keydir}/anchor.crt"
-  }
-
+  # The client certs are required to generate FPs
+  # TODO: check whether we can produce this directly instead
+  # See 28-setup-test-dependencies.sh
   provisioner "file" {
     content     = module.pki.clients["tserver-client-22"]["cert"]
     destination = "${local.tserver_keydir}/client-22.crt"
+  }
+
+  provisioner "file" {
+    content     = module.pki.clients["tserver-client-22"]["key"]
+    destination = "${local.tserver_keydir}/client-22.key"
   }
 
   provisioner "file" {
@@ -61,8 +64,18 @@ resource "aws_instance" "tserver_rocky_9_amd64" {
   }
 
   provisioner "file" {
+    content     = module.pki.clients["tserver-client-23"]["key"]
+    destination = "${local.tserver_keydir}/client-23.key"
+  }
+
+  provisioner "file" {
     content     = module.pki.clients["tserver-client-24"]["cert"]
     destination = "${local.tserver_keydir}/client-24.crt"
+  }
+
+  provisioner "file" {
+    content     = module.pki.clients["tserver-client-24"]["key"]
+    destination = "${local.tserver_keydir}/client-24.key"
   }
 
   provisioner "file" {
@@ -71,13 +84,38 @@ resource "aws_instance" "tserver_rocky_9_amd64" {
   }
 
   provisioner "file" {
+    content     = module.pki.clients["tserver-client-25"]["key"]
+    destination = "${local.tserver_keydir}/client-25.key"
+  }
+
+  provisioner "file" {
     content     = module.pki.clients["tserver-client-26"]["cert"]
     destination = "${local.tserver_keydir}/client-26.crt"
   }
 
   provisioner "file" {
+    content     = module.pki.clients["tserver-client-26"]["key"]
+    destination = "${local.tserver_keydir}/client-26.key"
+  }
+
+  provisioner "file" {
     content     = module.pki.clients["tserver-client-27"]["cert"]
     destination = "${local.tserver_keydir}/client-27.crt"
+  }
+
+  provisioner "file" {
+    content     = module.pki.clients["tserver-client-27"]["key"]
+    destination = "${local.tserver_keydir}/client-27.key"
+  }
+
+  provisioner "file" {
+    content     = module.pki.clients["tserver-client-28"]["cert"]
+    destination = "${local.tserver_keydir}/client-28.crt"
+  }
+
+  provisioner "file" {
+    content     = module.pki.clients["tserver-client-28"]["key"]
+    destination = "${local.tserver_keydir}/client-28.key"
   }
 
   provisioner "remote-exec" {

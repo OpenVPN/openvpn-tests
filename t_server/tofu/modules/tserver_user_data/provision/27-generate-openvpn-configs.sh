@@ -4,12 +4,23 @@ set -e
 
 . $(dirname "$0")/deployment-config.sh
 
+# Make sure any systemd files we installed are read
+systemctl daemon-reload
+
 # Copy and modify anchor VMs OpenVPN client configuration file
-if ! [ -f "$OPENVPN_ETCDIR/anchor.conf" ]; then
-    mkdir -p "$OPENVPN_ETCDIR"
-    cp -v "$HOMEDIR/openvpn-tests/t_server/original/anchor_vm/openvpn.conf" "$OPENVPN_ETCDIR/anchor.conf"
-    sed -i s/"^ca .*"/"ca \/root\/openvpn-test-server\/keys\/ca.crt"/g "$OPENVPN_ETCDIR/anchor.conf"
-    sed -i s/"^cert .*"/"cert \/root\/openvpn-test-server\/keys\/anchor.crt"/g "$OPENVPN_ETCDIR/anchor.conf"
-    sed -i s/"^key .*"/"key \/root\/openvpn-test-server\/keys\/anchor.key"/g "$OPENVPN_ETCDIR/anchor.conf"
-    sed -i s/"^remote .*"/"remote $ANCHOR_REMOTE"/g "$OPENVPN_ETCDIR/anchor.conf"
-fi
+mkdir -p "$OPENVPN_ETCDIR"
+for config in anchor-200 anchor-207; do
+    cp -v "$HOMEDIR/openvpn-tests/t_server/original/anchor_vm/openvpn.conf" "$OPENVPN_ETCDIR/${config}.conf"
+    cp -v /root/openvpn-test-server/keys/ca.crt \
+       "/root/openvpn-test-server/keys/${config}."* \
+       "$OPENVPN_ETCDIR/"
+    sed -i -e s/"^ca .*"/"ca ca.crt"/g \
+        -e s/"^cert .*"/"cert ${config}.crt"/g \
+        -e s/"^key .*"/"key ${config}.key"/g \
+        -e s/"^remote .*"/"remote $ANCHOR_REMOTE"/g \
+        "$OPENVPN_ETCDIR/${config}.conf"
+
+    systemctl enable "tserver-setup-netns@${config}"
+    systemctl enable "openvpn-client@${config}"
+    systemctl restart "openvpn-client@${config}"
+done

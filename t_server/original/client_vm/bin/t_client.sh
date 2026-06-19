@@ -25,15 +25,12 @@ update_t_client_ips="${update_t_client_ips:-${srcdir}/update_t_client_ips.sh}"
 # HACK for t_server support
 #  Argument 1 is BRANCH (23, 24, master)
 #  export as $BRANCH to t_client.rc
-#  execute openvpn as ../bin/openvpn.$BRANCH
 if [ x"$t_server" != "x" ]; then
     export BRANCH="$1"
 
     if [ -z "$BRANCH" ] ; then
         echo "$0: branch missing (23/24/master)" >&2 ; exit 1
     fi
-
-    openvpn="${openvpn:-../bin/openvpn.$BRANCH}"
 fi
 
 if [ -r "${top_builddir}"/t_client.rc ] ; then

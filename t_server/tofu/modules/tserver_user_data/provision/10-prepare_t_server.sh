@@ -6,5 +6,4 @@ set -e
 
 mkdir -p $PREFIX
 mkdir -p $BINDIR
-mkdir -p $OPENVPN_ETCDIR
 chown -R $USERNAME:$GROUPNAME $PREFIX
