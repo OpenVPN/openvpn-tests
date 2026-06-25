@@ -55,6 +55,24 @@ variable "provision_with_private_ip" {
   default     = false
 }
 
+variable "transit_gateway_id" {
+  description = "ID of an existing Transit Gateway to attach the primary VPC to. Leave empty to not attach to any TGW."
+  type        = string
+  default     = ""
+}
+
+variable "transit_gateway_destination_cidr_blocks" {
+  description = "IPv4 CIDR blocks reachable over the Transit Gateway (e.g. the buildbot master VPC). Routes are added to the primary public route table, and to the private route table when manage_vpc is true. Only used when transit_gateway_id is set."
+  type        = list(string)
+  default     = []
+}
+
+variable "transit_gateway_destination_ipv6_cidr_blocks" {
+  description = "IPv6 CIDR blocks reachable over the Transit Gateway. Routes are added to the primary public route table, and to the private route table when manage_vpc is true. Only used when transit_gateway_id is set."
+  type        = list(string)
+  default     = []
+}
+
 variable "external_primary_vpc_id" {
   description = "Define when manage_vpc is false: the VPC ID for the VPC."
   type        = string
