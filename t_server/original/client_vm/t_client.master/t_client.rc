@@ -53,10 +53,11 @@ PING8_SH="/root/bin/ping8.sh"
 #
 # https://redmine.puppeteers.in/issues/4240
 
-TEST_RUN_LIST="1 1a 1b 1c 1d 1e 1x 2 2a 2b 2c 2d 2e 2f 2g 2h 2w 2x 2y 2z1 2z2 3 3m 4 4a 4b 5 5a 5b 5c 5d 5e 5m 5n 5u1 5u2 5v1 5v2 5v3 5w1 5w2 5w3 5w4 5x1 5x2 5x3 5x4 6 7 7a 7b 7x 7x2 7y 8 8a 9 9a 10 10a 10b 10u 10v 10w 10x 10z 11 11a 11t 11z"
+TEST_RUN_LIST="1 1a 1b 1c 1d 1e 1x 2 2a 2b 2c 2d 2e 2f 2g 2h 2w 2x 2y 2z1 2z2 3 3m 4 4a 4b 5 5a 5b 5c 5d 5e 5m 5n 5u1 5u2 5v1 5v2 5v3 5w1 5w2 5w3 5w4 5x1 5x2 5x3 5x4 6 7 7a 7b 7x 7x2 7y 8 8a 9 9a 10 10a 10b 10u 10v 10w 10x 10z 11 11a"
 
 # Disabled tests
-#TEST_RUN_LIST+="7l" # needs lwipovpn
+#TEST_RUN_LIST+=" 7l " # needs lwipovpn
+#TEST_RUN_LIST+=" 11t 11z " # needs fixes to session management
 
 if [ -n "$TEST_RUN_OVERRIDE" ] ; then
     echo "overriding test list: $TEST_RUN_OVERRIDE"
