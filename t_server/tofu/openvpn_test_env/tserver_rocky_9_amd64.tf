@@ -12,7 +12,8 @@ resource "aws_instance" "tserver_rocky_9_amd64" {
                                   "tostop" : "true",
                                   "Distro" : "Rocky",
                                   "Login" : "rocky" }
-  user_data                   = module.tserver_rocky_9_amd64_user_data.user_data 
+  user_data                   = module.tserver_rocky_9_amd64_user_data.user_data
+  user_data_replace_on_change = true
   vpc_security_group_ids      = [ module.primary-vpc-standard-sg.id,
                                   aws_security_group.tserver.id, ]
 

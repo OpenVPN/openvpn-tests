@@ -13,6 +13,7 @@ resource "aws_instance" "tserver_anchor" {
                                   "Distro" : "Rocky",
                                   "Login" : "rocky" }
   user_data                   = module.tserver_anchor_user_data.user_data
+  user_data_replace_on_change = true
   vpc_security_group_ids      = [ module.primary-vpc-standard-sg.id, ]
 
   # Copy OpenVPN certificates and keys. This needs to be done using a
