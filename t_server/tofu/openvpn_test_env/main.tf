@@ -48,7 +48,7 @@ module "tserver_rocky_9_amd64_user_data" {
   tserver_allow_ipv4    = local.primary_vpc_cidr_block
   tserver_allow_ipv6    = local.primary_vpc_ipv6_cidr_block
   default_user          = var.rocky_9_default_user
-  default_group         = var.rocky_9_default_user
+  default_group         = var.rocky_9_default_group
   ssh_private_key       = sshkey_ed25519_key_pair.tserver.private_key_pem
   data_dir              = var.tserver_data_dir
   install_buildbot      = var.install_buildbot
@@ -65,7 +65,7 @@ module "tserver_anchor_user_data" {
   my_fqdn              = local.tserver_anchor_fqdn
   tserver_anchor       = true
   default_user         = var.rocky_9_default_user
-  default_group        = var.rocky_9_default_user
+  default_group        = var.rocky_9_default_group
   ssh_public_key       = sshkey_ed25519_key_pair.tserver.public_key
   data_dir             = var.tserver_data_dir
   git_name             = var.git_name
@@ -80,7 +80,7 @@ module "tserver_client_user_data" {
   my_fqdn              = local.tserver_client_fqdn
   tserver_client       = true
   default_user         = var.rocky_9_default_user
-  default_group        = var.rocky_9_default_user
+  default_group        = var.rocky_9_default_group
   ssh_public_key       = sshkey_ed25519_key_pair.tserver.public_key
   data_dir             = var.tserver_data_dir
   git_name             = var.git_name
