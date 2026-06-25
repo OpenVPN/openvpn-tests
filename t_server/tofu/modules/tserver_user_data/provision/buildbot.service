@@ -1,0 +1,19 @@
+[Unit]
+Description=Buildbot Worker Service
+Wants=network-online.target
+After=network-online.target
+
+[Service]
+User=${user}
+Group=${group}
+PassEnvironment=BUILDBOT_BASEDIR BUILDMASTER BUILDMASTER_PORT
+PassEnvironment=WORKERNAME WORKERPASS WORKER_ENVIRONMENT_BLACKLIST
+EnvironmentFile=-/var/lib/provision/buildbot.env
+ExecStart=/usr/bin/bash -c "/buildbot/venv/bin/twistd --pidfile= --nodaemon --python=buildbot.tac"
+WorkingDirectory=/buildbot
+Restart=always
+RestartSec=5
+SyslogIdentifier=buildbot
+
+[Install]
+WantedBy=multi-user.target

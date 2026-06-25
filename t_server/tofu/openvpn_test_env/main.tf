@@ -51,6 +51,8 @@ module "tserver_rocky_9_amd64_user_data" {
   default_group         = var.rocky_9_default_user
   ssh_private_key       = sshkey_ed25519_key_pair.tserver.private_key_pem
   data_dir              = var.tserver_data_dir
+  install_buildbot      = var.install_buildbot
+  buildbot_environment  = var.buildbot_environment
   git_name              = var.git_name
   git_email             = var.git_email
 }

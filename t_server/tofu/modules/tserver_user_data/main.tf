@@ -143,6 +143,11 @@ data "cloudinit_config" "tserver" {
             permissions = "0o755",
           },
           {
+            path        = "/var/lib/provision/60-install_buildbot.sh",
+            content     = file("${path.module}/provision/60-install_buildbot.sh"),
+            permissions = "0o755",
+          },
+          {
             path        = "/var/lib/provision/91-distribute-keys.sh",
             content     = file("${path.module}/provision/91-distribute-keys.sh"),
             permissions = "0o755",
@@ -162,16 +167,32 @@ Restart=on-failure
 RestartSec=10
 EOF
           },
+          {
+            encoding = "b64"
+            content = base64encode(templatefile("${path.module}/provision/buildbot.service",
+              { user = var.default_user, group = var.default_group }
+              ))
+            owner       = "root:root"
+            path        = "/etc/systemd/system/buildbot.service"
+            permissions = "0644"
+          },
+          {
+            content     = var.buildbot_environment
+            owner       = "${var.default_user}:${var.default_group}"
+            path        = "/var/lib/provision/buildbot.env"
+            permissions = "0640"
+          },
         ],
         runcmd = [
-           "sudo -u ${var.default_user} mkdir -p ${local.keydir}",
-           #"sudo -u ${var.default_user} /var/lib/provision/20-build-openssl.sh",
-           "/var/lib/provision/28-setup-test-dependencies.sh",
-           "sudo -u ${var.default_user} /var/lib/provision/35-generate-dh-params.sh",
-           "sudo -u ${var.default_user} /var/lib/provision/36-generate-secret-keys.sh",
-           "sudo -u ${var.default_user} /var/lib/provision/40-build-sample-plugins.sh",
-           "sudo -u ${var.default_user} /var/lib/provision/41-copy-plugins.sh",
-           "sudo -u ${var.default_user} /var/lib/provision/91-distribute-keys.sh",
+          "sudo -u ${var.default_user} mkdir -p ${local.keydir}",
+          #"sudo -u ${var.default_user} /var/lib/provision/20-build-openssl.sh",
+          "/var/lib/provision/28-setup-test-dependencies.sh",
+          "sudo -u ${var.default_user} /var/lib/provision/35-generate-dh-params.sh",
+          "sudo -u ${var.default_user} /var/lib/provision/36-generate-secret-keys.sh",
+          "sudo -u ${var.default_user} /var/lib/provision/40-build-sample-plugins.sh",
+          "sudo -u ${var.default_user} /var/lib/provision/41-copy-plugins.sh",
+          "if ${var.install_buildbot}; then /var/lib/provision/60-install_buildbot.sh ${var.default_user}; fi",
+          "sudo -u ${var.default_user} /var/lib/provision/91-distribute-keys.sh",
         ],
       })
     }

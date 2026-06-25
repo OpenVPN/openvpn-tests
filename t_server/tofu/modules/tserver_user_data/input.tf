@@ -76,6 +76,18 @@ variable "default_group" {
   description = "Primary group for the default operating system user"
 }
 
+variable "install_buildbot" {
+  type        = bool
+  default     = false
+  description = "Should we install buildbot agent?"
+}
+
+variable "buildbot_environment" {
+  type        = string
+  default     = ""
+  description = "Environment definition for buildbot agent (BUILDMASTER etc)"
+}
+
 variable "ssh_private_key" {
   type        = string
   default     = ""

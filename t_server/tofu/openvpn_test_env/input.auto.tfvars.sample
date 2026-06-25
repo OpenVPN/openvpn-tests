@@ -88,6 +88,14 @@ tserver_anchor_hostname        = "tserver-anchor"
 tserver_client_hostname        = "tserver-client"
 tserver_rocky_9_amd64_hostname = "tserver-rocky-9-amd64"
 
+# Buildbot settings
+install_buildbot = true
+buildbot_environment = <<EOF
+BUILDMASTER=buildbot
+WORKERNAME=t_server
+WORKERPASS=password
+EOF
+
 # Git settings
 git_name  = "John Doe"
 git_email = "john.doe@example.com"

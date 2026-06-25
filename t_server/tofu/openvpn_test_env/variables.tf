@@ -165,6 +165,18 @@ variable "rocky_9_default_group" {
   default     = "rocky"
 }
 
+variable "install_buildbot" {
+  type        = bool
+  default     = false
+  description = "Should we install buildbot agent?"
+}
+
+variable "buildbot_environment" {
+  type        = string
+  default     = ""
+  description = "Environment definition for buildbot agent (BUILDMASTER etc)"
+}
+
 variable "git_name" {
   type        = string
   description = "Name for Git config on the t_server server instance."
