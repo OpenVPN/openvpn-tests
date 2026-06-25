@@ -20,8 +20,8 @@ do
     echo "$T..."
     LOG=$LOGDIR/$DAY/$NOW.$T.out
 
-    ssh -i $KEY $HOST "TEST_RUN_OVERRIDE='$TEST_RUN_OVERRIDE' ./bin/t_client.sh $T 2>&1" >$LOG
-    RC=$?
+    ssh -i $KEY $HOST "TEST_RUN_OVERRIDE='$TEST_RUN_OVERRIDE' ./bin/t_client.sh $T 2>&1" | tee $LOG
+    RC=${PIPESTATUS[0]}
     case $RC in
 	0)   grep "Test sets" $LOG ;;		# all good
 	30)	# normal "one of the t_client tests failed", in "Test sets"
