@@ -53,10 +53,11 @@ PING8_SH="/root/bin/ping8.sh"
 #
 # https://redmine.puppeteers.in/issues/4240
 
-TEST_RUN_LIST="1 1a 1b 1c 1d 1e 1x 2 2a 2b 2c 2d 2e 2f 2g 2h 2w 2x 2y 2z1 2z2 3 3m 4 4a 4b 5 5a 5b 5c 5d 5e 5m 5n 5u1 5u2 5v1 5v2 5v3 5w1 5w2 5w3 5w4 5x1 5x2 5x3 5x4 6 7 7a 7b 7x 7x2 7y 8 8a 9 9a 10 10a 10b 10u 10v 10w 10x 10z 11 11a 11t 11z"
+TEST_RUN_LIST="1 1a 1b 1c 1d 1e 1x 2 2a 2b 2c 2d 2e 2f 2g 2h 2w 2x 2y 2z1 2z2 3 3m 4 4a 4b 5 5a 5b 5c 5d 5e 5m 5n 5u1 5u2 5v1 5v2 5v3 5w1 5w2 5w3 5w4 5x1 5x2 5x3 5x4 6 7 7a 7b 7x 7x2 7y 8 8a 9 9a 10 10a 10b 10u 10v 10w 10x 10z 11 11a"
 
 # Disabled tests
-#TEST_RUN_LIST+="7l" # needs lwipovpn
+#TEST_RUN_LIST+=" 7l " # needs lwipovpn
+#TEST_RUN_LIST+=" 11t 11z " # needs fixes to session management
 
 if [ -n "$TEST_RUN_OVERRIDE" ] ; then
     echo "overriding test list: $TEST_RUN_OVERRIDE"
@@ -78,30 +79,24 @@ OPENVPN_BASE_P2P="..."
 #
 # now define the individual tests - all variables suffixed with _1, _2 etc
 # will be used in test run "1", "2", etc.
-# 
-# if something is not defined here, the "generic" variable without 
+#
+# if something is not defined here, the "generic" variable without
 # suffix will be used
 #
 # Test 1: TCP / p2mp tun
 #
 RUN_TITLE_1="tcp / p2pm / top net30"
 OPENVPN_CONF_1="$OPENVPN_BASE_P2MP --dev tun --proto tcp4 --remote $REMOTE --port 51194"
-# OLD
-#EXPECT_IFCONFIG4_1=10.204.1.6
-#EXPECT_IFCONFIG6_1=fd00:abcd:204:1::1000
-
 PING4_HOSTS_1="10.204.1.1 10.204.0.1"
 PING6_HOSTS_1="fd00:abcd:204:1::1 fd00:abcd:204:0::1"
 
 #
 # Test 1a: TCP / IPv6 / p2mp tun
-# 
+#
 # with --server-poll-timeout, just to ensure it is still allowed in TLS mode
 
 RUN_TITLE_1a="tcp*6* / p2pm / top net30"
 OPENVPN_CONF_1a="$OPENVPN_BASE_P2MP --dev tun3 --proto tcp6-client --remote $REMOTE --port 51194 --server-poll-timeout 10" # --ifconfig-noexec
-#EXPECT_IFCONFIG4_1a=$EXPECT_IFCONFIG4_1
-#EXPECT_IFCONFIG6_1a=$EXPECT_IFCONFIG6_1
 PING4_HOSTS_1a="$PING4_HOSTS_1"
 PING6_HOSTS_1a="$PING6_HOSTS_1"
 
@@ -110,10 +105,7 @@ PING6_HOSTS_1a="$PING6_HOSTS_1"
 #
 
 RUN_TITLE_1b="tcp4 / http proxy / p2pm / top net30"
-# FIXME: hardcoded IP for tserver-rocky-9-amd64.foss.vpn
 OPENVPN_CONF_1b="$OPENVPN_BASE_P2MP --dev tun3 --proto tcp4-client --remote $REMOTE --port 51194 --http-proxy $PROXY_SERVER_IPV4 3128"
-#EXPECT_IFCONFIG4_1b=$EXPECT_IFCONFIG4_1
-#EXPECT_IFCONFIG6_1b=$EXPECT_IFCONFIG6_1
 PING4_HOSTS_1b="$PING4_HOSTS_1"
 PING6_HOSTS_1b="$PING6_HOSTS_1"
 
@@ -123,8 +115,6 @@ PING6_HOSTS_1b="$PING6_HOSTS_1"
 
 RUN_TITLE_1c="tcp6 / http proxy / p2pm / top net30"
 OPENVPN_CONF_1c="$OPENVPN_BASE_P2MP --dev tun3 --proto tcp6-client --remote $REMOTE --port 51194 --http-proxy $PROXY_SERVER 3128"
-#EXPECT_IFCONFIG4_1c=$EXPECT_IFCONFIG4_1
-#EXPECT_IFCONFIG6_1c=$EXPECT_IFCONFIG6_1
 PING4_HOSTS_1c="$PING4_HOSTS_1"
 PING6_HOSTS_1c="$PING6_HOSTS_1"
 
@@ -134,43 +124,30 @@ PING6_HOSTS_1c="$PING6_HOSTS_1"
 
 RUN_TITLE_1d="tcp4 / socks proxy / p2pm / top net30"
 OPENVPN_CONF_1d="$OPENVPN_BASE_P2MP --dev tun3 --proto tcp4-client --remote $REMOTE --port 51194 --socks-proxy $PROXY_SERVER 1080"
-#EXPECT_IFCONFIG4_1d=$EXPECT_IFCONFIG4_1
-#EXPECT_IFCONFIG6_1d=$EXPECT_IFCONFIG6_1
 PING4_HOSTS_1d="$PING4_HOSTS_1"
 PING6_HOSTS_1d="$PING6_HOSTS_1"
 
 #
-# Test 1e: TCP p2mp tun, IPv6 SOCKS proxy (localhost, ssh -D 2222)
+# Test 1e: TCP p2mp tun, IPv6 SOCKS proxy
 #
 
-#RUN_TITLE_1e="tcp6 / socks proxy / p2pm / top net30 [needs ssh -D 2222]"
 RUN_TITLE_1e="tcp6 / socks proxy / p2pm / top net30"
-#OPENVPN_CONF_1e="$OPENVPN_BASE_P2MP --dev tun3 --proto tcp6-client --remote $REMOTE --port 51194 --socks-proxy ::1 2222"
 OPENVPN_CONF_1e="$OPENVPN_BASE_P2MP --dev tun3 --proto tcp6-client --remote $REMOTE --port 51194 --socks-proxy $PROXY_SERVER 1080"
-#EXPECT_IFCONFIG4_1e=$EXPECT_IFCONFIG4_1
-#EXPECT_IFCONFIG6_1e=$EXPECT_IFCONFIG6_1
 PING4_HOSTS_1e="$PING4_HOSTS_1"
 PING6_HOSTS_1e="$PING6_HOSTS_1"
 
 # Test 1x: TCP / p2mp tun / data-cipher none
-#  [fails 3000 byte IPv4 ping, with "TCP/UDP packet too large on write to"]
 #
 RUN_TITLE_1x="tcp / p2pm / top net30 / --data-cipher none"
 OPENVPN_CONF_1x="$OPENVPN_BASE_P2MP --dev tun --proto tcp --remote $REMOTE --port 51194 --data-ciphers none"
-#EXPECT_IFCONFIG4_1x=$EXPECT_IFCONFIG4_1
-#EXPECT_IFCONFIG6_1x=$EXPECT_IFCONFIG6_1   
 PING4_HOSTS_1x="$PING4_HOSTS_1"
 PING6_HOSTS_1x="$PING6_HOSTS_1"
 
 #
 # Test 2: UDP / p2mp tun
-#   specify IPv4+IPv6 addresses expected from server and ping targets
 #
 RUN_TITLE_2="udp / p2pm / top net30"
-#OPENVPN_CONF_2="$OPENVPN_BASE_P2MP --dev tun --proto udp4 --remote $REMOTE --port 51194 --script-security 2"
 OPENVPN_CONF_2="$OPENVPN_BASE_P2MP --dev tun --proto udp4 --remote $REMOTE --port 51194"
-#EXPECT_IFCONFIG4_2=10.204.2.6
-#EXPECT_IFCONFIG6_2=fd00:abcd:204:2::1000
 PING4_HOSTS_2="10.204.2.1 10.204.0.1"
 PING6_HOSTS_2="fd00:abcd:204:2::1 fd00:abcd:204:0::1"
 
@@ -179,27 +156,19 @@ PING6_HOSTS_2="fd00:abcd:204:2::1 fd00:abcd:204:0::1"
 # same server used as for "test 2", but different client option
 #
 # + mtu-disc yes to test for "nobind" socket errors
-# + --ncp-disable
-# 01.08.22: no more --ncp-disable in master -> --data-ciphers
 
 RUN_TITLE_2a="udp / p2pm / v6-only / --multihome / --ncp-disable"
-#OPENVPN_CONF_2a="$OPENVPN_BASE_P2MP --dev tun --proto udp4 --remote $REMOTE --port 51194 --route-nopull --route-ipv6 fd00:abcd:204::/48 --multihome --ncp-disable --script-security 2"
-#OPENVPN_CONF_2a="$OPENVPN_BASE_P2MP --dev tun --proto udp4 --remote $REMOTE --port 51194 --route-nopull --route-ipv6 fd00:abcd:204::/48 --multihome --ncp-disable --cipher BF-CBC"
 OPENVPN_CONF_2a="$OPENVPN_BASE_P2MP --dev tun --proto udp4 --remote $REMOTE --port 51194 --route-nopull --route-ipv6 fd00:abcd:204::/48 --multihome --providers legacy default --data-ciphers BF-CBC"
 # geht nicht auf FreeBSD
 if [ `uname -o` = "GNU/Linux" ] ; then
     OPENVPN_CONF_2a="$OPENVPN_CONF_2a --mtu-disc yes"
 fi
-#EXPECT_IFCONFIG4_2a="$EXPECT_IFCONFIG4_2"
-#EXPECT_IFCONFIG6_2a="$EXPECT_IFCONFIG6_2"
 PING6_HOSTS_2a="fd00:abcd:204:2::1 fd00:abcd:204:0::1"
 
 # Test 2b: UDP*6* / p2mp tun
 #
 RUN_TITLE_2b="udp *6* / p2pm / top net30"
 OPENVPN_CONF_2b="$OPENVPN_BASE_P2MP --dev tun --proto udp6 --remote $REMOTE --port 51194"
-#EXPECT_IFCONFIG4_2b=$EXPECT_IFCONFIG4_2
-#EXPECT_IFCONFIG6_2b=$EXPECT_IFCONFIG6_2   
 PING4_HOSTS_2b="$PING4_HOSTS_2"
 PING6_HOSTS_2b="$PING6_HOSTS_2"
 
@@ -207,8 +176,6 @@ PING6_HOSTS_2b="$PING6_HOSTS_2"
 #
 RUN_TITLE_2c="udp *6* / p2pm / top net30 / redirect-gateway (4+6)"
 OPENVPN_CONF_2c="$OPENVPN_BASE_P2MP --dev tun --proto udp6 --remote $REMOTE --port 51194 --multihome --pull-filter ignore route --redirect-gateway def1 ipv6"
-#EXPECT_IFCONFIG4_2c=$EXPECT_IFCONFIG4_2
-#EXPECT_IFCONFIG6_2c=$EXPECT_IFCONFIG6_2   
 PING4_HOSTS_2c="$PING4_HOSTS_2"
 PING6_HOSTS_2c="$PING6_HOSTS_2"
 
@@ -218,8 +185,6 @@ PING6_HOSTS_2c="$PING6_HOSTS_2"
 
 RUN_TITLE_2d="UDP4 / socks proxy [on TCP!] / p2pm / top net30"
 OPENVPN_CONF_2d="$OPENVPN_BASE_P2MP --dev tun --proto udp4 --remote $REMOTE --port 51194 --socks-proxy $PROXY_SERVER 1080"
-#EXPECT_IFCONFIG4_2d=$EXPECT_IFCONFIG4_2
-#EXPECT_IFCONFIG6_2d=$EXPECT_IFCONFIG6_2
 PING4_HOSTS_2d="$PING4_HOSTS_2"
 PING6_HOSTS_2d="$PING6_HOSTS_2"
 
@@ -229,8 +194,6 @@ PING6_HOSTS_2d="$PING6_HOSTS_2"
 
 RUN_TITLE_2e="UDP6 / socks proxy [on TCP!] / p2pm / top net30"
 OPENVPN_CONF_2e="$OPENVPN_BASE_P2MP --dev tun --proto udp6 --remote $REMOTE --port 51194 --socks-proxy $PROXY_SERVER 1080"
-#EXPECT_IFCONFIG4_2e=$EXPECT_IFCONFIG4_2
-#EXPECT_IFCONFIG6_2e=$EXPECT_IFCONFIG6_2
 PING4_HOSTS_2e="$PING4_HOSTS_2"
 PING6_HOSTS_2e="$PING6_HOSTS_2"
 
@@ -240,8 +203,7 @@ PING6_HOSTS_2e="$PING6_HOSTS_2"
 
 RUN_TITLE_2f="UDP / p2pm / top net30 / pull-filter -> ipv6-only"
 OPENVPN_CONF_2f="$OPENVPN_BASE_P2MP --dev tun --proto udp --remote $REMOTE --port 51194 --pull-filter accept ifconfig- --pull-filter ignore ifconfig"
-#EXPECT_IFCONFIG4_2f=-
-#EXPECT_IFCONFIG6_2f=$EXPECT_IFCONFIG6_2
+EXPECT_IFCONFIG4_2f=-
 PING4_HOSTS_2f=
 PING6_HOSTS_2f="$PING6_HOSTS_2"
 
@@ -249,8 +211,6 @@ PING6_HOSTS_2f="$PING6_HOSTS_2"
 #
 RUN_TITLE_2g="udp *4* / p2pm / top net30 / redirect-gateway (4+6)"
 OPENVPN_CONF_2g="$OPENVPN_BASE_P2MP --dev tun --proto udp4 --remote $REMOTE --port 51194 --multihome --pull-filter ignore route --redirect-gateway def1 ipv6"
-#EXPECT_IFCONFIG4_2g=$EXPECT_IFCONFIG4_2
-#EXPECT_IFCONFIG6_2g=$EXPECT_IFCONFIG6_2   
 PING4_HOSTS_2g="$PING4_HOSTS_2"
 PING6_HOSTS_2g="$PING6_HOSTS_2"
 
@@ -259,50 +219,37 @@ PING6_HOSTS_2g="$PING6_HOSTS_2"
 #
 RUN_TITLE_2h="udp *4* / p2pm / top net30 / redirect-gateway (4+6)"
 OPENVPN_CONF_2h="$OPENVPN_BASE_P2MP --dev tun --proto udp4 --remote $REMOTE --port 51194 --multihome --pull-filter ignore route --redirect-gateway def1 ipv6"
-#EXPECT_IFCONFIG4_2h=$EXPECT_IFCONFIG4_2
-#EXPECT_IFCONFIG6_2h=$EXPECT_IFCONFIG6_2   
 PING4_HOSTS_2h="$PING4_HOSTS_2"
 PING6_HOSTS_2h="$PING6_HOSTS_2"
-PREPARE_2h="SU route add -net 194.97.140.11/32 194.97.140.30"
-CLEANUP_2h="SU route del -net 194.97.140.11/32 194.97.140.30"
+#PREPARE_2h="SU route add -net 194.97.140.11/32 194.97.140.30"
+#CLEANUP_2h="SU route del -net 194.97.140.11/32 194.97.140.30"
 
 # Test 2w: UDP*6* / p2mp tun / data-cipher DES-EDE3-CBC
-#  [fails with check_key_DES: bad parity detected - should succeed!]
 #
 RUN_TITLE_2w="udp *6* / p2pm / top net30 / --data-cipher DES-EDE3-CBC"
 OPENVPN_CONF_2w="$OPENVPN_BASE_P2MP --dev tun --proto udp6 --remote $REMOTE --port 51194 --data-ciphers DES-EDE3-CBC"
-#EXPECT_IFCONFIG4_2w=$EXPECT_IFCONFIG4_2
-#EXPECT_IFCONFIG6_2w=$EXPECT_IFCONFIG6_2   
 PING4_HOSTS_2w="$PING4_HOSTS_2"
 PING6_HOSTS_2w="$PING6_HOSTS_2"
 
 # Test 2x: UDP*4* / p2mp tun / data-cipher none
-#  [fails 3000 byte IPv4 ping, with "TCP/UDP packet too large on write to"]
 #
 RUN_TITLE_2x="udp *4* / p2pm / top net30 / --data-cipher none"
 OPENVPN_CONF_2x="$OPENVPN_BASE_P2MP --dev tun --proto udp4 --remote $REMOTE --port 51194 --data-ciphers none"
-#EXPECT_IFCONFIG4_2x=$EXPECT_IFCONFIG4_2
-#EXPECT_IFCONFIG6_2x=$EXPECT_IFCONFIG6_2   
 PING4_HOSTS_2x="$PING4_HOSTS_2"
 PING6_HOSTS_2x="$PING6_HOSTS_2"
 
 # Test 2y: UDP*6* / p2mp tun / --ncp-disable + cipher none
-#  [fails 3000 byte IPv4 ping, with "TCP/UDP packet too large on write to"]
-# 01.08.22: no more --ncp-disable in master -> --data-ciphers
 #
 RUN_TITLE_2y="udp *6* / p2pm / top net30 / --ncp-disable --cipher none"
-#OPENVPN_CONF_2y="$OPENVPN_BASE_P2MP --dev tun --proto udp6 --remote $REMOTE --port 51194 --ncp-disable --cipher none"
 OPENVPN_CONF_2y="$OPENVPN_BASE_P2MP --dev tun --proto udp6 --remote $REMOTE --port 51194 --data-ciphers none"
-#EXPECT_IFCONFIG4_2y=$EXPECT_IFCONFIG4_2
-#EXPECT_IFCONFIG6_2y=$EXPECT_IFCONFIG6_2   
 PING4_HOSTS_2y="$PING4_HOSTS_2"
 PING6_HOSTS_2y="$PING6_HOSTS_2"
 
 # 2z1: NCP *fail* (cipher)
 RUN_TITLE_2z1="udp *6* / p2pm / top net30 / --ncp-disable --cipher IDEA-CBC"
 OPENVPN_CONF_2z1="$OPENVPN_BASE_P2MP --dev tun --proto udp6 --remote $REMOTE --port 51194 --ncp-disable --cipher IDEA-CBC"
-#EXPECT_IFCONFIG4_2z1=-
-#EXPECT_IFCONFIG6_2z1=-
+EXPECT_IFCONFIG4_2z1=-
+EXPECT_IFCONFIG6_2z1=-
 EXPECT_FAIL_2z1="Received control message: AUTH_FAILED,Data channel cipher"
 
 # 2z2: NCP *fail* (cipher)
@@ -526,7 +473,7 @@ RUN_TITLE_7="udp / p2pm / top subnet / global / auth-user-pass"
 # FreeBSD 13 zeigt ICMP redirects ("ping ohne tun") als IGHD in netstat -r an
 # -> stoert vorher/nachher-Vergleich -> redirects ignorieren
 #PREPARE_7="doas sysctl -w net.inet.icmp.drop_redirect=1"
-#PREPARE_7="sudo sysctl -w net.ipv4.conf.all.accept_redirects=0 net.ipv6.conf.all.accept_redirects=0" 
+#PREPARE_7="sudo sysctl -w net.ipv4.conf.all.accept_redirects=0 net.ipv6.conf.all.accept_redirects=0"
 OPENVPN_CONF_7="$OPENVPN_BASE_P2MP --dev tun --proto udp --remote $REMOTE --port 51199 --auth-user-pass $AUTH_DIR/aup.txt"
 #EXPECT_IFCONFIG4_7=194.97.145.74
 #EXPECT_IFCONFIG6_7=2001:608:3:814::1000
@@ -538,23 +485,19 @@ PING6_HOSTS_7="fd00:abcd:204:6::1 fd00:abcd:204:0::1 2001:608:3:814::1"
 #  TODO (10/22): t_client / FPING_EXTRA_ARGS pullup'en
 RUN_TITLE_7a="udp / p2pm / auth-user-pass / token+reneg"
 OPENVPN_CONF_7a="$OPENVPN_BASE_P2MP --dev tun --proto udp --remote $REMOTE --port 51199 --auth-user-pass $AUTH_DIR/aup.txt --reneg-sec 151"
-#EXPECT_IFCONFIG4_7a=194.97.145.74
-#EXPECT_IFCONFIG6_7a=2001:608:3:814::1000
 PING4_HOSTS_7a="10.204.6.1 10.204.0.1 194.97.145.73"
 PING6_HOSTS_7a="fd00:abcd:204:6::1 fd00:abcd:204:0::1 2001:608:3:814::1"
 
 # Test 7b: UDP / p2mp tun, top subnet, global
 RUN_TITLE_7b="udp / p2pm / top subnet / global / auth-user-pass inline"
 OPENVPN_CONF_7b="$OPENVPN_BASE_P2MP --dev tun --proto udp4 --remote $REMOTE --port 51199 --config $AUTH_DIR/aup.conf"
-#EXPECT_IFCONFIG4_7b=$EXPECT_IFCONFIG4_7
-#EXPECT_IFCONFIG6_7b=$EXPECT_IFCONFIG6_7
 PING4_HOSTS_7b="$PING4_HOSTS_7"
 PING6_HOSTS_7b="$PING6_HOSTS_7"
 
 # Test 7l: UDP / p2mp tun, top subnet, global, lwip
 # the "expected IP addresses" are now in lwip userland stack, ping via remote
 RUN_TITLE_7l="udp / p2pm / top subnet / global / auth-user-pass"
-OPENVPN_CONF_7l="$OPENVPN_BASE_P2MP --dev tun --proto udp --remote $REMOTE --port 51199 --auth-user-pass $AUTH_DIR/aup.txt --dev-node unix:/home/gert/lwip-build/lwipovpn"
+OPENVPN_CONF_7l="$OPENVPN_BASE_P2MP --dev tun --proto udp --remote $REMOTE --port 51199 --auth-user-pass $AUTH_DIR/aup.txt --dev-node unix:/usr/local/bin/lwipovpn"
 #EXPECT_IFCONFIG4_7l=-
 #EXPECT_IFCONFIG6_7l=-
 PING4_HOSTS_7l="194.97.145.74"
@@ -563,8 +506,8 @@ PING6_HOSTS_7l="2001:608:3:814::1000"
 # 7x: auth-user-pass *fail*
 RUN_TITLE_7x="udp / p2pm / top subnet / global / auth-user-pass *fail*"
 OPENVPN_CONF_7x="$OPENVPN_BASE_P2MP --dev tun --proto udp4 --remote $REMOTE --port 51199 --auth-user-pass $AUTH_DIR/aup-fail.txt"
-#EXPECT_IFCONFIG4_7x=-
-#EXPECT_IFCONFIG6_7x=-
+EXPECT_IFCONFIG4_7x=-
+EXPECT_IFCONFIG6_7x=-
 EXPECT_FAIL_7x="Received control message: AUTH_FAILED"
 
 # 7x2: auth-user-pass *fail* (too long)
@@ -573,39 +516,35 @@ EXPECT_FAIL_7x="Received control message: AUTH_FAILED"
 # since the username is then already truncated on the client side.
 RUN_TITLE_7x2="udp / p2pm / top subnet / global / auth-user-pass *fail*"
 OPENVPN_CONF_7x2="$OPENVPN_BASE_P2MP --dev tun --proto udp4 --remote $REMOTE --port 51199 --auth-user-pass $AUTH_DIR/aup-toolong.txt"
-#EXPECT_IFCONFIG4_7x2=-
-#EXPECT_IFCONFIG6_7x2=-
+EXPECT_IFCONFIG4_7x2=-
+EXPECT_IFCONFIG6_7x2=-
 EXPECT_FAIL_7x2="Received control message: AUTH_FAILED"
 
 # 7y: auth-user-pass *fail* (script fail)
 RUN_TITLE_7y="udp / p2pm / top subnet / global / auth-user-pass *fail2*"
 OPENVPN_CONF_7y="$OPENVPN_BASE_P2MP --dev tun --proto udp6 --remote $REMOTE --port 51199 --auth-user-pass $AUTH_DIR/aup.txt --push-peer-info --setenv UV_WANT_SCRIPT_FAIL 5"
-#EXPECT_IFCONFIG4_7y=-
-#EXPECT_IFCONFIG6_7y=-
+EXPECT_IFCONFIG4_7y=-
+EXPECT_IFCONFIG6_7y=-
 EXPECT_FAIL_7y="Received control message: AUTH_FAILED"
 
 #
 # Test 8: UDP / p2p tun
 RUN_TITLE_8="p2p tun / udp4"
 OPENVPN_CONF_8="--dev tun --proto udp4 --remote $REMOTE 51204 --nobind --secret $KEYBASE/p2p.key --ifconfig 10.204.8.2 10.204.8.1 --comp-lzo --tun-ipv6 --ifconfig-ipv6 fd00:abcd:204:8::2/64 fd00:abcd:204:8::1 --route 10.204.0.0 255.255.0.0 --route-ipv6 fd00:abcd:204::/48 --verb 3 --up $PING8_SH --script-security 2 --allow-deprecated-insecure-static-crypto --providers legacy default"
-#EXPECT_IFCONFIG4_8="10.204.8.2"
-#EXPECT_IFCONFIG6_8="fd00:abcd:204:8::2"
 PING4_HOSTS_8="10.204.8.1 10.204.0.1"
 PING6_HOSTS_8="fd00:abcd:204:8::1 fd00:abcd:204:0::1"
 
 # Test 8a, IPv6
 RUN_TITLE_8a="p2p tun / udp6"
 OPENVPN_CONF_8a="--dev tun --proto udp6 --remote $REMOTE 51204 --nobind --secret $KEYBASE/p2p.key --ifconfig 10.204.8.2 10.204.8.1 --comp-lzo --tun-ipv6 --ifconfig-ipv6 fd00:abcd:204:8::2/64 fd00:abcd:204:8::1 --route 10.204.0.0 255.255.0.0 --route-ipv6 fd00:abcd:204::/48 --verb 3 --up $PING8_SH --script-security 2 --allow-deprecated-insecure-static-crypto --providers legacy default"
-#EXPECT_IFCONFIG4_8a="$EXPECT_IFCONFIG4_8"
-#EXPECT_IFCONFIG6_8a="$EXPECT_IFCONFIG6_8"
 PING4_HOSTS_8a="$PING4_HOSTS_8"
 PING6_HOSTS_8a="$PING6_HOSTS_8"
 
 # Test 9: tcp / p2p tap / --tls-server
 RUN_TITLE_9="udp / p2p tap / --tls-server (no --server) / tcp4"
 OPENVPN_CONF_9="$OPENVPN_BASE_P2MP --dev tap --proto tcp4 --remote $REMOTE 51204 --ifconfig 10.204.9.2 255.255.255.0 --comp-lzo --tun-ipv6 --ifconfig-ipv6 fd00:abcd:204:9::2/64 fd00:abcd:204:9::1 --cipher BF-CBC"
-#EXPECT_IFCONFIG4_9="10.204.9.2"
-#EXPECT_IFCONFIG6_9="fd00:abcd:204:9::2"
+EXPECT_IFCONFIG4_9="10.204.9.2"
+EXPECT_IFCONFIG6_9="fd00:abcd:204:9::2"
 PING4_HOSTS_9="10.204.9.1 10.204.0.1"
 PING6_HOSTS_9="fd00:abcd:204:9::1 fd00:abcd:204:0::1"
 
@@ -618,8 +557,8 @@ OPENVPN_CONF_9a="--ca $CA_CERT --cert $CLIENT_CERT --key $CLIENT_KEY \
         --ifconfig-ipv6 fd00:abcd:204:9::2/64 fd00:abcd:204:9::1 \
         --route 10.204.0.0 255.255.0.0 10.204.9.1 \
         --route-ipv6 fd00:abcd:204::/48"
-#EXPECT_IFCONFIG4_9a="$EXPECT_IFCONFIG4_9"
-#EXPECT_IFCONFIG6_9a="$EXPECT_IFCONFIG6_9"
+EXPECT_IFCONFIG4_9a="$EXPECT_IFCONFIG4_9"
+EXPECT_IFCONFIG6_9a="$EXPECT_IFCONFIG6_9"
 PING4_HOSTS_9a="$PING4_HOSTS_9"
 PING6_HOSTS_9a="$PING6_HOSTS_9"
 
@@ -631,8 +570,6 @@ BASE_CONF_10="--client --cert $CLIENT_CERT --key $CLIENT_KEY \
 
 OPENVPN_CONF_10="$BASE_CONF_10 --auth-user-pass $AUTH_DIR/aup.txt \
      --peer-fingerprint $PEER_FINGERPRINT"
-#EXPECT_IFCONFIG4_10=10.204.10.2
-#EXPECT_IFCONFIG6_10=fd00:abcd:204:10::1000
 PING4_HOSTS_10="10.204.10.1 10.204.0.1"
 PING6_HOSTS_10="fd00:abcd:204:10::1 fd00:abcd:204:0::1"
 
@@ -642,8 +579,6 @@ OPENVPN_CONF_10a="$BASE_CONF_10 --auth-user-pass $AUTH_DIR/aup.txt \
      --peer-fingerprint $PEER_FINGERPRINT \
      --push-peer-info --setenv UV_WANT_AUV_ASYNC 10
      --ncp-ciphers CHACHA20-POLY1305"
-#EXPECT_IFCONFIG4_10a=$EXPECT_IFCONFIG4_10
-#EXPECT_IFCONFIG6_10a=$EXPECT_IFCONFIG6_10
 PING4_HOSTS_10a=$PING4_HOSTS_10
 PING6_HOSTS_10a=$PING6_HOSTS_10
 
@@ -653,8 +588,6 @@ OPENVPN_CONF_10b="$BASE_CONF_10 --auth-user-pass $AUTH_DIR/aup.txt \
      --peer-fingerprint $PEER_FINGERPRINT \
      --push-peer-info --setenv UV_WANT_SCRIPT_FAIL 99 \
      --connect-retry 1 --ncp-ciphers CHACHA20-POLY1305"
-#EXPECT_IFCONFIG4_10b=$EXPECT_IFCONFIG4_10
-#EXPECT_IFCONFIG6_10b=$EXPECT_IFCONFIG6_10
 PING4_HOSTS_10b=$PING4_HOSTS_10
 PING6_HOSTS_10b=$PING6_HOSTS_10
 
@@ -663,8 +596,8 @@ PING6_HOSTS_10b=$PING6_HOSTS_10
 RUN_TITLE_10u="udp / p2pm / FP+script auth / FAIL: wrong pass (sync)"
 OPENVPN_CONF_10u="$BASE_CONF_10 --auth-user-pass $AUTH_DIR/aup-fail.txt \
      --peer-fingerprint $PEER_FINGERPRINT"
-#EXPECT_IFCONFIG4_10u=-
-#EXPECT_IFCONFIG6_10u=-
+EXPECT_IFCONFIG4_10u=-
+EXPECT_IFCONFIG6_10u=-
 EXPECT_FAIL_10u="Received control message: AUTH_FAILED"
 
 # Test 10v: UDP / p2mp tun, no CA / FP auth / wrong password
@@ -672,8 +605,8 @@ RUN_TITLE_10v="udp / p2pm / FP+script auth / FAIL: wrong pass (async)"
 OPENVPN_CONF_10v="$BASE_CONF_10 --auth-user-pass $AUTH_DIR/aup-fail.txt \
      --peer-fingerprint $PEER_FINGERPRINT \
      --push-peer-info --setenv UV_WANT_AUV_ASYNC 7"
-#EXPECT_IFCONFIG4_10v=-
-#EXPECT_IFCONFIG6_10v=-
+EXPECT_IFCONFIG4_10v=-
+EXPECT_IFCONFIG6_10v=-
 EXPECT_FAIL_10v="Received control message: AUTH_FAILED"
 
 # Test 10w: UDP / p2mp tun, no CA / FP auth / script fail
@@ -681,8 +614,8 @@ RUN_TITLE_10w="udp / p2pm / FP+script auth / FAIL: script fail"
 OPENVPN_CONF_10w="$BASE_CONF_10 --auth-user-pass $AUTH_DIR/aup.txt \
      --peer-fingerprint $PEER_FINGERPRINT \
      --push-peer-info --setenv UV_WANT_SCRIPT_FAIL 5"
-#EXPECT_IFCONFIG4_10w=-
-#EXPECT_IFCONFIG6_10w=-
+EXPECT_IFCONFIG4_10w=-
+EXPECT_IFCONFIG6_10w=-
 EXPECT_FAIL_10w="Received control message: AUTH_FAILED"
 
 # Test 10x: UDP / p2mp tun, no CA / FP auth / wrong server FP
@@ -698,8 +631,8 @@ RUN_TITLE_10x="udp / p2pm / FP + script auth / FAIL: wrong FP"
 OPENVPN_CONF_10x="$BASE_CONF_10 --auth-user-pass $AUTH_DIR/aup.txt \
     --peer-fingerprint FF:FF:37:6F:AE:9A:BC:DF:3F:8A:54:34:A6:BD:9B:19:42:64:BA:1A:CD:37:B3:A7:9A:E1:32:D3:26:CE:6F:E8 \
     --connect-retry-max 1 --connect-retry 1"
-#EXPECT_IFCONFIG4_10x=-
-#EXPECT_IFCONFIG6_10x=-
+EXPECT_IFCONFIG4_10x=-
+EXPECT_IFCONFIG6_10x=-
 EXPECT_FAIL_10x="hash verification failed"
 
 
@@ -713,8 +646,8 @@ OPENVPN_CONF_10z="$OPENVPN_BASE_P2MP \
                  --dev tun --proto udp --remote $REMOTE --port 51200 \
 	         --auth-user-pass $AUTH_DIR/aup.txt \
 		 --connect-retry 0 --connect-retry-max 1 --hand-window 5"
-#EXPECT_IFCONFIG4_10z=-
-#EXPECT_IFCONFIG6_10z=-
+EXPECT_IFCONFIG4_10z=-
+EXPECT_IFCONFIG6_10z=-
 #EXPECT_FAIL_10z="TLS Error: TLS key negotiation failed to occur"
 EXPECT_FAIL_10z="All connections have been connect-retry-max"
 
@@ -732,8 +665,8 @@ BASE_CONF_11="--tls-client --cert $CLIENT_CERT --key $CLIENT_KEY \
 	      --route-ipv6 fd00:abcd:204::/48"
 
 OPENVPN_CONF_11="$BASE_CONF_11"
-#EXPECT_IFCONFIG4_11=10.204.11.4
-#EXPECT_IFCONFIG6_11=fd00:abcd:204:11::1004
+EXPECT_IFCONFIG4_11=10.204.11.4
+EXPECT_IFCONFIG6_11=fd00:abcd:204:11::1004
 PING4_HOSTS_11="10.204.11.1 10.204.0.1"
 PING6_HOSTS_11="fd00:abcd:204:11::1 fd00:abcd:204:0::1"
 
@@ -741,8 +674,8 @@ PING6_HOSTS_11="fd00:abcd:204:11::1 fd00:abcd:204:0::1"
 # der Server dann "dieselbe Instance" re-used, und AES-256-GCM macht
 RUN_TITLE_11a="udp / p2p / TLS / SHA256 (BF-only) / v6"
 OPENVPN_CONF_11a="$BASE_CONF_11 --providers legacy default --data-ciphers BF-CBC --auth SHA256 --proto udp6"
-#EXPECT_IFCONFIG4_11a=$EXPECT_IFCONFIG4_11
-#EXPECT_IFCONFIG6_11a=$EXPECT_IFCONFIG6_11
+EXPECT_IFCONFIG4_11a=$EXPECT_IFCONFIG4_11
+EXPECT_IFCONFIG6_11a=$EXPECT_IFCONFIG6_11
 PING4_HOSTS_11a="$PING4_HOSTS_11"
 PING6_HOSTS_11a="$PING6_HOSTS_11"
 
@@ -751,8 +684,8 @@ PING6_HOSTS_11a="$PING6_HOSTS_11"
 RUN_TITLE_11t="udp4 / p2p / TLS / SHA1-SHA256 (NCP) / 400s pre-delay"
 PREPARE_11t="date ; sleep 400 ; date"
 OPENVPN_CONF_11t="$BASE_CONF_11 --proto udp4"
-#EXPECT_IFCONFIG4_11t=$EXPECT_IFCONFIG4_11
-#EXPECT_IFCONFIG6_11t=$EXPECT_IFCONFIG6_11
+EXPECT_IFCONFIG4_11t=$EXPECT_IFCONFIG4_11
+EXPECT_IFCONFIG6_11t=$EXPECT_IFCONFIG6_11
 PING4_HOSTS_11t="$PING4_HOSTS_11"
 PING6_HOSTS_11t="$PING6_HOSTS_11"
 
@@ -761,8 +694,8 @@ PING6_HOSTS_11t="$PING6_HOSTS_11"
 # most important: the *server* must not get stuck in lala land
 RUN_TITLE_11z="udp / p2p / TLS / none 'lala land'"
 OPENVPN_CONF_11z="$BASE_CONF_11 --data-ciphers none --auth SHA256 --connect-retry-max 1"
-#EXPECT_IFCONFIG4_11z=$EXPECT_IFCONFIG4_11
-#EXPECT_IFCONFIG6_11z=$EXPECT_IFCONFIG6_11
+EXPECT_IFCONFIG4_11z=$EXPECT_IFCONFIG4_11
+EXPECT_IFCONFIG6_11z=$EXPECT_IFCONFIG6_11
 PING4_HOSTS_11z="$PING4_HOSTS_11"
 PING6_HOSTS_11z="$PING6_HOSTS_11"
 EXPECT_FAIL_11z="ERROR: Failed to apply P2P negotiated protocol options"

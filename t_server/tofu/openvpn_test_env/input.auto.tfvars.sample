@@ -39,6 +39,17 @@ primary_vpc_secondary_public_subnet_cidr_block  = "10.151.1.0/24"
 primary_vpc_primary_private_subnet_cidr_block   = "10.151.2.0/24"
 primary_vpc_secondary_private_subnet_cidr_block = "10.151.3.0/24"
 
+### Transit Gateway settings
+#
+# Attach the primary VPC to an existing Transit Gateway to reach resources in
+# peered VPCs (e.g. the buildbot master). Leave transit_gateway_id empty to not
+# attach to any TGW. The destination CIDRs are the networks reachable over the
+# TGW; routes for them are added to the VPC route tables.
+#
+transit_gateway_id                           = "tgw-0123456789abcdef0"
+transit_gateway_destination_cidr_blocks      = ["10.18.0.0/20"]
+transit_gateway_destination_ipv6_cidr_blocks = []
+
 ### Provisioning settings
 #
 # Use private IP to provision. Keep this at false unless you have a VPN setup
@@ -76,6 +87,14 @@ deployment = "production"
 tserver_anchor_hostname        = "tserver-anchor"
 tserver_client_hostname        = "tserver-client"
 tserver_rocky_9_amd64_hostname = "tserver-rocky-9-amd64"
+
+# Buildbot settings
+install_buildbot = true
+buildbot_environment = <<EOF
+BUILDMASTER=buildbot
+WORKERNAME=t_server
+WORKERPASS=password
+EOF
 
 # Git settings
 git_name  = "John Doe"
