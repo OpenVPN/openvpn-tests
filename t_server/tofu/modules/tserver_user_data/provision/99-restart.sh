@@ -12,5 +12,7 @@ if which needs-restarting > /dev/null 2>&1; then
         # now.
         systemd-run --on-active=1 --timer-property=AccuracySec=100ms sh -c 'cloud-init status --wait ; systemctl reboot'
     fi
+else
+    # If we do not reboot, apply some settings
+    systemctl restart systemd-sysctl.service
 fi
-
