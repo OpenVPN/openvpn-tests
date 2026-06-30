@@ -2,16 +2,20 @@
 # this is sourced from t_client.sh and defines which openvpn client tests
 # to run
 #
-#
-# define these - if empty, no tests will run
-#
+
+# Load deployment configuration
+. /var/lib/provision/deployment-config.sh
+
+# Load EXPECT_IFCONFIG* values from the cache, if present
+test -r ./t_client_ips.rc && . ./t_client_ips.rc
+
 if [ -z "$KEYBASE" ] ; then
-    KEYBASE="/home/openvpn-keys"
+    KEYBASE="/openvpn-test-server/keys"
 fi
 
 CA_CERT="$KEYBASE/ca.crt"
-CLIENT_KEY="$KEYBASE/cron2-freebsd-tc-amd64-23.key"
-CLIENT_CERT="$KEYBASE/cron2-freebsd-tc-amd64-23.crt"
+CLIENT_KEY="$KEYBASE/client-23.key"
+CLIENT_CERT="$KEYBASE/client-23.crt"
 
 # auf Linux *nicht*, weil fping/fping6 nicht suid sind (hargh!)
 RUN_SUDO=sudo
@@ -29,7 +33,13 @@ FPING_EXTRA_ARGS="-C 10"
 #
 # remote host (used as macro below)
 #
-REMOTE=gentoo.ov.greenie.net
+REMOTE=$T_SERVER_PRIVATE_HOSTNAME
+PROXY_SERVER=$REMOTE
+PROXY_SERVER_IPV4="$(dig +short A $REMOTE)"
+PROXY_SERVER_IPV6="$(dig +short AAAA $REMOTE)"
+AUTH_DIR="$OPENVPN_TEST_SERVER_DIR/auth"
+PING8_SH="/root/bin/ping8.sh"
+
 #
 # tests to run (list suffixes for config stanzas below)
 #
@@ -115,7 +125,7 @@ PING6_HOSTS_1a="$PING6_HOSTS_1"
 #
 
 RUN_TITLE_1b="tcp4 / http proxy / p2pm / top net30"
-OPENVPN_CONF_1b="$OPENVPN_BASE_P2MP --dev tun3 --proto tcp-client --remote $REMOTE --port 51194 --http-proxy wwwcache.space.net 3128"
+OPENVPN_CONF_1b="$OPENVPN_BASE_P2MP --dev tun3 --proto tcp-client --remote $REMOTE --port 51194 --http-proxy $PROXY_SERVER_IPV4 3128"
 EXPECT_IFCONFIG4_1b=$EXPECT_IFCONFIG4_1
 EXPECT_IFCONFIG6_1b=$EXPECT_IFCONFIG6_1
 PING4_HOSTS_1b="$PING4_HOSTS_1"
@@ -126,7 +136,7 @@ PING6_HOSTS_1b="$PING6_HOSTS_1"
 #
 
 RUN_TITLE_1c="tcp6 / http proxy / p2pm / top net30"
-OPENVPN_CONF_1c="$OPENVPN_BASE_P2MP --dev tun3 --proto tcp6-client --remote $REMOTE --port 51194 --http-proxy 2001:608:b:81::107 3128"
+OPENVPN_CONF_1c="$OPENVPN_BASE_P2MP --dev tun3 --proto tcp6-client --remote $REMOTE --port 51194 --http-proxy $PROXY_SERVER_IPV6 3128"
 EXPECT_IFCONFIG4_1c=$EXPECT_IFCONFIG4_1
 EXPECT_IFCONFIG6_1c=$EXPECT_IFCONFIG6_1
 PING4_HOSTS_1c="$PING4_HOSTS_1"
@@ -137,7 +147,7 @@ PING6_HOSTS_1c="$PING6_HOSTS_1"
 #
 
 RUN_TITLE_1d="tcp4 / socks proxy / p2pm / top net30"
-OPENVPN_CONF_1d="$OPENVPN_BASE_P2MP --dev tun3 --proto tcp-client --remote $REMOTE --port 51194 --socks-proxy socks.ov.greenie.net 1080"
+OPENVPN_CONF_1d="$OPENVPN_BASE_P2MP --dev tun3 --proto tcp-client --remote $REMOTE --port 51194 --socks-proxy $PROXY_SERVER_IPV4 1080"
 EXPECT_IFCONFIG4_1d=$EXPECT_IFCONFIG4_1
 EXPECT_IFCONFIG6_1d=$EXPECT_IFCONFIG6_1
 PING4_HOSTS_1d="$PING4_HOSTS_1"
@@ -150,7 +160,7 @@ PING6_HOSTS_1d="$PING6_HOSTS_1"
 #RUN_TITLE_1e="tcp6 / socks proxy / p2pm / top net30 [needs ssh -D 2222]"
 RUN_TITLE_1e="tcp6 / socks proxy / p2pm / top net30"
 #OPENVPN_CONF_1e="$OPENVPN_BASE_P2MP --dev tun3 --proto tcp6-client --remote $REMOTE --port 51194 --socks-proxy ::1 2222"
-OPENVPN_CONF_1e="$OPENVPN_BASE_P2MP --dev tun3 --proto tcp6-client --remote $REMOTE --port 51194 --socks-proxy socks.ov.greenie.net 1080"
+OPENVPN_CONF_1e="$OPENVPN_BASE_P2MP --dev tun3 --proto tcp6-client --remote $REMOTE --port 51194 --socks-proxy $PROXY_SERVER_IPV6 1080"
 EXPECT_IFCONFIG4_1e=$EXPECT_IFCONFIG4_1
 EXPECT_IFCONFIG6_1e=$EXPECT_IFCONFIG6_1
 PING4_HOSTS_1e="$PING4_HOSTS_1"
@@ -207,7 +217,7 @@ PING6_HOSTS_2c="$PING6_HOSTS_2"
 #
 
 RUN_TITLE_2d="UDP4 / socks proxy [on TCP!] / p2pm / top net30"
-OPENVPN_CONF_2d="$OPENVPN_BASE_P2MP --dev tun --proto udp --remote $REMOTE --port 51194 --socks-proxy socks.ov.greenie.net 1080"
+OPENVPN_CONF_2d="$OPENVPN_BASE_P2MP --dev tun --proto udp --remote $REMOTE --port 51194 --socks-proxy $PROXY_SERVER_IPV4 1080"
 EXPECT_IFCONFIG4_2d=$EXPECT_IFCONFIG4_2
 EXPECT_IFCONFIG6_2d=$EXPECT_IFCONFIG6_2
 PING4_HOSTS_2d="$PING4_HOSTS_2"
@@ -218,7 +228,7 @@ PING6_HOSTS_2d="$PING6_HOSTS_2"
 #
 
 RUN_TITLE_2e="UDP6 / socks proxy [on TCP!] / p2pm / top net30"
-OPENVPN_CONF_2e="$OPENVPN_BASE_P2MP --dev tun --proto udp6 --remote $REMOTE --port 51194 --socks-proxy socks.ov.greenie.net 1080"
+OPENVPN_CONF_2e="$OPENVPN_BASE_P2MP --dev tun --proto udp6 --remote $REMOTE --port 51194 --socks-proxy $PROXY_SERVER_IPV6 1080"
 EXPECT_IFCONFIG4_2e=$EXPECT_IFCONFIG4_2
 EXPECT_IFCONFIG6_2e=$EXPECT_IFCONFIG6_2
 PING4_HOSTS_2e="$PING4_HOSTS_2"
@@ -248,9 +258,9 @@ PING4_HOSTS_3="10.204.3.1 10.204.0.1"
 # Test 4: UDP / p2mp tap
 #
 RUN_TITLE_4="udp(4) / p2pm / tap"
-OPENVPN_CONF_4="$OPENVPN_BASE_P2MP --dev tap --proto udp --remote $REMOTE --port 51196 --route-ipv6 fd00:abcd:195::/48 fd00:abcd:204:4::ffff --script-security 2 --up /home/gert/bin/inet6-no-ifdisabled.sh"
-EXPECT_IFCONFIG4_4=10.204.4.23			# ccd/cron2-freebsd-tc-amd64-23
-EXPECT_IFCONFIG6_4=fd00:abcd:204:4::a:23	# ccd/cron2-freebsd-tc-amd64-23
+OPENVPN_CONF_4="$OPENVPN_BASE_P2MP --dev tap --tun-ipv6 --proto udp --remote $REMOTE --port 51196 --route-ipv6 fd00:abcd:195::/48 fd00:abcd:204:4::ffff --script-security 2"
+EXPECT_IFCONFIG4_4=10.204.4.23			# ccd/tserver-client-23
+EXPECT_IFCONFIG6_4=fd00:abcd:204:4::a:23	# ccd/tserver-client-23
 # .200 = fbsd11, .207 = fbsd74
 PING4_HOSTS_4="10.204.4.1 10.204.0.1 10.204.4.200 10.207.4.207"
 PING6_HOSTS_4="fd00:abcd:204:4::1 fd00:abcd:204:0::1 fd00:abcd:204:4::a:200 fd00:abcd:207:4::a:207"
@@ -306,7 +316,7 @@ PING6_HOSTS_6="fd00:abcd:204:6::1 fd00:abcd:204:0::1"
 #
 # Test 8: UDP / p2p tun
 RUN_TITLE_8="p2p tun / udp4"
-OPENVPN_CONF_8="--dev tun --proto udp --remote gentoo.ov.greenie.net 51204 --nobind --secret $KEYBASE/p2p-gentoo.key --ifconfig 10.204.8.2 10.204.8.1 --comp-lzo --tun-ipv6 --ifconfig-ipv6 fd00:abcd:204:8::2/64 fd00:abcd:204:8::1 --route 10.204.0.0 255.255.0.0 --route-ipv6 fd00:abcd:204::/48 --verb 3 --up /home/gert/bin/ping8.sh --script-security 2"
+OPENVPN_CONF_8="--dev tun --proto udp --remote $REMOTE 51204 --nobind --secret $KEYBASE/p2p.key --ifconfig 10.204.8.2 10.204.8.1 --comp-lzo --tun-ipv6 --ifconfig-ipv6 fd00:abcd:204:8::2/64 fd00:abcd:204:8::1 --route 10.204.0.0 255.255.0.0 --route-ipv6 fd00:abcd:204::/48 --verb 3 --up $PING8_SH --script-security 2"
 EXPECT_IFCONFIG4_8="10.204.8.2"
 EXPECT_IFCONFIG6_8="fd00:abcd:204:8::2"
 PING4_HOSTS_8="10.204.8.1 10.204.0.1"
@@ -314,7 +324,7 @@ PING6_HOSTS_8="fd00:abcd:204:8::1 fd00:abcd:204:0::1"
 
 # Test 8a, IPv6
 RUN_TITLE_8a="p2p tun / udp6"
-OPENVPN_CONF_8a="--dev tun --proto udp6 --remote gentoo.ov.greenie.net 51204 --nobind --secret $KEYBASE/p2p-gentoo.key --ifconfig 10.204.8.2 10.204.8.1 --comp-lzo --tun-ipv6 --ifconfig-ipv6 fd00:abcd:204:8::2/64 fd00:abcd:204:8::1 --route 10.204.0.0 255.255.0.0 --route-ipv6 fd00:abcd:204::/48 --verb 3 --up /home/gert/bin/ping8.sh --script-security 2"
+OPENVPN_CONF_8a="--dev tun --proto udp6 --remote $REMOTE 51204 --nobind --secret $KEYBASE/p2p.key --ifconfig 10.204.8.2 10.204.8.1 --comp-lzo --tun-ipv6 --ifconfig-ipv6 fd00:abcd:204:8::2/64 fd00:abcd:204:8::1 --route 10.204.0.0 255.255.0.0 --route-ipv6 fd00:abcd:204::/48 --verb 3 --up $PING8_SH --script-security 2"
 EXPECT_IFCONFIG4_8a="$EXPECT_IFCONFIG4_8"
 EXPECT_IFCONFIG6_8a="$EXPECT_IFCONFIG6_8"
 PING4_HOSTS_8a="$PING4_HOSTS_8"
@@ -322,7 +332,7 @@ PING6_HOSTS_8a="$PING6_HOSTS_8"
 
 # Test 9: tcp / p2p tap / --tls-server
 RUN_TITLE_9="udp / p2p tap / --tls-server --inetd on remote"
-OPENVPN_CONF_9="$OPENVPN_BASE_P2MP --dev tap --proto tcp --remote gentoo.ov.greenie.net 51204 --ifconfig 10.204.9.2 255.255.255.0 --comp-lzo --tun-ipv6 --ifconfig-ipv6 fd00:abcd:204:9::2/64 fd00:abcd:204:9::1"
+OPENVPN_CONF_9="$OPENVPN_BASE_P2MP --dev tap --proto tcp --remote $REMOTE 51204 --ifconfig 10.204.9.2 255.255.255.0 --comp-lzo --tun-ipv6 --ifconfig-ipv6 fd00:abcd:204:9::2/64 fd00:abcd:204:9::1"
 EXPECT_IFCONFIG4_9="10.204.9.2"
 EXPECT_IFCONFIG6_9="fd00:abcd:204:9::2"
 PING4_HOSTS_9="10.204.9.1 10.204.0.1"
