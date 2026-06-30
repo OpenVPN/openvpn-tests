@@ -195,12 +195,12 @@ get_ifconfig_route()
     case $UNAME in
 	Linux)
             # linux / iproute2? (-> if configure got a path)
-            if [ -n "/usr/sbin/ip" ]
+            if [ -n "/sbin/ip" ]
             then
                 echo "-- linux iproute2 --"
-                /usr/sbin/ip addr show     | grep -v valid_lft
-                /usr/sbin/ip route show
-                /usr/sbin/ip -o -6 route show | grep -v ' cache' | sed -E -e 's/ expires [0-9]*sec//' -e 's/ (mtu|hoplimit|cwnd|ssthresh) [0-9]+//g' -e 's/ (rtt|rttvar) [0-9]+ms//g'
+                /sbin/ip addr show     | grep -v valid_lft
+                /sbin/ip route show
+                /sbin/ip -o -6 route show | grep -v ' cache' | sed -E -e 's/ expires [0-9]*sec//' -e 's/ (mtu|hoplimit|cwnd|ssthresh) [0-9]+//g' -e 's/ (rtt|rttvar) [0-9]+ms//g'
             else
 	        echo "-- linux / ifconfig --"
 	        LANG=C /usr/sbin/ifconfig -a |egrep  "( addr:|encap:)"
