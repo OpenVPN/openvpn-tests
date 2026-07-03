@@ -4,6 +4,9 @@ set -e
 
 . $(dirname "$0")/deployment-config.sh
 
+# Ensure that 2.2 clients can connect
+update-crypto-policies --set LEGACY
+
 # tun-tcp-p2mp: make sure --port-share can work
 dnf -y install nginx
 systemctl enable nginx

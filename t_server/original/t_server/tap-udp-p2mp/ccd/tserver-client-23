@@ -1,0 +1,3 @@
+ifconfig-push 10.204.4.23 255.255.255.0
+ifconfig-ipv6-push fd00:abcd:204:4::a:23/64 fd00:abcd:204:4::1
+vlan-pvid 200
