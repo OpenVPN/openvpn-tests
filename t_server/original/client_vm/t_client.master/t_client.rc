@@ -23,13 +23,12 @@ CLIENT_CERT="$KEYBASE/client-master.crt"
 # auf Linux *nicht*, weil fping/fping6 nicht suid sind (hargh!)
 RUN_SUDO=sudo
 
-#
-# default time for OpenVPN startup is 10 seconds, increase for faraway server
-SETUP_TIME_WAIT=20
-
-# override test ("make it fast!")
-#FPING_EXTRA_ARGS="-C 5"
-FPING_EXTRA_ARGS="-C 10"
+# Define ping
+FPING_EXTRA_ARGS="-C 5 -p 50"
+# For proxy tests
+FPING_PROXY_ARGS="-C 5 -p 100"
+# For slow tests (4/9)
+FPING_SLOW_ARGS="-C 10 -p 200"
 
 #
 # remote host (used as macro below)
@@ -64,8 +63,8 @@ fi
 # base confic that is the same for all the p2mp test runs
 #
 OPENVPN_BASE_P2MP="--client --ca $CA_CERT \
-	--cert $CLIENT_CERT --key $CLIENT_KEY \
-	--remote-cert-tls server --nobind $COMP_ARGS --verb 3"
+                   --cert $CLIENT_CERT --key $CLIENT_KEY \
+                   --remote-cert-tls server --nobind $COMP_ARGS --verb 3"
 
 # Common replacement
 if needs_openvpn 24; then
@@ -112,6 +111,7 @@ RUN_TITLE_1b="tcp4 / http proxy / p2pm / top net30"
 OPENVPN_CONF_1b="$BASE_CONF_1 --proto ${TCP4}-client --http-proxy $PROXY_SERVER_IPV4 3128"
 EXPECT_IFCONFIG4_1b="$EXPECT_IFCONFIG4_1"
 EXPECT_IFCONFIG6_1b="$EXPECT_IFCONFIG6_1"
+FPING_ARGS_1b="$FPING_PROXY_ARGS"
 PING4_HOSTS_1b="$PING4_HOSTS_1"
 PING6_HOSTS_1b="$PING6_HOSTS_1"
 
@@ -124,6 +124,7 @@ CHECK_SKIP_1c="needs_openvpn 24" # proxy ipv6 support
 OPENVPN_CONF_1c="$BASE_CONF_1 --proto tcp6-client --http-proxy $PROXY_SERVER 3128"
 EXPECT_IFCONFIG4_1c="$EXPECT_IFCONFIG4_1"
 EXPECT_IFCONFIG6_1c="$EXPECT_IFCONFIG6_1"
+FPING_ARGS_1c="$FPING_PROXY_ARGS"
 PING4_HOSTS_1c="$PING4_HOSTS_1"
 PING6_HOSTS_1c="$PING6_HOSTS_1"
 
@@ -135,6 +136,7 @@ RUN_TITLE_1d="tcp4 / socks proxy / p2pm / top net30"
 OPENVPN_CONF_1d="$BASE_CONF_1 --proto ${TCP4}-client --socks-proxy $PROXY_SERVER 1080"
 EXPECT_IFCONFIG4_1d="$EXPECT_IFCONFIG4_1"
 EXPECT_IFCONFIG6_1d="$EXPECT_IFCONFIG6_1"
+FPING_ARGS_1d="$FPING_PROXY_ARGS"
 PING4_HOSTS_1d="$PING4_HOSTS_1"
 PING6_HOSTS_1d="$PING6_HOSTS_1"
 
@@ -147,6 +149,7 @@ CHECK_SKIP_1e="needs_openvpn 24" # proxy ipv6 support
 OPENVPN_CONF_1e="$BASE_CONF_1 --proto tcp6-client --socks-proxy $PROXY_SERVER 1080"
 EXPECT_IFCONFIG4_1e="$EXPECT_IFCONFIG4_1"
 EXPECT_IFCONFIG6_1e="$EXPECT_IFCONFIG6_1"
+FPING_ARGS_1e="$FPING_PROXY_ARGS"
 PING4_HOSTS_1e="$PING4_HOSTS_1"
 PING6_HOSTS_1e="$PING6_HOSTS_1"
 
@@ -213,6 +216,7 @@ PING6_HOSTS_2c="$PING6_HOSTS_2"
 
 RUN_TITLE_2d="udp4 / socks proxy [on TCP!] / p2pm / top net30"
 OPENVPN_CONF_2d="$BASE_CONF_2 --proto ${UDP4} --socks-proxy $PROXY_SERVER 1080"
+FPING_ARGS_2d="$FPING_PROXY_ARGS"
 PING4_HOSTS_2d="$PING4_HOSTS_2"
 PING6_HOSTS_2d="$PING6_HOSTS_2"
 
@@ -223,6 +227,7 @@ PING6_HOSTS_2d="$PING6_HOSTS_2"
 RUN_TITLE_2e="udp6 / socks proxy [on TCP!] / p2pm / top net30"
 CHECK_SKIP_2e="needs_openvpn 24" # proxy ipv6 support
 OPENVPN_CONF_2e="$BASE_CONF_2 --proto udp6 --socks-proxy $PROXY_SERVER 1080"
+FPING_ARGS_2e="$FPING_PROXY_ARGS"
 PING4_HOSTS_2e="$PING4_HOSTS_2"
 PING6_HOSTS_2e="$PING6_HOSTS_2"
 
@@ -317,6 +322,7 @@ OPENVPN_CONF_4="$OPENVPN_BASE_P2MP --dev tap --proto ${UDP4} --remote $REMOTE --
 if ! needs_openvpn 24; then
   OPENVPN_CONF_4="$OPENVPN_CONF_4 --tun-ipv6"
 fi
+FPING_ARGS_4="$FPING_SLOW_ARGS"
 # .200 = anchor-200, .207 = anchor-207
 PING4_HOSTS_4="10.204.4.1 10.204.0.1 10.204.4.200 10.207.4.207"
 PING6_HOSTS_4="fd00:abcd:204:4::1 fd00:abcd:204:0::1 fd00:abcd:204:4::a:200 fd00:abcd:207:4::a:207"
@@ -328,6 +334,7 @@ CHECK_SKIP_4a="needs_openvpn 24" # subnet
 OPENVPN_CONF_4a="$OPENVPN_BASE_P2MP --dev tap3 --proto udp6 --remote $REMOTE --port 51196 --topology subnet"
 EXPECT_IFCONFIG4_4a=$EXPECT_IFCONFIG4_4
 EXPECT_IFCONFIG6_4a=$EXPECT_IFCONFIG6_4
+FPING_ARGS_4a="$FPING_SLOW_ARGS"
 PING4_HOSTS_4a="$PING4_HOSTS_4"
 PING6_HOSTS_4a="$PING6_HOSTS_4"
 
@@ -338,6 +345,7 @@ CHECK_SKIP_4b="needs_openvpn 25" # ipv6-only doesn't work
 OPENVPN_CONF_4b="$OPENVPN_BASE_P2MP --dev tap --proto udp --remote $REMOTE --port 51196 --pull-filter accept ifconfig- --pull-filter ignore ifconfig"
 EXPECT_IFCONFIG4_4b=-
 EXPECT_IFCONFIG6_4b=$EXPECT_IFCONFIG6_4
+FPING_ARGS_4b="$FPING_SLOW_ARGS"
 PING4_HOSTS_4b=""
 PING6_HOSTS_4b="$PING6_HOSTS_4"
 
@@ -610,6 +618,7 @@ BASE_CONF_9="$OPENVPN_BASE_P2MP --dev tap --remote $REMOTE 51204 --ifconfig 10.2
 OPENVPN_CONF_9="$BASE_CONF_9 --proto ${TCP4} --cipher BF-CBC"
 EXPECT_IFCONFIG4_9="10.204.9.2"
 EXPECT_IFCONFIG6_9="fd00:abcd:204:9::2"
+FPING_ARGS_9="$FPING_SLOW_ARGS"
 PING4_HOSTS_9="10.204.9.1 10.204.0.1"
 PING6_HOSTS_9="fd00:abcd:204:9::1 fd00:abcd:204:0::1"
 
@@ -623,6 +632,7 @@ OPENVPN_CONF_9a="$BASE_CONF_9 \
         --route-ipv6 fd00:abcd:204::/48"
 EXPECT_IFCONFIG4_9a="$EXPECT_IFCONFIG4_9"
 EXPECT_IFCONFIG6_9a="$EXPECT_IFCONFIG6_9"
+FPING_ARGS_9a="$FPING_SLOW_ARGS"
 PING4_HOSTS_9a="$PING4_HOSTS_9"
 PING6_HOSTS_9a="$PING6_HOSTS_9"
 
