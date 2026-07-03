@@ -6,7 +6,7 @@ set -eux
 dnf install -y python3-pip python3-virtualenv
 
 mkdir -p /buildbot
-chown -R "$USERNAME:$GROUPNAME" /buildbot
+chown -R "$USERNAME:$GROUPNAME" /buildbot /var/lib/provision/buildbot.env
 
 cd /buildbot
 sudo -u "$USERNAME" virtualenv ./venv
