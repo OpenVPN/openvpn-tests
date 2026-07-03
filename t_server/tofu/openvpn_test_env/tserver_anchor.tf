@@ -7,14 +7,14 @@ resource "aws_instance" "tserver_anchor" {
   key_name                    = var.key_name
   source_dest_check           = false
   subnet_id                   = local.primary_vpc_primary_public_subnet_id
-  tags                        = { "Name": "tserver-anchor",
-                                  "Role" : "Static tserver OpenVPN client",
-                                  "tostop" : "true",
-                                  "Distro" : "Rocky",
-                                  "Login" : "rocky" }
+  tags = { "Name" : "tserver-anchor",
+    "Role" : "Static tserver OpenVPN client",
+    "tostop" : "true",
+    "Distro" : "Rocky",
+  "Login" : "rocky" }
   user_data                   = module.tserver_anchor_user_data.user_data
   user_data_replace_on_change = true
-  vpc_security_group_ids      = [ module.primary-vpc-standard-sg.id, ]
+  vpc_security_group_ids      = [module.primary-vpc-standard-sg.id, ]
 
   # Copy OpenVPN certificates and keys. This needs to be done using a
   # provisioner as the content will not fit into the userdata.
@@ -27,7 +27,7 @@ resource "aws_instance" "tserver_anchor" {
 
   provisioner "remote-exec" {
     inline = ["sudo mkdir -p ${local.tserver_keydir}",
-              "sudo chown -R ${var.rocky_9_default_user}:${var.rocky_9_default_group} ${var.tserver_data_dir}"]
+    "sudo chown -R ${var.rocky_9_default_user}:${var.rocky_9_default_group} ${var.tserver_data_dir}"]
   }
 
   provisioner "file" {
@@ -62,13 +62,13 @@ resource "aws_instance" "tserver_anchor" {
 
   provisioner "remote-exec" {
     inline = ["sudo chown -R ${var.rocky_9_default_user}:${var.rocky_9_default_group} ${var.tserver_data_dir}",
-              "chmod 600 ${local.tserver_keydir}/*.key"]
+    "chmod 600 ${local.tserver_keydir}/*.key"]
   }
 
   root_block_device {
     volume_size = 15
-    tags        = { "Name" : "tserver-anchor",
-                    "Role" : "Static tserver OpenVPN client", }
+    tags = { "Name" : "tserver-anchor",
+    "Role" : "Static tserver OpenVPN client", }
   }
 
   lifecycle {

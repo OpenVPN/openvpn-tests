@@ -11,11 +11,11 @@ terraform {
       version = "= 2.3.7"
     }
     tls = {
-      source = "hashicorp/tls"
+      source  = "hashicorp/tls"
       version = "=4.1.0"
     }
     sshkey = {
-      source = "daveadams/sshkey"
+      source  = "daveadams/sshkey"
       version = "=0.2.1"
     }
   }

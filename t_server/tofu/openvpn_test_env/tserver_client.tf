@@ -7,14 +7,14 @@ resource "aws_instance" "tserver_client" {
   key_name                    = var.key_name
   source_dest_check           = false
   subnet_id                   = local.primary_vpc_primary_public_subnet_id
-  tags                        = { "Name": "tserver-client",
-                                  "Role" : "Static tserver OpenVPN client",
-                                  "tostop" : "true",
-                                  "Distro" : "Rocky",
-                                  "Login" : "rocky" }
+  tags = { "Name" : "tserver-client",
+    "Role" : "Static tserver OpenVPN client",
+    "tostop" : "true",
+    "Distro" : "Rocky",
+  "Login" : "rocky" }
   user_data                   = module.tserver_client_user_data.user_data
   user_data_replace_on_change = true
-  vpc_security_group_ids      = [ module.primary-vpc-standard-sg.id, ]
+  vpc_security_group_ids      = [module.primary-vpc-standard-sg.id, ]
 
   # Copy OpenVPN certificates and keys. This needs to be done using a
   # provisioner as the content will not fit into the userdata.
@@ -27,7 +27,7 @@ resource "aws_instance" "tserver_client" {
 
   provisioner "remote-exec" {
     inline = ["sudo mkdir -p ${local.tserver_keydir}",
-              "sudo chown -R ${var.rocky_9_default_user}:${var.rocky_9_default_group} ${var.tserver_data_dir}"]
+    "sudo chown -R ${var.rocky_9_default_user}:${var.rocky_9_default_group} ${var.tserver_data_dir}"]
   }
 
   provisioner "file" {
@@ -112,16 +112,16 @@ resource "aws_instance" "tserver_client" {
 
   provisioner "remote-exec" {
     inline = ["sudo chown -R ${var.rocky_9_default_user}:${var.rocky_9_default_group} ${var.tserver_data_dir}",
-              "chmod 600 ${local.tserver_keydir}/*.key",
-              "ln -s ${local.tserver_keydir}/client-28.crt ${local.tserver_keydir}/client-master.crt",
-              "ln -s ${local.tserver_keydir}/client-28.key ${local.tserver_keydir}/client-master.key"]
+      "chmod 600 ${local.tserver_keydir}/*.key",
+      "ln -s ${local.tserver_keydir}/client-28.crt ${local.tserver_keydir}/client-master.crt",
+    "ln -s ${local.tserver_keydir}/client-28.key ${local.tserver_keydir}/client-master.key"]
 
   }
 
   root_block_device {
     volume_size = 50
-    tags        = { "Name" : "tserver-client",
-                    "Role" : "tserver client", }
+    tags = { "Name" : "tserver-client",
+    "Role" : "tserver client", }
   }
 
   lifecycle {

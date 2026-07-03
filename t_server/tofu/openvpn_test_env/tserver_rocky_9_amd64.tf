@@ -7,15 +7,15 @@ resource "aws_instance" "tserver_rocky_9_amd64" {
   key_name                    = var.key_name
   source_dest_check           = false
   subnet_id                   = local.primary_vpc_primary_public_subnet_id
-  tags                        = { "Name": "tserver-rocky-9-amd64",
-                                  "Role" : "tserver",
-                                  "tostop" : "true",
-                                  "Distro" : "Rocky",
-                                  "Login" : "rocky" }
+  tags = { "Name" : "tserver-rocky-9-amd64",
+    "Role" : "tserver",
+    "tostop" : "true",
+    "Distro" : "Rocky",
+  "Login" : "rocky" }
   user_data                   = module.tserver_rocky_9_amd64_user_data.user_data
   user_data_replace_on_change = true
-  vpc_security_group_ids      = [ module.primary-vpc-standard-sg.id,
-                                  aws_security_group.tserver.id, ]
+  vpc_security_group_ids = [module.primary-vpc-standard-sg.id,
+  aws_security_group.tserver.id, ]
 
   # Copy OpenVPN certificates and keys. This needs to be done using a
   # provisioner as the content will not fit into the userdata.
@@ -28,7 +28,7 @@ resource "aws_instance" "tserver_rocky_9_amd64" {
 
   provisioner "remote-exec" {
     inline = ["sudo mkdir -p ${local.tserver_keydir}",
-              "sudo chown -R ${var.rocky_9_default_user}:${var.rocky_9_default_group} ${var.tserver_data_dir}"]
+    "sudo chown -R ${var.rocky_9_default_user}:${var.rocky_9_default_group} ${var.tserver_data_dir}"]
   }
 
   provisioner "file" {
@@ -121,13 +121,13 @@ resource "aws_instance" "tserver_rocky_9_amd64" {
 
   provisioner "remote-exec" {
     inline = ["sudo chown -R ${var.rocky_9_default_user}:${var.rocky_9_default_group} ${var.tserver_data_dir}",
-              "chmod 600 ${local.tserver_keydir}/*.key"]
+    "chmod 600 ${local.tserver_keydir}/*.key"]
   }
 
   root_block_device {
     volume_size = 15
-    tags        = { "Name" : "tserver-rocky-9-amd64",
-                    "Role" : "tserver", }
+    tags = { "Name" : "tserver-rocky-9-amd64",
+    "Role" : "tserver", }
   }
 
   lifecycle {
