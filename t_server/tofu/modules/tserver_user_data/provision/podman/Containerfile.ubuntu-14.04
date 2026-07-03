@@ -1,4 +1,4 @@
-FROM docker.io/ubuntu:14.04@sha256:64483f3496c1373bfd55348e88694d1c4d0c9b660dee6bfef5e12f43b9933b30
+FROM docker.io/ubuntu:26.04@sha256:b7f48194d4d8b763a478a621cdc81c27be222ba2206ca3ca6bc42b49685f3d9e
 
 COPY prepare-openvpn-build.sh /build/
 COPY create-openvpn-executable.sh /build/
