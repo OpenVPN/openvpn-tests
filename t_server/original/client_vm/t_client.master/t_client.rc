@@ -87,8 +87,8 @@ fi
 # Test 1: TCP / p2mp tun
 #
 RUN_TITLE_1="tcp4 / p2pm / top net30"
-OPENVPN_CONF_1_BASE="$OPENVPN_BASE_P2MP --dev tun --remote $REMOTE --port 51194"
-OPENVPN_CONF_1="$OPENVPN_CONF_1_BASE --proto ${TCP4}"
+BASE_CONF_1="$OPENVPN_BASE_P2MP --dev tun --remote $REMOTE --port 51194"
+OPENVPN_CONF_1="$BASE_CONF_1 --proto ${TCP4}"
 PING4_HOSTS_1="10.204.1.1 10.204.0.1"
 PING6_HOSTS_1="fd00:abcd:204:1::1 fd00:abcd:204:0::1"
 
@@ -98,7 +98,7 @@ PING6_HOSTS_1="fd00:abcd:204:1::1 fd00:abcd:204:0::1"
 # with --server-poll-timeout, just to ensure it is still allowed in TLS mode
 
 RUN_TITLE_1a="tcp6 / p2pm / top net30"
-OPENVPN_CONF_1a="$OPENVPN_CONF_1_BASE --proto tcp6-client --server-poll-timeout 10"
+OPENVPN_CONF_1a="$BASE_CONF_1 --proto tcp6-client --server-poll-timeout 10"
 EXPECT_IFCONFIG4_1a="$EXPECT_IFCONFIG4_1"
 EXPECT_IFCONFIG6_1a="$EXPECT_IFCONFIG6_1"
 PING4_HOSTS_1a="$PING4_HOSTS_1"
@@ -109,7 +109,7 @@ PING6_HOSTS_1a="$PING6_HOSTS_1"
 #
 
 RUN_TITLE_1b="tcp4 / http proxy / p2pm / top net30"
-OPENVPN_CONF_1b="$OPENVPN_CONF_1_BASE --proto ${TCP4}-client --http-proxy $PROXY_SERVER_IPV4 3128"
+OPENVPN_CONF_1b="$BASE_CONF_1 --proto ${TCP4}-client --http-proxy $PROXY_SERVER_IPV4 3128"
 EXPECT_IFCONFIG4_1b="$EXPECT_IFCONFIG4_1"
 EXPECT_IFCONFIG6_1b="$EXPECT_IFCONFIG6_1"
 PING4_HOSTS_1b="$PING4_HOSTS_1"
@@ -121,7 +121,7 @@ PING6_HOSTS_1b="$PING6_HOSTS_1"
 
 RUN_TITLE_1c="tcp6 / http proxy / p2pm / top net30"
 CHECK_SKIP_1c="needs_openvpn 24" # proxy ipv6 support
-OPENVPN_CONF_1c="$OPENVPN_CONF_1_BASE --proto tcp6-client --http-proxy $PROXY_SERVER 3128"
+OPENVPN_CONF_1c="$BASE_CONF_1 --proto tcp6-client --http-proxy $PROXY_SERVER 3128"
 EXPECT_IFCONFIG4_1c="$EXPECT_IFCONFIG4_1"
 EXPECT_IFCONFIG6_1c="$EXPECT_IFCONFIG6_1"
 PING4_HOSTS_1c="$PING4_HOSTS_1"
@@ -132,7 +132,7 @@ PING6_HOSTS_1c="$PING6_HOSTS_1"
 #
 
 RUN_TITLE_1d="tcp4 / socks proxy / p2pm / top net30"
-OPENVPN_CONF_1d="$OPENVPN_CONF_1_BASE --proto ${TCP4}-client --socks-proxy $PROXY_SERVER 1080"
+OPENVPN_CONF_1d="$BASE_CONF_1 --proto ${TCP4}-client --socks-proxy $PROXY_SERVER 1080"
 EXPECT_IFCONFIG4_1d="$EXPECT_IFCONFIG4_1"
 EXPECT_IFCONFIG6_1d="$EXPECT_IFCONFIG6_1"
 PING4_HOSTS_1d="$PING4_HOSTS_1"
@@ -144,7 +144,7 @@ PING6_HOSTS_1d="$PING6_HOSTS_1"
 
 RUN_TITLE_1e="tcp6 / socks proxy / p2pm / top net30"
 CHECK_SKIP_1e="needs_openvpn 24" # proxy ipv6 support
-OPENVPN_CONF_1e="$OPENVPN_CONF_1_BASE --proto tcp6-client --socks-proxy $PROXY_SERVER 1080"
+OPENVPN_CONF_1e="$BASE_CONF_1 --proto tcp6-client --socks-proxy $PROXY_SERVER 1080"
 EXPECT_IFCONFIG4_1e="$EXPECT_IFCONFIG4_1"
 EXPECT_IFCONFIG6_1e="$EXPECT_IFCONFIG6_1"
 PING4_HOSTS_1e="$PING4_HOSTS_1"
@@ -154,7 +154,7 @@ PING6_HOSTS_1e="$PING6_HOSTS_1"
 #
 RUN_TITLE_1x="tcp / p2pm / top net30 / --data-cipher none"
 CHECK_SKIP_1x="needs_openvpn 25" # data-ciphers
-OPENVPN_CONF_1x="$OPENVPN_CONF_1_BASE --proto tcp --data-ciphers none"
+OPENVPN_CONF_1x="$BASE_CONF_1 --proto tcp --data-ciphers none"
 EXPECT_IFCONFIG4_1x="$EXPECT_IFCONFIG4_1"
 EXPECT_IFCONFIG6_1x="$EXPECT_IFCONFIG6_1"
 PING4_HOSTS_1x="$PING4_HOSTS_1"
@@ -291,7 +291,7 @@ EXPECT_FAIL_2z1="Received control message: AUTH_FAILED,Data channel cipher"
 # 2z2: NCP *fail* (cipher)
 RUN_TITLE_2z2="udp6 / p2pm / top net30 / --data-ciphers IDEA-CBC"
 CHECK_SKIP_2z2="needs_openvpn 25" # data-ciphers
-OPENVPN_CONF_2z2="$BASEC_CONF_2 --proto udp6 --data-ciphers IDEA-CBC"
+OPENVPN_CONF_2z2="$BASE_CONF_2 --proto udp6 --data-ciphers IDEA-CBC"
 EXPECT_IFCONFIG4_2z2=-
 EXPECT_IFCONFIG6_2z2=-
 EXPECT_FAIL_2z2="Received control message: AUTH_FAILED,Data channel cipher"
@@ -586,11 +586,11 @@ EXPECT_FAIL_7y="Received control message: AUTH_FAILED"
 #
 # Test 8: UDP / p2p tun
 RUN_TITLE_8="p2p tun / udp4"
-OPENVPN_CONF_8_BASE="--dev tun --proto ${UDP4} --remote $REMOTE 51204 --nobind --secret $KEYBASE/p2p.key --ifconfig 10.204.8.2 10.204.8.1 --comp-lzo --tun-ipv6 --ifconfig-ipv6 fd00:abcd:204:8::2/64 fd00:abcd:204:8::1 --route 10.204.0.0 255.255.0.0 --route-ipv6 fd00:abcd:204::/48 --verb 3 --up $PING8_SH --script-security 2 --setenv opt allow-deprecated-insecure-static-crypto"
+BASE_CONF_8="--dev tun --remote $REMOTE 51204 --nobind --secret $KEYBASE/p2p.key --ifconfig 10.204.8.2 10.204.8.1 --comp-lzo --tun-ipv6 --ifconfig-ipv6 fd00:abcd:204:8::2/64 fd00:abcd:204:8::1 --route 10.204.0.0 255.255.0.0 --route-ipv6 fd00:abcd:204::/48 --verb 3 --up $PING8_SH --script-security 2 --setenv opt allow-deprecated-insecure-static-crypto"
 if needs_openvpn 26; then
-   OPENVPN_CONF_8_BASE="$OPENVPN_CONF_8_BASE --providers legacy default"
+   BASE_CONF_8="$BASE_CONF_8 --providers legacy default"
 fi
-OPENVPN_CONF_8="$OPENVPN_CONF_8_BASE --proto ${UDP4}"
+OPENVPN_CONF_8="$BASE_CONF_8 --proto ${UDP4}"
 EXPECT_IFCONFIG4_8="10.204.8.2"
 EXPECT_IFCONFIG6_8="fd00:abcd:204:8::2"
 PING4_HOSTS_8="10.204.8.1 10.204.0.1"
@@ -598,7 +598,7 @@ PING6_HOSTS_8="fd00:abcd:204:8::1 fd00:abcd:204:0::1"
 
 # Test 8a, IPv6
 RUN_TITLE_8a="p2p tun / udp6"
-OPENVPN_CONF_8a="$OPENVPN_CONF_8_BASE --proto udp6"
+OPENVPN_CONF_8a="$BASE_CONF_8 --proto udp6"
 EXPECT_IFCONFIG4_8a="$EXPECT_IFCONFIG4_8"
 EXPECT_IFCONFIG6_8a="$EXPECT_IFCONFIG6_8"
 PING4_HOSTS_8a="$PING4_HOSTS_8"
@@ -606,15 +606,15 @@ PING6_HOSTS_8a="$PING6_HOSTS_8"
 
 # Test 9: tcp / p2p tap / --tls-server
 RUN_TITLE_9="tcp4 / p2p tap / --tls-server (no --server) / tcp4"
-OPENVPN_CONF_9_BASE="$OPENVPN_BASE_P2MP --dev tap --remote $REMOTE 51204 --ifconfig 10.204.9.2 255.255.255.0 --comp-lzo --tun-ipv6 --ifconfig-ipv6 fd00:abcd:204:9::2/64 fd00:abcd:204:9::1 "
-OPENVPN_CONF_9="$OPENVPN_CONF_9_BASE --proto ${TCP4} --cipher BF-CBC"
+BASE_CONF_9="$OPENVPN_BASE_P2MP --dev tap --remote $REMOTE 51204 --ifconfig 10.204.9.2 255.255.255.0 --comp-lzo --tun-ipv6 --ifconfig-ipv6 fd00:abcd:204:9::2/64 fd00:abcd:204:9::1 "
+OPENVPN_CONF_9="$BASE_CONF_9 --proto ${TCP4} --cipher BF-CBC"
 EXPECT_IFCONFIG4_9="10.204.9.2"
 EXPECT_IFCONFIG6_9="fd00:abcd:204:9::2"
 PING4_HOSTS_9="10.204.9.1 10.204.0.1"
 PING6_HOSTS_9="fd00:abcd:204:9::1 fd00:abcd:204:0::1"
 
 RUN_TITLE_9a="tcp6 / p2p tap / --tls-client (no --client) / tcp6 / no pushed cipher"
-OPENVPN_CONF_9a="$OPENVPN_CONF_9_BASE \
+OPENVPN_CONF_9a="$BASE_CONF_9 \
         --ca $CA_CERT --cert $CLIENT_CERT --key $CLIENT_KEY \
         --remote-cert-tls server --nobind \
         --tls-client \
