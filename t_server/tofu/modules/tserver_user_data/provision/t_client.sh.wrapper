@@ -4,7 +4,7 @@
 #
 BRANCH=$1
 
-podman run --tty \
+podman run --tty --rm \
   --cap-add=CAP_NET_ADMIN \
   --cap-add=CAP_NET_RAW \
   --device=/dev/net/tun \
@@ -14,9 +14,10 @@ podman run --tty \
   --volume /home/rocky/t_client.$BRANCH:/root/t_client.$BRANCH:rw \
   --workdir /root/t_client.$BRANCH \
   --env TEST_RUN_OVERRIDE \
+  --env TEST_RUN_GROUP \
   --env "t_server=yes" \
   --env "t_client_ips_rc=/root/t_client.$BRANCH/t_client_ips.rc" \
   --env "update_t_client_ips=/root/bin/update_t_client_ips.sh" \
   --env "srcdir=/root/t_client.$BRANCH" \
   --env "openvpn=/usr/local/bin/openvpn-$BRANCH" \
-  localhost/openvpn-$BRANCH:latest /root/bin/t_client.sh.real $@
+  localhost/openvpn-$BRANCH:latest /root/bin/t_client.sh.real

@@ -1,10 +1,13 @@
-#!/bin/sh
+#!/bin/bash
 #
+set -u
+
 . /var/lib/provision/deployment-config.sh
 
 KEY=$SSH_PRIVATE_KEY
 HOST=tserver-client.$PRIVATE_DNS_ZONE_NAME
 TESTSETS="22 23 24 25 26 27 master"
+TESTGROUPS=$(seq 1 10)
 
 LOGDIR=$HOMEDIR/t_server_logs
 DAY=`date +%Y%m%d`
@@ -23,23 +26,40 @@ EOF
 for T in $TESTSETS
 do
     echo "$T..."
-    LOG=$LOGDIR/$DAY/$NOW.$T.out
+    JOBS=""
+    for G in $TESTGROUPS
+    do
+        LOG=$LOGDIR/$DAY/$NOW.$T.$G.out
 
-    ssh -i $KEY $HOST "TEST_RUN_OVERRIDE='$TEST_RUN_OVERRIDE' ./bin/t_client.sh $T 2>&1" | tee $LOG
+        echo "Starting $T/$G..."
+        ssh -i "$KEY" "$HOST" "TEST_RUN_OVERRIDE='${TEST_RUN_OVERRIDE:-}' TEST_RUN_GROUP=$G ./bin/t_client.sh $T" >"$LOG" 2>&1 &
+        JOBS="$JOBS $!"
+    done
     echo "$T..." >> $SUMMARY
-    grep "Test sets" $LOG >> $SUMMARY
-    RC=${PIPESTATUS[0]}
-    case $RC in
-	0)  ;;	# all good
-	30) ;;	# all good
-	*)	# something else, more details!
-	echo "SSH $HOST failed (test set $T): rc=$RC" | tee -a $SUMMARY
-	echo "-----------------"
-	tail $LOG
-	echo "-----------------"
-	echo ""
-	exit 1
-    esac
+    G=1
+    for J in $JOBS
+    do
+        LOG=$LOGDIR/$DAY/$NOW.$T.$G.out
+
+        echo "Waiting for $T/$G (pid=$J)..."
+        wait $J
+        RC=$?
+        echo "$T/$G..." >> $SUMMARY
+        grep "Test sets" $LOG >> $SUMMARY
+        case $RC in
+	    0)  ;;	# all good
+	    30) ;;	# some tests failed
+            77) ;;      # no tests run
+	    *)	# unexpected failure, show more details!
+	        echo "Test run $T/$G failed (host=$HOST): rc=$RC" | tee -a $SUMMARY
+	        echo "-----------------"
+	        tail $LOG
+	        echo "-----------------"
+	        echo ""
+	        exit 1
+        esac
+        G=$((G + 1))
+    done
 done
 
 cat $SUMMARY
