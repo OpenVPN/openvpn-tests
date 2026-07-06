@@ -17,6 +17,7 @@ if [ ! -d "$LOGDIR/$DAY" ] ; then
     mkdir -p "$LOGDIR/$DAY"
 fi
 
+EXIT_CODE=0
 SUMMARY=$LOGDIR/$DAY/$NOW.Summary
 cat >$SUMMARY <<EOF
 -----------------
@@ -48,8 +49,8 @@ do
         grep "Test sets" $LOG >> $SUMMARY
         case $RC in
 	    0)  ;;	# all good
-	    30) ;;	# some tests failed
-            77) ;;      # no tests run
+	    30) EXIT_CODE=1 ;;	# some tests failed
+	    77) ;;      # no tests run
 	    *)	# unexpected failure, show more details!
 	        echo "Test run $T/$G failed (host=$HOST): rc=$RC" | tee -a $SUMMARY
 	        echo "-----------------"
@@ -63,3 +64,4 @@ do
 done
 
 cat $SUMMARY
+exit $EXIT_CODE
