@@ -19,12 +19,8 @@ CLIENT_CERT="$KEYBASE/client-22.crt"
 
 RUN_SUDO=sudo
 
-# default time for OpenVPN startup is 10 seconds, increase for faraway server
-SETUP_TIME_WAIT=10
-
-# override test ("make it fast!")
-#FPING_EXTRA_ARGS="-C 5"
-FPING_EXTRA_ARGS="-C 10"
+# Define ping
+FPING_EXTRA_ARGS="-C 5 -p 50"
 
 #
 # remote host (used as macro below)
@@ -53,7 +49,7 @@ OPENVPN_BASE_P2MP="--client --ca $CA_CERT \
 #
 # now define the individual tests - all variables suffixed with _1, _2 etc
 # will be used in test run "1", "2", etc.
-# 
+#
 # Test 1: TCP / p2mp tun
 #
 RUN_TITLE_1="tcp / p2pm / top net30"

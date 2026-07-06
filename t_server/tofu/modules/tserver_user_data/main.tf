@@ -158,6 +158,7 @@ data "cloudinit_config" "tserver" {
 net.ipv4.ip_forward=1
 net.ipv6.conf.all.forwarding=1
 EOF
+            permissions = "0o644"
           },
           {
             path = "/etc/systemd/system/sockd.service.d/override.conf",
@@ -166,21 +167,20 @@ EOF
 Restart=on-failure
 RestartSec=10
 EOF
+            permissions = "0o644"
           },
           {
             encoding = "b64"
             content = base64encode(templatefile("${path.module}/provision/buildbot.service",
               { user = var.default_user, group = var.default_group }
               ))
-            owner       = "root:root"
             path        = "/etc/systemd/system/buildbot.service"
-            permissions = "0644"
+            permissions = "0o644"
           },
           {
             content     = var.buildbot_environment
-            owner       = "${var.default_user}:${var.default_group}"
             path        = "/var/lib/provision/buildbot.env"
-            permissions = "0640"
+            permissions = "0o640"
           },
         ],
         runcmd = [
