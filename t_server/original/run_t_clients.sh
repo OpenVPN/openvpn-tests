@@ -46,7 +46,7 @@ do
         wait $J
         RC=$?
         echo "$T/$G..." >> $SUMMARY
-        grep "Test sets" $LOG >> $SUMMARY
+        grep "Test sets" $LOG | grep -v none >> $SUMMARY
         case $RC in
 	    0)  ;;	# all good
 	    30) EXIT_CODE=1 ;;	# some tests failed
