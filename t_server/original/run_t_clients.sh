@@ -49,12 +49,18 @@ do
         grep "Test sets" $LOG | grep -v none >> $SUMMARY
         case $RC in
 	    0)  ;;	# all good
-	    30) EXIT_CODE=1 ;;	# some tests failed
+	    30) # some tests failed
+	        EXIT_CODE=1
+	        echo "Tests failed in ($T/$G)"
+	        echo "-----------------"
+	        cat $LOG
+	        echo "-----------------"
+		;;
 	    77) ;;      # no tests run
 	    *)	# unexpected failure, show more details!
 	        echo "Test run $T/$G failed (host=$HOST): rc=$RC" | tee -a $SUMMARY
 	        echo "-----------------"
-	        tail $LOG
+	        cat $LOG
 	        echo "-----------------"
 	        echo ""
 	        exit 1
