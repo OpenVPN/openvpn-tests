@@ -141,6 +141,9 @@ else
 fi
 
 LOGDIR=t_client-`hostname`-`date +%Y%m%d-%H%M%S`
+if [ -n "$TEST_RUN_GROUP" ]; then
+    LOGDIR="${LOGDIR}-${TEST_RUN_GROUP}"
+fi
 LOGDIR_ABS="$PWD/$LOGDIR"
 if mkdir $LOGDIR
 then :
