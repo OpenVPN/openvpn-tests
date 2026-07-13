@@ -141,6 +141,9 @@ else
 fi
 
 LOGDIR=t_client-`hostname`-`date +%Y%m%d-%H%M%S`
+if [ -n "$TEST_RUN_GROUP" ]; then
+    LOGDIR="${LOGDIR}-${TEST_RUN_GROUP}"
+fi
 LOGDIR_ABS="$PWD/$LOGDIR"
 if mkdir $LOGDIR
 then :
@@ -240,7 +243,7 @@ get_ifconfig_route()
     # except Linux and MacOS
     case $UNAME in
 	Linux)
-            if [ -x /usr/bin/resolvectl ] ; then
+            if [ -x /usr/bin/resolvectl -a -d /run/systemd/system ] ; then
                 echo "-- linux resolvectl --"
                 resolvectl status
             else
