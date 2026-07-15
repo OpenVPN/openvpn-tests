@@ -36,6 +36,8 @@ if [ "$1" != '' ] ; then INSTANCES="$@" ; fi
 
 cd "$SCRIPTPATH"
 
+ulimit -c unlimited
+
 for SI in $INSTANCES
 do
     # to avoid starting an instance, just put an "X" before the 
