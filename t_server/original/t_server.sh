@@ -96,7 +96,7 @@ sudo $SCRIPTPATH/t_server/stop
 sleep 14		# wg. multisocket/EEN, issue #702
 
 cp -v $BINDIR/openvpn $BINDIR/openvpn.$DAY
-cp -v src/openvpn/openvpn $BINDIR/openvpn
+cp -v src/openvpn/openvpn $BINDIR/openvpn || exit 13
 
 sudo $SCRIPTPATH/t_server/start
 #sudo sh -c "setsid /root/t_server/start"
