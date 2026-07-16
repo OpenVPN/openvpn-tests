@@ -34,7 +34,9 @@ ip addr add fd00:dead:beef::2002/128 dev lo
 # start/stop single instances: "./start tap-udp-p2mp"
 if [ "$1" != '' ] ; then INSTANCES="$@" ; fi
 
-cd "$SCRIPTPATH"
+cd "$SCRIPTPATH" || exit 1
+
+ulimit -c unlimited
 
 for SI in $INSTANCES
 do

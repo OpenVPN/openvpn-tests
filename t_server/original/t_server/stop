@@ -28,3 +28,7 @@ do
     sleep 1
     rm -f $PID
 done
+
+if pgrep -f -a -- "$BINDIR/openvpn"; then
+    pkill -f -- "$BINDIR/openvpn"
+fi
