@@ -27,19 +27,19 @@ EOF
 for T in $TESTSETS
 do
     echo "$T..."
-    JOBS=""
+    declare -A JOBS=()
     for G in $TESTGROUPS
     do
         LOG=$LOGDIR/$DAY/$NOW.$T.$G.out
 
         echo "Starting $T/$G..."
         ssh -i "$KEY" "$HOST" "TEST_RUN_OVERRIDE='${TEST_RUN_OVERRIDE:-}' TEST_RUN_GROUP=$G ./bin/t_client.sh $T" >"$LOG" 2>&1 &
-        JOBS="$JOBS $!"
+        JOBS[$G]=$!
     done
     echo "$T..." >> $SUMMARY
-    G=1
-    for J in $JOBS
+    for G in $TESTGROUPS
     do
+        J=${JOBS[$G]}
         LOG=$LOGDIR/$DAY/$NOW.$T.$G.out
 
         echo "Waiting for $T/$G (pid=$J)..."
@@ -65,7 +65,6 @@ do
 	        echo ""
 	        exit 1
         esac
-        G=$((G + 1))
     done
 done
 
