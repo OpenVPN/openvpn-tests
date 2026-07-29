@@ -7,8 +7,9 @@ resource "aws_instance" "tserver_rocky_9_amd64" {
   key_name                    = var.key_name
   source_dest_check           = false
   subnet_id                   = local.primary_vpc_primary_public_subnet_id
-  tags = { "Name" : "tserver-rocky-9-amd64",
+  tags = { "Name" : "${var.deployment}-tserver-rocky-9-amd64",
     "Role" : "tserver",
+    "Deployment" : var.deployment,
     "tostop" : "true",
     "Distro" : "Rocky",
   "Login" : "rocky" }

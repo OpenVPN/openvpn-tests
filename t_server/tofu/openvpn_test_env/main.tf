@@ -6,7 +6,7 @@ module "ami" {
 module "primary-vpc" {
   count                               = var.manage_vpc ? 1 : 0
   source                              = "github.com/Puppet-Finland/opentofu-vpc?ref=1.1.0"
-  basename                            = "production"
+  basename                            = var.vpc_name
   region                              = var.region
   manage_ipv4_nat_gateway             = false
   vpc_cidr_block                      = var.primary_vpc_cidr_block

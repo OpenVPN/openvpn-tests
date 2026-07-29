@@ -7,8 +7,9 @@ resource "aws_instance" "tserver_anchor" {
   key_name                    = var.key_name
   source_dest_check           = false
   subnet_id                   = local.primary_vpc_primary_public_subnet_id
-  tags = { "Name" : "tserver-anchor",
+  tags = { "Name" : "${var.deployment}-tserver-anchor",
     "Role" : "Static tserver OpenVPN client",
+    "Deployment" : var.deployment,
     "tostop" : "true",
     "Distro" : "Rocky",
   "Login" : "rocky" }

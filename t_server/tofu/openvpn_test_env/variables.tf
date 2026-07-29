@@ -23,6 +23,12 @@ variable "manage_vpc" {
   default     = true
 }
 
+variable "vpc_name" {
+  description = "How to name the VPC (only if manage_vpc=true)"
+  type        = string
+  default     = "production"
+}
+
 # Parameters
 variable "public_dns_zone_name" {
   description = "Public Route 53 hosted zone name. Required when enable_public_dns_zone is true."
@@ -35,7 +41,7 @@ variable "private_dns_zone_name" {
 }
 
 variable "deployment" {
-  description = "Informal deployment name added to EC2 instance tags"
+  description = "Deployment name added to EC2 resource names"
   type        = string
 }
 
