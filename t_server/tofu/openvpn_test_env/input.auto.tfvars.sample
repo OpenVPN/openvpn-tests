@@ -29,6 +29,9 @@ external_primary_vpc_id                            = "vpc-abcdef0123456789a"
 external_primary_vpc_primary_public_subnet_id      = "subnet-cdef0123456789abc"
 external_primary_vpc_primary_public_route_table_id = "rtb-f0123456789abcdef012"
 
+# if you set manage_vpc to true, you can change the name of the VPC
+vpc_name = "production"
+
 ### VPC settings
 #
 # Only required when this module manages the VPC
@@ -79,7 +82,8 @@ private_dns_zone_name = "tserver.vpn"
 # t_server VPN CIDR block
 tserver_rocky_9_amd64_vpn_cidr_block = "10.52.124.0/24"
 
-# This gets added to AWS tags and is purely informal
+# This gets added to AWS name tags to make resources from different deployments
+# easier to differentiate
 deployment = "production"
 
 # Hostnames for the t_server EC2 instances; these will be added to private DNS
