@@ -28,7 +28,7 @@ FPING_EXTRA_ARGS="-C 5 -p 50"
 # For proxy tests
 FPING_PROXY_ARGS="-C 5 -p 100"
 # For slow tests (4/9)
-FPING_SLOW_ARGS="-C 10 -p 200"
+FPING_SLOW_ARGS="-C 20 -p 200"
 
 #
 # remote host (used as macro below)
@@ -315,10 +315,13 @@ OPENVPN_CONF_3m="$OPENVPN_CONF_3 --max-packet-size 145"
 EXPECT_IFCONFIG4_3m=$EXPECT_IFCONFIG4_3
 PING4_HOSTS_3m="$PING4_HOSTS_3"
 
+LLDADDR_4="--lladdr 02:04:02:07:00:$openvpn_version"
+
 # Test 4: UDP / p2mp tap
 #
 RUN_TITLE_4="udp4 / p2pm / tap"
-OPENVPN_CONF_4="$OPENVPN_BASE_P2MP --dev tap --proto ${UDP4} --remote $REMOTE --port 51196 --route-ipv6 fd00:abcd:195::/48 fd00:abcd:204:4::ffff"
+BASE_CONF_4="$OPENVPN_BASE_P2MP --dev tap --remote $REMOTE --port 51196 $LLDADDR_4"
+OPENVPN_CONF_4="$BASE_CONF_4 --proto ${UDP4} --route-ipv6 fd00:abcd:195::/48 fd00:abcd:204:4::ffff"
 if ! needs_openvpn 24; then
   OPENVPN_CONF_4="$OPENVPN_CONF_4 --tun-ipv6"
 fi
@@ -331,7 +334,7 @@ PING6_HOSTS_4="fd00:abcd:204:4::1 fd00:abcd:204:0::1 fd00:abcd:204:4::a:200 fd00
 #
 RUN_TITLE_4a="udp6 / p2pm / tap3 / topo subnet"
 CHECK_SKIP_4a="needs_openvpn 24" # subnet
-OPENVPN_CONF_4a="$OPENVPN_BASE_P2MP --dev tap3 --proto udp6 --remote $REMOTE --port 51196 --topology subnet"
+OPENVPN_CONF_4a="$BASE_CONF_4 --proto udp6 --topology subnet"
 EXPECT_IFCONFIG4_4a=$EXPECT_IFCONFIG4_4
 EXPECT_IFCONFIG6_4a=$EXPECT_IFCONFIG6_4
 FPING_ARGS_4a="$FPING_SLOW_ARGS"
@@ -342,7 +345,7 @@ PING6_HOSTS_4a="$PING6_HOSTS_4"
 #
 RUN_TITLE_4b="udp / p2pm / tap / ipv6-only (pull-filter)"
 CHECK_SKIP_4b="needs_openvpn 25" # ipv6-only doesn't work
-OPENVPN_CONF_4b="$OPENVPN_BASE_P2MP --dev tap --proto udp --remote $REMOTE --port 51196 --pull-filter accept ifconfig- --pull-filter ignore ifconfig"
+OPENVPN_CONF_4b="$BASE_CONF_4 --proto udp --pull-filter accept ifconfig- --pull-filter ignore ifconfig"
 EXPECT_IFCONFIG4_4b=-
 EXPECT_IFCONFIG6_4b=$EXPECT_IFCONFIG6_4
 FPING_ARGS_4b="$FPING_SLOW_ARGS"
