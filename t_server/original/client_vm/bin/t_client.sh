@@ -263,6 +263,20 @@ get_ifconfig_route()
 }
 
 # ----------------------------------------------------------
+# check ifconfig output on whether some address is in "tentative" state
+# repeats calling get_ifconfig_route until it does not
+#  arg1: log file
+check_tentative_state()
+{
+    logfile="$1"
+    while grep -q tentative $logfile; do
+        output "waiting for tentative state to end"
+        sleep 1
+        get_ifconfig_route >$logfile
+    done
+}
+
+# ----------------------------------------------------------
 # check ifconfig
 #  arg1: "4" or "6" -> for message
 #  arg2: IPv4/IPv6 address that must show up in out of "get_ifconfig_route"
@@ -389,6 +403,7 @@ do
 
     output "save pre-openvpn ifconfig + route"
     get_ifconfig_route >$LOGDIR/$SUF:ifconfig_route_pre.txt
+    check_tentative_state $LOGDIR/$SUF:ifconfig_route_pre.txt
 
     output "\nrun pre-openvpn ping tests - targets must not be reachable..."
     run_ping_tests 4 want_fail "$ping4_hosts"
@@ -489,6 +504,7 @@ do
     # compare whether anything changed in ifconfig/route setup?
     output "save ifconfig+route"
     get_ifconfig_route >$LOGDIR/$SUF:ifconfig_route.txt
+    check_tentative_state $LOGDIR/$SUF:ifconfig_route.txt
 
     if [ "$expect_ifconfig4" = "-" ] ; then
         output "skip ifconfig+route check"
@@ -527,6 +543,7 @@ do
 
     output "\nsave post-openvpn ifconfig + route..."
     get_ifconfig_route >$LOGDIR/$SUF:ifconfig_route_post.txt
+    check_tentative_state $LOGDIR/$SUF:ifconfig_route_post.txt
 
     output -n "compare pre- and post-openvpn ifconfig + route..."
     if diff $LOGDIR/$SUF:ifconfig_route_pre.txt \
