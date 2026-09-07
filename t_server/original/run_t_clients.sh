@@ -49,7 +49,7 @@ do
         grep "Test sets" $LOG | grep -v none >> $SUMMARY
         case $RC in
 	    0)  ;;	# all good
-	    30) # some tests failed
+	    30|32|33) # some tests failed
 	        EXIT_CODE=1
 	        echo "Tests failed in ($T/$G)"
 	        echo "-----------------"

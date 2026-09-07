@@ -23,9 +23,9 @@ t_client_ips_rc="${t_client_ips_rc:-${top_builddir}/t_client_ips.rc}"
 update_t_client_ips="${update_t_client_ips:-${srcdir}/update_t_client_ips.sh}"
 
 if [ -z "${t_client_rc}" ]; then
-    if [ -r "${top_builddir}"/t_client.rc ] ; then
+    if [ -r "${top_builddir}"/t_client.rc ]; then
         t_client_rc="${top_builddir}"/t_client.rc
-    elif [ -r "${srcdir}"/t_client.rc ] ; then
+    elif [ -r "${srcdir}"/t_client.rc ]; then
         t_client_rc="${srcdir}"/t_client.rc
     else
         echo "$0: cannot find 't_client.rc' in build dir ('${top_builddir}')" >&2
@@ -37,39 +37,38 @@ fi
 # Check for external dependencies
 FPING="fping"
 FPING6="fping6"
-which fping > /dev/null
+which fping >/dev/null
 if [ $? -ne 0 ]; then
     echo "$0: fping is not available in \$PATH" >&2
     exit "${TCLIENT_SKIP_RC}"
 fi
-which fping6 > /dev/null
+which fping6 >/dev/null
 if [ $? -ne 0 ]; then
     echo "$0: fping6 is not available in \$PATH, assuming fping 4.0 or later" >&2
     FPING="fping -4"
     FPING6="fping -6"
 fi
 
-KILL_EXEC=`which kill`
+KILL_EXEC=$(which kill)
 if [ $? -ne 0 ]; then
     echo "$0: kill not found in \$PATH" >&2
     exit "${TCLIENT_SKIP_RC}"
 fi
 
-if [ ! -x "${openvpn}" ]
-then
+if [ ! -x "${openvpn}" ]; then
     echo "no (executable) openvpn binary in current build tree. FAIL." >&2
     exit 1
 fi
 
-if [ ! -w . ]
-then
+if [ ! -w . ]; then
     echo "current directory is not writable (required for logging). FAIL." >&2
     exit 1
 fi
 
-openvpn_version=`${openvpn} --version | head -n 1 | cut -f2 -d" " | sed -e 's/^2\.\([0123456789]\+\).*$/2\1/'`
+openvpn_version=$(${openvpn} --version | head -n 1 | cut -f2 -d" " | sed -E 's/^2\.([0123456789]+).*$/2\1/')
 
-needs_openvpn() {
+needs_openvpn()
+{
     needs_version=$1
 
     [ "$openvpn_version" -ge "$needs_version" ]
@@ -78,7 +77,7 @@ needs_openvpn() {
 
 . "${t_client_rc}"
 
-if [ -z "$TEST_RUN_LIST" ] ; then
+if [ -z "$TEST_RUN_LIST" ]; then
     echo "TEST_RUN_LIST empty, no tests defined.  SKIP test." >&2
     exit "${TCLIENT_SKIP_RC}"
 fi
@@ -86,10 +85,10 @@ fi
 if [ -n "$TEST_RUN_GROUP" ]; then
     FILTERED_LIST=
     for test in $TEST_RUN_LIST; do
-        group=`echo $test | sed 's/^\([0123456789]\+\).*/\1/'`
+        group=$(echo $test | sed -E 's/^([0123456789]+).*/\1/')
         if [ "$group" = "$TEST_RUN_GROUP" ]; then
             FILTERED_LIST="$FILTERED_LIST $test"
-        fi;
+        fi
     done
     if [ -z "$FILTERED_LIST" ]; then
         echo "Filtered TEST_RUN_LIST empty (group=$TEST_RUN_GROUP), no tests defined.  SKIP test." >&2
@@ -103,16 +102,14 @@ PREFER_KSU="${PREFER_KSU:-0}"
 
 # make sure we have permissions to run ifconfig/route from OpenVPN
 # can't use "id -u" here - doesn't work on Solaris
-ID=`id`
-if expr "$ID" : "uid=0" >/dev/null
-then :
+ID=$(id)
+if expr "$ID" : "uid=0" >/dev/null; then
+    :
 else
-    if [ "${PREFER_KSU}" -eq 1 ];
-    then
+    if [ "${PREFER_KSU}" -eq 1 ]; then
         # Check if we have a valid kerberos ticket
         klist -l 1>/dev/null 2>/dev/null
-        if [ $? -ne 0 ];
-        then
+        if [ $? -ne 0 ]; then
             # No kerberos ticket found, skip ksu and fallback to RUN_SUDO
             PREFER_KSU=0
             echo "$0: No Kerberos ticket available.  Will not use ksu."
@@ -121,8 +118,7 @@ else
         fi
     fi
 
-    if [ -z "$RUN_SUDO" ]
-    then
+    if [ -z "$RUN_SUDO" ]; then
         echo "$0: this test must run be as root, or RUN_SUDO=... " >&2
         echo "      must be set correctly in 't_client.rc'. SKIP." >&2
         exit "${TCLIENT_SKIP_RC}"
@@ -130,23 +126,22 @@ else
         # We have to use sudo. Make sure that we (hopefully) do not have
         # to ask the users password during the test. This is done to
         # prevent timing issues, e.g. when the waits for openvpn to start
-	if $RUN_SUDO $KILL_EXEC -0 $$
-	then
-	    echo "$0: $RUN_SUDO $KILL_EXEC -0 succeeded, good."
-	else
-	    echo "$0: $RUN_SUDO $KILL_EXEC -0 failed, cannot go on. SKIP." >&2
-	    exit "${TCLIENT_SKIP_RC}"
-	fi
+        if $RUN_SUDO $KILL_EXEC -0 $$; then
+            echo "$0: $RUN_SUDO $KILL_EXEC -0 succeeded, good."
+        else
+            echo "$0: $RUN_SUDO $KILL_EXEC -0 failed, cannot go on. SKIP." >&2
+            exit "${TCLIENT_SKIP_RC}"
+        fi
     fi
 fi
 
-LOGDIR=t_client-`hostname`-`date +%Y%m%d-%H%M%S`
+LOGDIR=t_client-$(hostname)-$(date +%Y%m%d-%H%M%S)
 if [ -n "$TEST_RUN_GROUP" ]; then
     LOGDIR="${LOGDIR}-${TEST_RUN_GROUP}"
 fi
 LOGDIR_ABS="$PWD/$LOGDIR"
-if mkdir $LOGDIR
-then :
+if mkdir $LOGDIR; then
+    :
 else
     echo "can't create log directory '$LOGDIR'. FAIL." >&2
     exit 1
@@ -166,21 +161,28 @@ exit_code=0
 output_start()
 {
     case $V in
-	0) outbuf="" ;;			# no per-test output at all
-	1) printf "$@\n"			# compact, details only on failure
-           outbuf="\n" ;;
-	*) printf "\n$@\n" ;;		# print all, with a bit formatting
+        0) outbuf="" ;; # no per-test output at all
+        1)
+            printf "$@\n" # compact, details only on failure
+            outbuf="\n"
+            ;;
+        *) printf "\n$@\n" ;; # print all, with a bit formatting
     esac
 }
 
 output()
 {
-    END_NL="\n"; if [ "X$1" = "X-n" ] ; then END_NL="" ; shift ; fi
+    END_NL="\n"
+    if [ "X$1" = "X-n" ]; then
+        END_NL=""
+        shift
+    fi
     case $V in
-	0) ;;				# no per-test output at all
-	1) outbuf="$outbuf$@${END_NL}"	# print details only on failure
-           ;;
-	*) printf "$@${END_NL}" ;;	# print everything
+        0) ;; # no per-test output at all
+        1)
+            outbuf="$outbuf$@${END_NL}" # print details only on failure
+            ;;
+        *) printf "$@${END_NL}" ;; # print everything
     esac
 }
 
@@ -188,62 +190,61 @@ output()
 fail()
 {
     output "FAIL: $@\n"
-    fail_count=$(( $fail_count + 1 ))
+    fail_count=$((fail_count + 1))
 }
 
 # print "all interface IP addresses" + "all routes"
 # this is higly system dependent...
 get_ifconfig_route()
 {
-    UNAME=`uname -s`
+    UNAME=$(uname -s)
     case $UNAME in
-	Linux)
+        Linux)
             # linux / iproute2? (-> if configure got a path)
-            if [ -n "/sbin/ip" ]
-            then
+            if [ -n "/sbin/ip" ]; then
                 echo "-- linux iproute2 --"
-                /sbin/ip addr show     | grep -v valid_lft
+                /sbin/ip addr show | grep -v valid_lft
                 /sbin/ip route show
                 /sbin/ip -o -6 route show | grep -v ' cache' | sed -E -e 's/ expires [0-9]*sec//' -e 's/ (mtu|hoplimit|cwnd|ssthresh) [0-9]+//g' -e 's/ (rtt|rttvar) [0-9]+ms//g'
             else
-	        echo "-- linux / ifconfig --"
-	        LANG=C /usr/sbin/ifconfig -a |egrep  "( addr:|encap:)"
-	        LANG=C netstat -rn -4 -6
+                echo "-- linux / ifconfig --"
+                LANG=C /usr/sbin/ifconfig -a | egrep "( addr:|encap:)"
+                LANG=C netstat -rn -4 -6
             fi
             ;;
-	FreeBSD|NetBSD|Darwin)
-	   echo "-- FreeBSD/NetBSD/Darwin [MacOS X] --"
-	   /usr/sbin/ifconfig -a | egrep "(flags=|inet)"
-	   netstat -rn | awk '$3 !~ /^UHL/ { print $1,$2,$3,$NF }'
-	   ;;
-	OpenBSD)
-	   echo "-- OpenBSD --"
-	   /usr/sbin/ifconfig -a | egrep "(flags=|inet)" | \
-		sed -e 's/pltime [0-9]*//' -e 's/vltime [0-9]*//'
-	   netstat -rn | awk '$3 !~ /^UHL/ { print $1,$2,$3,$NF }'
-	   ;;
-	SunOS)
-	   echo "-- Solaris --"
-	   /usr/sbin/ifconfig -a | egrep "(flags=|inet)"
-	   netstat -rn | awk '$3 !~ /^UHL/ { print $1,$2,$3,$6 }'
-	   ;;
-	AIX)
-	   echo "-- AIX --"
-	   /usr/sbin/ifconfig -a | egrep "(flags=|inet)"
-	   netstat -rn | awk '$3 !~ /^UHL/ { print $1,$2,$3,$6 }'
-	   ;;
+        FreeBSD | NetBSD | Darwin)
+            echo "-- FreeBSD/NetBSD/Darwin [MacOS X] --"
+            /usr/sbin/ifconfig -a | egrep "(flags=|inet)"
+            netstat -rn | awk '$3 !~ /^UHL/ { print $1,$2,$3,$NF }'
+            ;;
+        OpenBSD)
+            echo "-- OpenBSD --"
+            /usr/sbin/ifconfig -a | egrep "(flags=|inet)" |
+                sed -e 's/pltime [0-9]*//' -e 's/vltime [0-9]*//'
+            netstat -rn | awk '$3 !~ /^UHL/ { print $1,$2,$3,$NF }'
+            ;;
+        SunOS)
+            echo "-- Solaris --"
+            /usr/sbin/ifconfig -a | egrep "(flags=|inet)"
+            netstat -rn | awk '$3 !~ /^UHL/ { print $1,$2,$3,$6 }'
+            ;;
+        AIX)
+            echo "-- AIX --"
+            /usr/sbin/ifconfig -a | egrep "(flags=|inet)"
+            netstat -rn | awk '$3 !~ /^UHL/ { print $1,$2,$3,$6 }'
+            ;;
         *)
-           echo "get_ifconfig_route(): no idea how to get info on your OS (`uname -s`).  FAIL." >&2
-           exit 20
-           ;;
+            echo "get_ifconfig_route(): no idea how to get info on your OS ($(uname -s)).  FAIL." >&2
+            exit 20
+            ;;
     esac
 
     # another round of per-platform information gathering, for DNS info
     # for most of the platforms "cat /etc/resolv.conf" is good enough
     # except Linux and MacOS
     case $UNAME in
-	Linux)
-            if [ -x /usr/bin/resolvectl -a -d /run/systemd/system ] ; then
+        Linux)
+            if [ -x /usr/bin/resolvectl -a -d /run/systemd/system ]; then
                 echo "-- linux resolvectl --"
                 resolvectl status
             else
@@ -251,7 +252,7 @@ get_ifconfig_route()
                 cat /etc/resolv.conf
             fi
             ;;
-	Darwin)
+        Darwin)
             echo "-- MacOS scutil --dns"
             scutil --dns
             ;;
@@ -282,19 +283,19 @@ check_tentative_state()
 #  arg2: IPv4/IPv6 address that must show up in out of "get_ifconfig_route"
 check_ifconfig()
 {
-    proto=$1 ; shift
+    proto=$1
+    shift
     expect_list="$@"
 
-    if [ -z "$expect_list" ] ; then return ; fi
-    if [ "$expect_list" = "-" ] ; then return ; fi
+    if [ -z "$expect_list" ]; then return; fi
+    if [ "$expect_list" = "-" ]; then return; fi
 
-    for expect in $expect_list
-    do
-	if get_ifconfig_route | fgrep "$expect" >/dev/null
-	then :
-	else
-	    fail "check_ifconfig(): expected IPv$proto address '$expect' not found in ifconfig output."
-	fi
+    for expect in $expect_list; do
+        if get_ifconfig_route | fgrep "$expect" >/dev/null; then
+            :
+        else
+            fail "check_ifconfig(): expected IPv$proto address '$expect' not found in ifconfig output."
+        fi
     done
 }
 
@@ -305,47 +306,48 @@ check_ifconfig()
 #  arg3... -> fping arguments (host list)
 run_ping_tests()
 {
-    proto=$1 ; want=$2 ; shift ; shift
+    proto=$1
+    want=$2
+    shift
+    shift
     targetlist="$@"
 
     # "no targets" is fine
-    if [ -z "$targetlist" ] ; then return ; fi
+    if [ -z "$targetlist" ]; then return; fi
 
     case $proto in
-	4) cmd="$FPING" ;;
-	6) cmd="$FPING6" ;;
-	*) echo "internal error in run_ping_tests arg 1: '$proto'" >&2
-	   exit 1 ;;
+        4) cmd="$FPING" ;;
+        6) cmd="$FPING6" ;;
+        *)
+            echo "internal error in run_ping_tests arg 1: '$proto'" >&2
+            exit 1
+            ;;
     esac
 
     case $want in
-	want_ok)   sizes_list="64 1440 3000" ;;
-	want_fail) sizes_list="64" ;;
+        want_ok) sizes_list="64 1440 3000" ;;
+        want_fail) sizes_list="64" ;;
     esac
 
-    for bytes in $sizes_list
-    do
-	output "run IPv$proto ping tests ($want), $bytes byte packets..."
+    for bytes in $sizes_list; do
+        output "run IPv$proto ping tests ($want), $bytes byte packets..."
 
-	echo "$cmd -b $bytes -C 20 -p 250 -q $fping_args $targetlist" >>$LOGDIR/$SUF:fping.out
-	$cmd -b $bytes -C 20 -p 250 -q $fping_args $targetlist >>$LOGDIR/$SUF:fping.out 2>&1
+        echo "$cmd -b $bytes -C 20 -p 250 -q $fping_args $targetlist" >>$LOGDIR/$SUF:fping.out
+        $cmd -b $bytes -C 20 -p 250 -q $fping_args $targetlist >>$LOGDIR/$SUF:fping.out 2>&1
 
-	# while OpenVPN is running, pings must succeed (want='want_ok')
-	# before OpenVPN is up, pings must NOT succeed (want='want_fail')
+        # while OpenVPN is running, pings must succeed (want='want_ok')
+        # before OpenVPN is up, pings must NOT succeed (want='want_fail')
 
-	rc=$?
-	if [ $rc = 0 ] 				# all ping OK
-	then
-	    if [ $want = "want_fail" ]		# not what we want
-	    then
-		fail "IPv$proto ping test succeeded, but needs to *fail*."
-	    fi
-	else					# ping failed
-	    if [ $want = "want_ok" ]		# not what we wanted
-	    then
-		fail "IPv$proto ping test ($bytes bytes) failed, but should succeed."
-	    fi
-	fi
+        rc=$?
+        if [ $rc = 0 ]; then                 # all ping OK
+            if [ $want = "want_fail" ]; then # not what we want
+                fail "IPv$proto ping test succeeded, but needs to *fail*."
+            fi
+        else                               # ping failed
+            if [ $want = "want_ok" ]; then # not what we wanted
+                fail "IPv$proto ping test ($bytes bytes) failed, but should succeed."
+            fi
+        fi
     done
 }
 
@@ -356,8 +358,7 @@ SUMMARY_OK=
 SUMMARY_SKIP=
 SUMMARY_FAIL=
 
-for SUF in $TEST_RUN_LIST
-do
+for SUF in $TEST_RUN_LIST; do
     # get config variables
     eval test_prep=\"\$PREPARE_$SUF\"
     eval test_check_skip=\"\$CHECK_SKIP_$SUF\"
@@ -381,18 +382,20 @@ do
     fi
 
     output_start "### test run $SUF: '$test_run_title' ###"
-    if [ -n "$expect_fail" ] ; then
-        output "### expect failure: '$expect_fail'";
+    if [ -n "$expect_fail" ]; then
+        output "### expect failure: '$expect_fail'"
     fi
     fail_count=0
 
     if [ -n "$test_check_skip" ]; then
         output "check whether we need to skip: '$test_check_skip'"
-        if eval $test_check_skip; then :
+        if eval $test_check_skip; then
+            :
         else
             output "skip check failed, SKIP test $SUF."
-	    SUMMARY_SKIP="$SUMMARY_SKIP $SUF"
-	    printf "$outbuf" ; continue
+            SUMMARY_SKIP="$SUMMARY_SKIP $SUF"
+            printf "$outbuf"
+            continue
         fi
     fi
 
@@ -408,13 +411,14 @@ do
     output "\nrun pre-openvpn ping tests - targets must not be reachable..."
     run_ping_tests 4 want_fail "$ping4_hosts"
     run_ping_tests 6 want_fail "$ping6_hosts"
-    if [ "$fail_count" = 0 ] ; then
+    if [ "$fail_count" = 0 ]; then
         output "OK.\n"
     else
-	fail "make sure that ping hosts are ONLY reachable via VPN, SKIP test $SUF."
-	SUMMARY_FAIL="$SUMMARY_FAIL $SUF"
-	exit_code=31
-	printf "$outbuf" ; continue
+        fail "make sure that ping hosts are ONLY reachable via VPN, SKIP test $SUF."
+        SUMMARY_FAIL="$SUMMARY_FAIL $SUF"
+        exit_code=31
+        printf "$outbuf"
+        continue
     fi
 
     pidfile="$LOGDIR_ABS/openvpn-$SUF.pid"
@@ -429,16 +433,14 @@ do
     # to $ovpn_init_check times.
     ovpn_init_check=30
     ovpn_init_success=0
-    while [ $ovpn_init_check -gt 0 ];
-    do
-        sleep 1  # Wait for OpenVPN to initialize and have had time to write the pid file
-        if [ -n "$expect_fail" ]
-        then
-            grep "$expect_fail" $LOGDIR/$SUF:openvpn.log # >/dev/null
+    while [ $ovpn_init_check -gt 0 ]; do
+        sleep 1 # Wait for OpenVPN to initialize and to write the pid file
+        if [ -n "$expect_fail" ]; then
+            grep "$expect_fail" $LOGDIR/$SUF:openvpn.log >/dev/null
             if [ $? -eq 0 ]; then
                 ovpn_init_check=0
                 ovpn_init_success=1
-                sleep 5         # give openvpn time to quit
+                sleep 5 # give openvpn time to quit
             fi
         else
             grep "Initialization Sequence Completed" $LOGDIR/$SUF:openvpn.log >/dev/null
@@ -447,33 +449,39 @@ do
                 ovpn_init_success=1
             fi
         fi
-        ovpn_init_check=$(( $ovpn_init_check - 1 ))
+        ovpn_init_check=$((ovpn_init_check - 1))
     done
 
-    opid=`[ -e $pidfile ] && cat $pidfile`
+    opid=$([ -e $pidfile ] && cat $pidfile)
     if [ -n "$opid" ]; then
         output "  OpenVPN running with PID $opid"
     else
-        if [ -z "$expect_fail" ]        # print this only if unexpected
-        then
+        if [ -z "$expect_fail" ]; then # print this only if unexpected
             output "  Could not read OpenVPN PID file"
         fi
     fi
 
     # did we expect a failure?
-    if [ -n "$expect_fail" ]
-    then
-        if [ -n "$opid" ]               # OpenVPN did start!
-        then
+    if [ -n "$expect_fail" ]; then
+        if [ -n "$opid" ]; then # OpenVPN did start!
             output "$0: OpenVPN did start up, expected failure"
             $RUN_SUDO $KILL_EXEC $opid $sudopid
             output "tail -5 $SUF:openvpn.log"
-            output "`tail -5 $LOGDIR/$SUF:openvpn.log`"
+            output "$(tail -5 $LOGDIR/$SUF:openvpn.log)"
             fail "skip rest of sub-tests for test run $SUF."
             trap - 0 1 2 3 15
             SUMMARY_FAIL="$SUMMARY_FAIL $SUF"
             exit_code=32
-            printf "$outbuf" ; continue
+            printf "$outbuf"
+            continue
+        elif [ $ovpn_init_success -eq 0 ]; then
+            output "$0: OpenVPN failure did not match expected failure"
+            output "tail -5 $SUF:openvpn.log"
+            output "$(tail -5 $LOGDIR/$SUF:openvpn.log)"
+            SUMMARY_FAIL="$SUMMARY_FAIL $SUF"
+            exit_code=33
+            printf "$outbuf"
+            continue
         else
             output "test run $SUF: all tests OK (saw expected failure)."
             SUMMARY_OK="$SUMMARY_OK $SUF"
@@ -485,16 +493,17 @@ do
     if [ $ovpn_init_success -ne 1 -o -z "$opid" ]; then
         output "$0:  OpenVPN did not initialize in a reasonable time"
         if [ -n "$opid" ]; then
-           $RUN_SUDO $KILL_EXEC $opid
+            $RUN_SUDO $KILL_EXEC $opid
         fi
         $RUN_SUDO $KILL_EXEC $sudopid
-	output "tail -5 $SUF:openvpn.log"
-	output "`tail -5 $LOGDIR/$SUF:openvpn.log`"
-	fail "skip rest of sub-tests for test run $SUF."
-	trap - 0 1 2 3 15
-	SUMMARY_FAIL="$SUMMARY_FAIL $SUF"
-	exit_code=30
-	printf "$outbuf" ; continue
+        output "tail -5 $SUF:openvpn.log"
+        output "$(tail -5 $LOGDIR/$SUF:openvpn.log)"
+        fail "skip rest of sub-tests for test run $SUF."
+        trap - 0 1 2 3 15
+        SUMMARY_FAIL="$SUMMARY_FAIL $SUF"
+        exit_code=30
+        printf "$outbuf"
+        continue
     fi
 
     # make sure openvpn client is terminated in case shell exits
@@ -506,17 +515,16 @@ do
     get_ifconfig_route >$LOGDIR/$SUF:ifconfig_route.txt
     check_tentative_state $LOGDIR/$SUF:ifconfig_route.txt
 
-    if [ "$expect_ifconfig4" = "-" ] ; then
+    if [ "$expect_ifconfig4" = "-" ]; then
         output "skip ifconfig+route check"
     else
-	output -n "compare pre-openvpn ifconfig+route with current values..."
-	if diff $LOGDIR/$SUF:ifconfig_route_pre.txt \
-		$LOGDIR/$SUF:ifconfig_route.txt >/dev/null
-	then
-	    fail "no differences between ifconfig/route before OpenVPN start and now."
-	else
-	    output " OK!\n"
-	fi
+        output -n "compare pre-openvpn ifconfig+route with current values..."
+        if diff $LOGDIR/$SUF:ifconfig_route_pre.txt \
+            $LOGDIR/$SUF:ifconfig_route.txt >/dev/null; then
+            fail "no differences between ifconfig/route before OpenVPN start and now."
+        else
+            output " OK!\n"
+        fi
     fi
 
     # post init script needed?
@@ -537,8 +545,8 @@ do
     $RUN_SUDO $KILL_EXEC $opid
     wait $!
     rc=$?
-    if [ $rc != 0 ] ; then
-	fail "OpenVPN return code $rc, expect 0"
+    if [ $rc != 0 ]; then
+        fail "OpenVPN return code $rc, expect 0"
     fi
 
     output "\nsave post-openvpn ifconfig + route..."
@@ -547,23 +555,22 @@ do
 
     output -n "compare pre- and post-openvpn ifconfig + route..."
     if diff $LOGDIR/$SUF:ifconfig_route_pre.txt \
-	    $LOGDIR/$SUF:ifconfig_route_post.txt >$LOGDIR/$SUF:ifconfig_route_diff.txt
-    then
-	output " OK.\n"
+        $LOGDIR/$SUF:ifconfig_route_post.txt >$LOGDIR/$SUF:ifconfig_route_diff.txt; then
+        output " OK.\n"
     else
-	output "\n\n" "`cat $LOGDIR/$SUF:ifconfig_route_diff.txt`" "\n"
-	fail "differences between pre- and post-ifconfig/route."
+        output "\n\n" "$(cat $LOGDIR/$SUF:ifconfig_route_diff.txt)" "\n"
+        fail "differences between pre- and post-ifconfig/route."
     fi
-    if [ "$fail_count" = 0 ] ; then
+    if [ "$fail_count" = 0 ]; then
         output "test run $SUF: all tests OK.\n"
-	SUMMARY_OK="$SUMMARY_OK $SUF"
+        SUMMARY_OK="$SUMMARY_OK $SUF"
     else
-	if [ "$V" -gt 0 ] ; then
-	    printf "$outbuf"
-	    echo "test run $SUF: $fail_count test failures. FAIL."
+        if [ "$V" -gt 0 ]; then
+            printf "$outbuf"
+            echo "test run $SUF: $fail_count test failures. FAIL."
         fi
-	SUMMARY_FAIL="$SUMMARY_FAIL $SUF"
-	exit_code=30
+        SUMMARY_FAIL="$SUMMARY_FAIL $SUF"
+        exit_code=30
     fi
 
     if [ -n "$test_cleanup" ]; then
@@ -573,9 +580,9 @@ do
 
 done
 
-if [ -z "$SUMMARY_OK" ] ; then SUMMARY_OK=" none"; fi
-if [ -z "$SUMMARY_SKIP" ] ; then SUMMARY_SKIP=" none"; fi
-if [ -z "$SUMMARY_FAIL" ] ; then SUMMARY_FAIL=" none"; fi
+if [ -z "$SUMMARY_OK" ]; then SUMMARY_OK=" none"; fi
+if [ -z "$SUMMARY_SKIP" ]; then SUMMARY_SKIP=" none"; fi
+if [ -z "$SUMMARY_FAIL" ]; then SUMMARY_FAIL=" none"; fi
 echo "Test sets succeeded:$SUMMARY_OK."
 echo "Test sets skipped:$SUMMARY_SKIP."
 echo "Test sets failed:$SUMMARY_FAIL."

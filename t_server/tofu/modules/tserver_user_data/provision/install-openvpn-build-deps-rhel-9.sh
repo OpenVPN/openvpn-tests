@@ -32,7 +32,6 @@ libnl3-devel \
 libtool \
 lz4-devel \
 lzo-devel \
-mbedtls-devel \
 pam-devel \
 pkcs11-helper-devel \
 pkgconfig \

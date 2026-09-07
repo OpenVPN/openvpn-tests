@@ -288,10 +288,10 @@ PING6_HOSTS_2y="$PING6_HOSTS_2"
 # 2z1: NCP *fail* (cipher)
 RUN_TITLE_2z1="udp6 / p2pm / top net30 / --ncp-disable --cipher IDEA-CBC"
 CHECK_SKIP_2z1="needs_openvpn 25" # 2.4 does write a bogus pid file
-OPENVPN_CONF_2z1="$BASE_CONF_2 --proto udp6 --ncp-disable --cipher IDEA-CBC"
+OPENVPN_CONF_2z1="$BASE_CONF_2 --proto udp6 --setenv opt ncp-disable --cipher IDEA-CBC"
 EXPECT_IFCONFIG4_2z1=-
 EXPECT_IFCONFIG6_2z1=-
-EXPECT_FAIL_2z1="Received control message: AUTH_FAILED,Data channel cipher"
+EXPECT_FAIL_2z1="Cipher IDEA-CBC not supported"
 
 # 2z2: NCP *fail* (cipher)
 RUN_TITLE_2z2="udp6 / p2pm / top net30 / --data-ciphers IDEA-CBC"
@@ -299,7 +299,7 @@ CHECK_SKIP_2z2="needs_openvpn 25" # data-ciphers
 OPENVPN_CONF_2z2="$BASE_CONF_2 --proto udp6 --data-ciphers IDEA-CBC"
 EXPECT_IFCONFIG4_2z2=-
 EXPECT_IFCONFIG6_2z2=-
-EXPECT_FAIL_2z2="Received control message: AUTH_FAILED,Data channel cipher"
+EXPECT_FAIL_2z2="Unsupported cipher in --data-ciphers: IDEA-CBC"
 
 # Test 3: UDP / p2mp tun, topology subnet, tls-auth
 #
@@ -725,8 +725,8 @@ EXPECT_FAIL_10x="hash verification failed"
 RUN_TITLE_10z="udp / p2pm / FP+script auth / FAIL: invalid cert"
 CHECK_SKIP_10z="needs_openvpn 26" # peer-fingerprint
 OPENVPN_CONF_10z="$OPENVPN_BASE_P2MP \
-                 --key $KEYBASE/cron2-freebsd-tc-amd64-24.key \
-                 --cert $KEYBASE/cron2-freebsd-tc-amd64-24.crt \
+                 --key $KEYBASE/client-22.key \
+                 --cert $KEYBASE/client-22.crt \
                  --dev tun --proto udp --remote $REMOTE --port 51200 \
 	         --auth-user-pass $AUTH_DIR/aup.txt \
 		 --connect-retry 0 --connect-retry-max 1 --hand-window 5"
