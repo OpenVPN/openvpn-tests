@@ -4,7 +4,7 @@
 # https://github.com/diodonfrost/terraform-aws-lambda-scheduler-stop-start
 #
 module "stop_ec2_instance" {
-  source                         = "github.com/diodonfrost/terraform-aws-lambda-scheduler-stop-start?ref=3.5.0"
+  source                         = "github.com/diodonfrost/terraform-aws-lambda-scheduler-stop-start?ref=4.5.0"
   name                           = "ec2_stop"
   # See https://docs.aws.amazon.com/lambda/latest/dg/services-cloudwatchevents-expressions.html
   cloudwatch_schedule_expression = "cron(30 19 * * ? *)"
