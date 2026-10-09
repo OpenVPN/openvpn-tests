@@ -20,26 +20,24 @@ cd $OPENVPN_GIT_REPO || exit 1
 PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/opt/bin
 
 CRYPTO=openssl
-EXTRA_ARGS=--enable-async-push			# 1+2+3+7
 
-# FIXME: revert to old behavior later
-# build variants
-#DAY=`date +%u`
-DAY=1
+NUM_VARIANTS=5
+# select based on timestamp
+[ -n "${VARIANT:-}" ] || VARIANT=$(($(date +%s) % $NUM_VARIANTS + 1))
 
-case $DAY in
-    1) EXTRA_ARGS=--enable-werror ;;				# Monday
-    2) CRYPTO=mbedtls; EXTRA_ARGS=--enable-small ;;		# Tuesday
-#   3) openssl 3.5 "tbd" - default build for now
-# This build type fails, so ignore it for now
-#    4) CRYPTO=openssl; OPENSSL_CFLAGS=-I$PREFIX/include/openssl;  OPENSSL_LIBS="-L$PREFIX/lib -Wl,-rpath=$PREFIX/lib -lssl -lcrypto" ;;		# Thursday
-    5) EXTRA_ARGS=--enable-small ;;				# Friday
-    6) EXTRA_ARGS=--enable-iproute2 ;;				# Saturday
-    7) ;;							# Sunday
-    *) ;;
+case $VARIANT in
+    1) EXTRA_ARGS= ; VARIANT_NAME=default ;;
+    2) EXTRA_ARGS=--enable-small ; VARIANT_NAME=small ;;
+    3) EXTRA_ARGS=--enable-iproute2 ; VARIANT_NAME=iproute2 ;;
+    #FIXME: --enable-pkcs11 doesn't work on Rocky 9
+    4) EXTRA_ARGS="--enable-systemd --enable-selinux --enable-async-push"
+       VARIANT_NAME=full ;;
+    5) EXTRA_ARGS=--enable-developer-debug ; VARIANT_NAME=debug ;;
+    *) exit 1;; # should not happen
 esac
 
-# which crypto library to use?
+echo "using variant $VARIANT_NAME ($VARIANT/$NUM_VARIANTS)"
+echo "using crypto $CRYPTO"
 
 if [ "$1" != nogit ]
 then
@@ -56,7 +54,7 @@ if [ $? != 0 ] ; then
     exit 10
 fi
 
-EXTRA_ARGS="$EXTRA_ARGS --disable-dco"
+EXTRA_ARGS="$EXTRA_ARGS --disable-dco --enable-werror"
 
 echo "configure --with-crypto-library=$CRYPTO OPENSSL_CFLAGS="$OPENSSL_CFLAGS" OPENSSL_LIBS="$OPENSSL_LIBS" $EXTRA_ARGS (quiet)..."
 ./configure --with-crypto-library=$CRYPTO OPENSSL_CFLAGS="$OPENSSL_CFLAGS" OPENSSL_LIBS="$OPENSSL_LIBS" $EXTRA_ARGS >configure.stdout
@@ -95,7 +93,6 @@ echo "restart server processes..."
 sudo $SCRIPTPATH/t_server/stop
 sleep 14		# wg. multisocket/EEN, issue #702
 
-cp -v $BINDIR/openvpn $BINDIR/openvpn.$DAY
 cp -v src/openvpn/openvpn $BINDIR/openvpn || exit 13
 
 sudo $SCRIPTPATH/t_server/start
