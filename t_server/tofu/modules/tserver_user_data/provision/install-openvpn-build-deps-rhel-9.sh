@@ -30,12 +30,14 @@ inotify-tools-devel \
 libcap-ng-devel \
 libnl3-devel \
 libtool \
+libselinux-devel \
 lz4-devel \
 lzo-devel \
 pam-devel \
 pkcs11-helper-devel \
 pkgconfig \
-openssl-devel
+openssl-devel \
+systemd-devel
 
 # ovpn-dco build dependencies
 dnf -y install \
