@@ -7,7 +7,13 @@ set -u
 KEY=$SSH_PRIVATE_KEY
 HOST=tserver-client.$PRIVATE_DNS_ZONE_NAME
 TESTSETS="22 23 24 25 26 27 master"
-TESTGROUPS=$(seq 1 10)
+
+if src/openvpn/openvpn --secret foo 2>&1 | grep -q "Unrecognized option"; then
+  echo "Skipping test group 8 due to missing --secret support"
+  TESTGROUPS="$(seq 1 7) $(seq 9 10)"
+else
+  TESTGROUPS=$(seq 1 10)
+fi
 
 LOGDIR=$HOMEDIR/t_server_logs
 DAY=`date +%Y%m%d`
