@@ -13,7 +13,6 @@ tun-udp-p2mp-topology-subnet
 tap-udp-p2mp
 tun-udp-p2mp-112-mask
 tun-udp-p2mp-fragment
-tun-udp-p2p
 Xtun-udp-p2mp-ccd-static
 Xtun-udp-p2mp-polar
 tun-udp-p2mp-global-authpam
@@ -21,6 +20,13 @@ tun-udp-p2mp-hash-defscript
 tap-tcp-p2p
 tun-udp-p2p-tls-sha256
 "
+
+if $BINDIR/openvpn --secret foo 2>&1 | grep -q "Unrecognized option"; then
+  echo "No --secret support, disabling tun-udp-p2p"
+  INSTANCES="$INSTANCES Xtun-udp-p2p"
+else
+  INSTANCES="$INSTANCES tun-udp-p2p"
+fi
 
 #cd /root/openvpn-test-server || exit 1
 ip addr add 10.204.0.1/32 dev lo
